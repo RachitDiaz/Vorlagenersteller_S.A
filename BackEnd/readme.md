@@ -1,1 +1,1 @@
-# Esta carpeta contiene toda la parte de back end desarrollada con .NET
+# Esta carpeta contiene toda la parte de back end desarrollada con .NET(8.0)
