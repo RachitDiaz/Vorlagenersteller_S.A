@@ -5,7 +5,7 @@
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-
+import theme from './src/config/theme.js'
 export default {
   name: 'App',
   components: {
