@@ -19,16 +19,20 @@
       <div :key="selectedTab" class="form-wrapper">
         <form @submit.prevent="login">
           <div class="form-group">
-            <label>Correo</label>
+            <label>correo</label>
             <input
               type="email"
+              v-model="correo"
               :placeholder="selectedTab === 'empleado' ? 'Correo de la empresa' : 'Correo personal'"
               required
             />
           </div>
           <div class="form-group">
-            <label>Contraseña</label>
-            <input type="password" required />
+            <label>contraseña</label>
+            <input 
+            type="password" 
+            v-model="contrasena"
+            required/>
           </div>
           <button class="login-button">Ingresar</button>
 
@@ -43,11 +47,24 @@
 
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
 
 const selectedTab = ref('empleado')
+const correo = ref('')
+const contrasena = ref('')
 
-const login = () => {
-  console.log(`Intento de login como ${selectedTab.value}`)
+const login = async () => {
+  try {
+    const response = await axios.post('https://localhost:7296/api/login', {
+      Correo: correo.value,
+      Contrasena: contrasena.value,
+      Rol: selectedTab.value
+    })
+
+    console.log(response.data.mensaje)
+  } catch (error) {
+    console.error(error.response?.data?.mensaje || 'Error en la solicitud')
+  }
 }
 </script>
 

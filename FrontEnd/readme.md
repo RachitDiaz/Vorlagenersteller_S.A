@@ -4,9 +4,11 @@ Este proyecto de front-end desarrollado con Vue.js se complementa con la parte b
 ## Paquetes necesarios para correr el proyecto front-end
 
 Colocarse en la carpeta raiz del proyecto ".../frontend-planilla" y correr los siguientes comandos:
+  * `npm install`
   * `npm install vue-router`
   * `npm install bootstrap`
   * `npm install @fortawesome/fontawesome-free`
+  * `npm install axios`
 
 ## Para correr el proyecto
 
