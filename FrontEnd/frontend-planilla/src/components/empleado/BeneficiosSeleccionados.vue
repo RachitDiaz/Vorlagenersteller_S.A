@@ -4,7 +4,6 @@
       <p class="subtitle">Seleccionar {{ selected.length }}/{{ max }} de la lista</p>
   
       <div class="lists-wrapper">
-        <!-- Elegidos -->
         <div class="list">
           <h3>Beneficios elegidos</h3>
           <div class="benefit-list">
@@ -19,7 +18,6 @@
           </div>
         </div>
   
-        <!-- Disponibles -->
         <div class="list">
           <h3>Beneficios disponibles</h3>
           <div class="benefit-list">
