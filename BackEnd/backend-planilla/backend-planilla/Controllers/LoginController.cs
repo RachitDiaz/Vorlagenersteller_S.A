@@ -20,6 +20,8 @@ namespace backend_planilla.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] LoginRequest request)
         {
+            Console.WriteLine($"Intento de login: Correo={request.Correo}, Rol={request.Rol}");
+
             if (string.IsNullOrWhiteSpace(request.Correo) ||
                 string.IsNullOrWhiteSpace(request.Contrasena) ||
                 string.IsNullOrWhiteSpace(request.Rol))
@@ -27,7 +29,7 @@ namespace backend_planilla.Controllers
                 return BadRequest(new { mensaje = "Correo, contraseña y rol son obligatorios." });
             }
 
-            // Simula la verificación del usuario (esto se haría con una base de datos real)
+            // Simula la verificación del usuario (aquí van las consultas a la base de datos)
             if (request.Correo == "admin@empresa.com" && request.Contrasena == "1234")
             {
                 // Devuelve HTTP 200 OK
