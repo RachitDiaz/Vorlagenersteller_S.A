@@ -1,6 +1,6 @@
 <template>
 
-    <div class="mb-5" >
+    <div class="mb-5" style="text-align: center;" >
 
         <div class="page-tittle">Informacion de la empresa</div>
 
@@ -11,7 +11,7 @@
             <div style="font-weight: bold;"> {{ nombre }} </div>
 
             <div class="section-subtittle">Cedula juridica</div>
-            <div> {{telefono}} </div>
+            <div> {{cedulaJuridica}} </div>
             
             <div class="section-subtittle">Estado</div>
             <div> Activo/Inactivo </div>
@@ -28,8 +28,10 @@
 
             <div class="subsection-tittle"> Descripcion </div>
             <div> {{descripcion}}</div>
-            <div class="subsection-tittle"> Razon social </div>
+            <div class="section-subtittle"> Razon social </div>
             <div> {{razonSocial}}</div>
+            <div class="section-subtittle"> Empleados </div>
+            <div> Cantidad total de empleados: {{cantidadEmpleados}}</div>
 
             <div class="subsection-tittle"> Informacion del propietario </div>
             <div class="section-subtittle">Cedula del propietario</div>
@@ -49,7 +51,7 @@
             <div> {{ provincia }}, {{ canton }}, {{ distrito }}, {{ otrasSenas }} </div>
         </div>
 
-        <div style="width: 35%;">
+        <div style="width: 35%; margin: 5%;">
         <button type="submit" class="btn-eliminar">Eliminar</button>
         </div>
     </div>
@@ -110,7 +112,9 @@ export default {
     padding: 2rem;
     background-color: #fff;
     border-radius: 8px;
-    border-color: grey;
+    border-color: rgb(172, 172, 172);
+    border-style: solid;
+    border-width: 2px;
 
     display: inline-block;
     vertical-align:top;
@@ -122,7 +126,6 @@ export default {
     font-weight: bold;
     font-size: larger;
     margin-bottom: 1rem;
-    margin-top: 1rem;
   }
 
   .section-subtittle {
