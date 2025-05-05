@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <button class="btn btn-primary" @click="showModal">
-      Open Modal
+      Agregar beneficio
     </button>
     <ModalAgregarBeneficios ref="modalRef" />
   </div>
@@ -17,4 +17,3 @@ function showModal() {
   modalRef.value?.show()
 }
 </script>
-
