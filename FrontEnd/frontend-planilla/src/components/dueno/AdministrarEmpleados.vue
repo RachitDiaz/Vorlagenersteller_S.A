@@ -3,8 +3,7 @@
   <section class="employee-table">
     <div class="header">
       <h2>Gestión de Empleados</h2>
-      <!-- Botón único que abre el modal -->
-      <button class="add- " @click="abrirModal">Añadir empleado</button>
+      <button class="add-button " @click="abrirModal">Añadir empleado</button>
     </div>
 
     <div class="controls">
