@@ -16,14 +16,13 @@ namespace Lista_Beneficios.Controllers
             _beneficiosHandler = new BeneficiosHandler();
         }
 
-        /*
         [HttpGet]
         public List<BeneficioModel> Get()
         {
             var beneficios = _beneficiosHandler.ObtenerBeneficios();
             return beneficios;
         }
-        */
+
         [HttpPost]
 
         public async Task<ActionResult<bool>> CrearBeneficio(BeneficioModel beneficio)

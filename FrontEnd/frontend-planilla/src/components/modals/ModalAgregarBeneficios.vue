@@ -297,13 +297,12 @@
   function submitForm() {
     if (form.tipo === 'API') {
       form.parametros.forEach(param => {
-        param.valor = ''
+        param.valorParametro = 0
         param.tipoParametro = 'API'
       })
 
     } else {
       form.ServicioExterno  = ''
-
     }
     console.log("Datos a guardar", form);
     axios.post("https://localhost:7296/api/ListaBeneficios", {
@@ -314,7 +313,13 @@
       mesesMinimos: form.mesesMinimos,
       cantidadParametros: form.cantidadParametros, 
       parametros: form.parametros,
+    }).then(() => {
+      window.location.href = "/ListaBeneficios";
     })
+    .catch(error => {
+      console.error("Error al guardar beneficio:", error);
+    });
+
   }
   defineExpose({ show })
 </script>

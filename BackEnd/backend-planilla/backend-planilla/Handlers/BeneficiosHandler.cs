@@ -39,8 +39,8 @@ namespace backend_planilla.Handlers
                 new BeneficioModel
                 {
                     Nombre = Convert.ToString(columna["Nombre"]),
-                    Descripcion = Convert.ToString(columna["Descripcion"]),
                     Tipo = Convert.ToString(columna["Tipo"]),
+                    Descripcion = Convert.ToString(columna["Descripcion"]),
                     ServicioExterno = Convert.ToString(columna["ServicioExterno"]),
                     MesesMinimos = Convert.ToInt32(columna["MesesMinimos"]),
                     CantidadParametros = Convert.ToInt32(columna["CantidadParametros"])
@@ -51,8 +51,8 @@ namespace backend_planilla.Handlers
 
         public bool CrearBeneficio(BeneficioModel beneficio)
         {
-            var consulta = @"INSERT INTO [dbo].[Beneficio] ([Nombre], [Tipo] ,[Descripcion], [ServicioExterno], [MesesMinimos])
-                                             VALUES(@Nombre, @Tipo , @Descripcion, @ServicioExterno, @MesesMinimos) ";
+            var consulta = @"INSERT INTO [dbo].[Beneficio] ([Nombre], [Tipo] ,[Descripcion], [ServicioExterno], [MesesMinimos], [CantidadParametros])
+                                             VALUES(@Nombre, @Tipo , @Descripcion, @ServicioExterno, @MesesMinimos, @CantidadParametros) ";
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
             comandoParaConsulta.Parameters.AddWithValue("@Nombre", beneficio.Nombre);
@@ -60,6 +60,7 @@ namespace backend_planilla.Handlers
             comandoParaConsulta.Parameters.AddWithValue("@Descripcion", beneficio.Descripcion);
             comandoParaConsulta.Parameters.AddWithValue("@ServicioExterno", beneficio.ServicioExterno);
             comandoParaConsulta.Parameters.AddWithValue("@MesesMinimos", beneficio.MesesMinimos);
+            comandoParaConsulta.Parameters.AddWithValue("@CantidadParametros", beneficio.CantidadParametros);
 
             _conexion.Open();
             bool exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
