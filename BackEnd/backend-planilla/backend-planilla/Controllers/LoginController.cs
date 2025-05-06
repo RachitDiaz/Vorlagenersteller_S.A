@@ -9,11 +9,11 @@ namespace backend_planilla.Controllers
     [Route("api/[controller]")]
     public class LoginController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly LoginService _loginService;
 
         public LoginController()
         {
-            _authService = new AuthService(); // Idealmente usar inyección de dependencias
+            _loginService = new LoginService(); // Idealmente usar inyección de dependencias
         }
 
         [HttpPost]
@@ -28,7 +28,7 @@ namespace backend_planilla.Controllers
                 return BadRequest(new { mensaje = "Correo, contraseña y rol son obligatorios." });
             }
 
-            if (_authService.ValidarCredenciales(request.Correo, request.Contrasena))
+            if (_loginService.ValidarCredenciales(request.Correo, request.Contrasena))
             {
                 return Ok(new { mensaje = $"Bienvenido {request.Rol}" });
             }
