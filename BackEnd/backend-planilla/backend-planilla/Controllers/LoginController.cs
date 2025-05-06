@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using backend_planilla.Models;
-using backend_planilla.Services;
+using backend_planilla.Handlers;
 
 namespace backend_planilla.Controllers
 {
@@ -9,18 +9,16 @@ namespace backend_planilla.Controllers
     [Route("api/[controller]")]
     public class LoginController : ControllerBase
     {
-        private readonly LoginService _loginService;
+        private readonly LoginHandler _loginHandler;
 
         public LoginController()
         {
-            _loginService = new LoginService(); // Idealmente usar inyección de dependencias
+            _loginHandler = new LoginHandler();
         }
 
         [HttpPost]
         public IActionResult Login([FromBody] LoginRequestModel request)
         {
-            Console.WriteLine($"Intento de login: Correo={request.Correo}, Rol={request.Rol}");
-
             if (string.IsNullOrWhiteSpace(request.Correo) ||
                 string.IsNullOrWhiteSpace(request.Contrasena) ||
                 string.IsNullOrWhiteSpace(request.Rol))
@@ -28,7 +26,7 @@ namespace backend_planilla.Controllers
                 return BadRequest(new { mensaje = "Correo, contraseña y rol son obligatorios." });
             }
 
-            if (_loginService.ValidarCredenciales(request.Correo, request.Contrasena))
+            if (_loginHandler.ValidarCredenciales(request.Correo, request.Contrasena))
             {
                 return Ok(new { mensaje = $"Bienvenido {request.Rol}" });
             }
