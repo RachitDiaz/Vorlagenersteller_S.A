@@ -59,13 +59,16 @@ const login = async () => {
       Correo: correo.value,
       Contrasena: contrasena.value,
       Rol: selectedTab.value
-    })
+    });
 
-    console.log(response.data.mensaje)
+    const token = response.data.token;
+    localStorage.setItem('jwtToken', token);
+
+    window.location.href = '/ListaBeneficios';
   } catch (error) {
-    console.error(error.response?.data?.mensaje || 'Error en la solicitud')
+    console.error(error.response?.data?.mensaje || 'Error en la solicitud');
   }
-}
+};
 </script>
 
 <style scoped>

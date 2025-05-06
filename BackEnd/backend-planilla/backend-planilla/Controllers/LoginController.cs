@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using backend_planilla.Models;
 using backend_planilla.Handlers;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace backend_planilla.Controllers
 {
@@ -10,10 +14,12 @@ namespace backend_planilla.Controllers
     public class LoginController : ControllerBase
     {
         private readonly LoginHandler _loginHandler;
+        private readonly IConfiguration _config;
 
-        public LoginController()
+        public LoginController(IConfiguration config)
         {
             _loginHandler = new LoginHandler();
+            _config = config;
         }
 
         [HttpPost]
@@ -26,12 +32,35 @@ namespace backend_planilla.Controllers
                 return BadRequest(new { mensaje = "Correo, contraseña y rol son obligatorios." });
             }
 
-            if (_loginHandler.ValidarCredenciales(request.Correo, request.Contrasena))
+            var resultadoValidacion = _loginHandler.ValidarCredenciales(request.Correo, request.Contrasena);
+
+            if (resultadoValidacion.CorreoUsuario != null)
             {
-                return Ok(new { mensaje = $"Bienvenido {request.Rol}" });
+                var rol = resultadoValidacion.EsDueno ? "Dueño" : "NoDueno";
+
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.Email, resultadoValidacion.CorreoUsuario),
+                    new Claim(ClaimTypes.Role, rol)
+                };
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(Convert.ToDouble(_config["Jwt:ExpireHours"])),
+                    signingCredentials: creds
+                );
+
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return Ok(new { token = tokenString });
             }
 
-            return Unauthorized(new { mensaje = "Credenciales incorrectas" });
+            return Unauthorized(new { mensaje = "No hay un usuario registrado con estos datos" });
         }
     }
 }

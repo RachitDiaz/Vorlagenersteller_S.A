@@ -59,11 +59,23 @@
 
   onMounted(async () => {
     try {
-      const response = await axios.get('https://localhost:7296/api/ListaBeneficios')
-      benefits.value = response.data
+      const token = localStorage.getItem("jwtToken");
+      
+      if (!token) {
+        alert("You must be logged in to view benefits.");
+        return;
+      }
+
+      const response = await axios.get('https://localhost:7296/api/ListaBeneficios', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      benefits.value = response.data;
     } catch (error) {
-      console.error('Error fetching beneficios:', error)
-      alert('Error al cargar los beneficios desde el servidor.')
+      console.error('Error fetching beneficios:', error);
+      alert('Error al cargar los beneficios desde el servidor.');
     }
   })
   </script>
