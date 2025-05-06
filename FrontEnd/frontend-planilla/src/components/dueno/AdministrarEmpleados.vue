@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
 
 export default {
@@ -54,11 +55,7 @@ export default {
   data() {
     return {
       search: "",
-      empleados: [
-        { id: 1, nombre: "Ana", apellido1: "Ramírez", apellido2: "Lopez", cedula: "1-2345-6789", posicion: "Gerente" },
-        { id: 2, nombre: "Carlos", apellido1: "Mora", apellido2: "Jiménez", cedula: "2-1234-5678", posicion: "Asistente" },
-        { id: 3, nombre: "Lucía", apellido1: "Gómez", apellido2: "Alvarado", cedula: "3-9876-5432", posicion: "Director" },
-      ],
+      empleados: []
     };
   },
   computed: {
@@ -72,7 +69,18 @@ export default {
   methods: {
     abrirModal() {
       this.$refs.modalAgregarEmpleado.show()
+    },
+    async obtenerEmpleados() {
+      try {
+        const response = await axios.get('https://localhost:7296/api/Empleado') // o el puerto que uses
+        this.empleados = response.data
+      } catch (error) {
+        console.error('Error al obtener empleados:', error)
+      }
     }
+  },
+  mounted() {
+    this.obtenerEmpleados()
   }
 };
 </script>
