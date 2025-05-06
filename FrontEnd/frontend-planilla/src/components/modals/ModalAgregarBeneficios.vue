@@ -54,7 +54,7 @@
             <div class="mb-3" v-if="form.tipo === 'API'">
               <label class="form-label"> URL del Servicio Externo </label>
               <input
-                v-model="form.URL"
+                v-model="form.ServicioExterno"
                 type="url"
                 class="form-control"
                 placeholder="URL del servicio externo"
@@ -68,7 +68,7 @@
             <div class="mb-3">
               <label class="form-label">* Meses mínimos para poder elegir el beneficio</label>
               <input
-                v-model="form.meses"
+                v-model="form.mesesMinimos"
                 type="number"
                 class="form-control"
                 min="0"
@@ -106,7 +106,7 @@
                 @input="borrarMensaje"
               />
 
-              <div class="mb-3"  v-if="form.tipo !== 'API' && param.nombre">
+              <div class="mb-3"  v-if="form.tipo !== 'API'">
                 <label class="form-label">* Tipo de parámetro</label>
 
                 <div class="form-check">
@@ -165,16 +165,19 @@
                     v-model="param.datoIngreso"
                     value="Numero"
                     :id="'TipoNumero' + index"
+                    required
+                    @invalid="mensajeParametro"
+                    @input="borrarMensaje"
                   />
                   <label class="form-check-label" :for="'TipoNumero' + index">Parámetro numérico</label>
                 </div>
               </div>
 
-              <div class="mb-3" v-if="form.tipo !== 'API' && param.dato">
+              <div class="mb-3" v-if="form.tipo !== 'API' && param.datoIngreso">
                 <label class="form-label">* Valor del parámetro</label>
                 <input
                   v-model="param.valorParametro"
-                  :type="tipoEntrada(index)"
+                  type="number"
                   class="form-control"
                   :placeholder="textoTemporal(index)"
                   required
@@ -195,6 +198,7 @@
 
 <script setup>
   import { ref, reactive, onMounted, defineExpose, watch} from 'vue'
+  import axios from "axios";
   import Modal from 'bootstrap/js/dist/modal'
 
   const modalRef = ref(null)
@@ -204,8 +208,8 @@
     nombre: '',
     descripcion: '',
     tipo: '',
-    URL: '',
-    meses: '',
+    ServicioExterno: '',
+    mesesMinimos: '',
     cantidadParametros: '', 
     parametros: [],
   })
@@ -272,12 +276,8 @@
     event.target.setCustomValidity("")
   }
 
-  function tipoEntrada(index) {
-    return form.parametros[index]?.dato === 'Numero' ? 'number' : 'text'
-  }
-
   function textoTemporal(index) {
-    const tipo = form.parametros[index]?.tipo
+    const tipo = form.parametros[index]?.tipoParametro
     if (tipo === 'Fijo') return 'Ingrese el monto fijo (ej. 5000)'
     if (tipo === 'Porcentaje') return 'Ingrese el porcentaje (ej. 10)'
     return ''
@@ -302,10 +302,19 @@
       })
 
     } else {
-      form.URL = ''
+      form.ServicioExterno  = ''
 
     }
-    console.log(form)
+    console.log("Datos a guardar", form);
+    axios.post("https://localhost:7296/api/ListaBeneficios", {
+      nombre: form.nombre,
+      descripcion: form.descripcion,
+      tipo: form.tipo,
+      ServicioExterno: form.ServicioExterno,
+      mesesMinimos: form.mesesMinimos,
+      cantidadParametros: form.cantidadParametros, 
+      parametros: form.parametros,
+    })
   }
   defineExpose({ show })
 </script>
