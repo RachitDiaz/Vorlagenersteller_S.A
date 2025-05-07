@@ -52,20 +52,20 @@ CREATE TABLE Beneficio (
 
 -- Las siguientes lineas son inserciones manuales para probar el login y autenticacion del usuario en la pagina
 
---INSERT INTO Persona(Cedula, Nombre, Apellido1, Apellido2, Genero) VALUES
---('1-1909-0924', 'Daniel', 'Shih', 'Tang', 'Masculino')
+INSERT INTO Persona(Cedula, Nombre, Apellido1, Apellido2, Genero) VALUES
+('1-1909-0924', 'Daniel', 'Shih', 'Tang', 'Masculino')
 
---INSERT INTO Usuario(Cedula, Correo, Contrase�a) VALUES
---('1-1909-0924', 'shihtangdaniel@gmail.com', 'Contrase�aTemporal')
+INSERT INTO Usuario(Cedula, Correo, Contrasena) VALUES
+('1-1909-0924', 'shihtangdaniel@gmail.com', 'ContrasenaTemporal')
 
---INSERT INTO Due�o(Cedula) VALUES
---('1-1909-0924')
+INSERT INTO Dueno(Cedula) VALUES
+('1-1909-0924')
 
---SELECT * FROM Due�o, Persona, Usuario
+SELECT * FROM Dueno, Persona, Usuario
 
---SELECT 
---    u.Correo,
---    CASE WHEN d.Cedula IS NOT NULL THEN 1 ELSE 0 END AS EsDueno
---FROM Usuario u
---LEFT JOIN Due�o d ON u.Cedula = d.Cedula
---WHERE u.Correo = 'shihtangdaniel@gmail.com' AND u.Contrase�a = 'Contrase�aTemporal'
+SELECT 
+    u.Correo,
+    CASE WHEN d.Cedula IS NOT NULL THEN 1 ELSE 0 END AS EsDueno
+FROM Usuario u
+LEFT JOIN Dueno d ON u.Cedula = d.Cedula
+WHERE u.Correo = 'shihtangdaniel@gmail.com' AND u.Contrasena = 'ContrasenaTemporal'
