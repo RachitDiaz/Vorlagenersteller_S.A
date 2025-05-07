@@ -39,14 +39,16 @@
   
   <script setup>
   import { ref, onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
   import axios from 'axios'
-  import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue'    
+  import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue'
+
+  const router = useRouter()
 
   const max = 4
   const selectedAmount = ref(0)
   
   const benefits = ref([])
-  
   const modalRef = ref(null)
 
   function showModal() {
@@ -62,8 +64,10 @@
       const token = localStorage.getItem("jwtToken");
       
       if (!token) {
-        alert("You must be logged in to view benefits.");
-        return;
+        alert('Tiene que iniciar sesión primero.');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
       }
 
       const response = await axios.get('https://localhost:7296/api/ListaBeneficios', {
@@ -74,7 +78,7 @@
 
       benefits.value = response.data;
     } catch (error) {
-      console.error('Error fetching beneficios:', error);
+      console.error('Error cargando beneficios:', error);
       alert('Error al cargar los beneficios desde el servidor.');
     }
   })

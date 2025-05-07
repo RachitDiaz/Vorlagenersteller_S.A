@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
 
@@ -66,13 +68,26 @@ export default {
       );
     }
   },
+  setup() {
+    const router = useRouter()
+
+    onMounted(() => {
+      const token = localStorage.getItem('jwtToken')
+      if (!token) {
+        alert('Tiene que iniciar sesión primero.');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+    })
+  },
   methods: {
     abrirModal() {
       this.$refs.modalAgregarEmpleado.show()
     },
     async obtenerEmpleados() {
       try {
-        const response = await axios.get('https://localhost:7296/api/Empleado') // o el puerto que uses
+        const response = await axios.get('https://localhost:7296/api/Empleado')
         this.empleados = response.data
       } catch (error) {
         console.error('Error al obtener empleados:', error)

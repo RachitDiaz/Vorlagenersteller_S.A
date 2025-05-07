@@ -44,32 +44,31 @@
 </template>
 
 <script>
-export default {
-  name: 'RegistroUsuario',
-  data() {
-    return {
-      form: {
-        nombre: '',
-        cedula: '',
-        correo: '',
-        contrasena: '',
-        confirmarContrasena: '',
-        telefono: '',
-        direccion: ''
+  export default {
+    name: 'RegistroUsuario',
+    data() {
+      return {
+        form: {
+          nombre: '',
+          cedula: '',
+          correo: '',
+          contrasena: '',
+          confirmarContrasena: '',
+          telefono: '',
+          direccion: ''
+        }
       }
-    }
-  },
-  methods: {
-    registrarUsuario() {
-      if (this.form.contrasena !== this.form.confirmarContrasena) {
-        alert('Las contraseñas no coinciden');
-        return;
+    },
+    methods: {
+      registrarUsuario() {
+        if (this.form.contrasena !== this.form.confirmarContrasena) {
+          alert('Las contraseñas no coinciden');
+          return;
+        }
+        console.log('Usuario registrado:', this.form);
       }
-      console.log('Usuario registrado:', this.form);
-      // Aquí puedes hacer un POST a tu backend
     }
   }
-}
 </script>
 
 <style scoped>
