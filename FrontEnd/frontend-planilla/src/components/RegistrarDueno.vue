@@ -15,7 +15,7 @@
         <div class="form-group">
           <label>Correo Electrónico</label>
           <input v-model="form.correo" type="email" placeholder="ejemplo@correo.com" required />
-        </div>
+        </div> 
 
         <div class="form-group">
           <label>Contraseña*</label>
@@ -44,31 +44,67 @@
 </template>
 
 <script>
-  export default {
-    name: 'RegistroUsuario',
-    data() {
-      return {
-        form: {
-          nombre: '',
-          cedula: '',
-          correo: '',
-          contrasena: '',
-          confirmarContrasena: '',
-          telefono: '',
-          direccion: ''
-        }
+import axios from 'axios'
+
+export default {
+  name: 'RegistroUsuario',
+  data() {
+    return {
+      form: {
+        nombre: '',
+        cedula: '',
+        correo: '',
+        contrasena: '',
+        confirmarContrasena: '',
+        telefono: '',
+        direccion: ''
       }
-    },
-    methods: {
-      registrarUsuario() {
-        if (this.form.contrasena !== this.form.confirmarContrasena) {
-          alert('Las contraseñas no coinciden');
-          return;
+    }
+  },
+  methods: {
+    async registrarUsuario() {
+      if (this.form.contrasena !== this.form.confirmarContrasena) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+
+      try {
+        const persona = {
+          cedula: this.form.cedula,
+          nombre: this.form.nombre,
+          apellido1: 'Ramírez',
+          apellido2: 'Gómez',
+          genero: 'Masculino',
+          usuario: {
+            correo: this.form.correo,
+            contrasena: this.form.contrasena
+          }
+        };
+
+        const payload = {
+          persona,
+          telefono: this.form.telefono,
+          direccion: this.form.direccion
+        };
+
+        const response = await axios.post('https://localhost:7296/api/Dueno', payload, {
+          timeout: 8000
+        });
+
+        if (response.data === true) {
+          alert('Dueño registrado correctamente');
+          this.$router.push('/login');
+        } else {
+          alert('El registro falló. Intenta nuevamente.');
         }
-        console.log('Usuario registrado:', this.form);
+
+      } catch (error) {
+        console.error('Error al registrar el dueño:', error);
+        alert(error.response?.data || 'Error al registrar el dueño');
       }
     }
   }
+}
 </script>
 
 <style scoped>

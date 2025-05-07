@@ -30,13 +30,22 @@
           <div class="form-group">
             <label>contraseña</label>
             <input 
-            type="password" 
-            v-model="contrasena"
-            required/>
+              type="password" 
+              v-model="contrasena"
+              required
+            />
           </div>
+
           <button class="login-button">Ingresar</button>
 
-          <a href="#" class="link">
+          <p v-if="mensajeError" class="text-danger text-center mt-3">
+            {{ mensajeError }}
+          </p>
+
+          <a
+            :href="selectedTab === 'dueno' ? '/RegistrarDueno' : '#'"
+            class="link"
+          >
             {{ selectedTab === 'empleado' ? '¿Olvidó su contraseña?' : 'Crear empresa' }}
           </a>
         </form>
@@ -52,27 +61,40 @@ import axios from 'axios'
 const selectedTab = ref('empleado')
 const correo = ref('')
 const contrasena = ref('')
+const mensajeError = ref('')
 
-onMounted(async () => {
-  localStorage.removeItem('jwtToken');
+onMounted(() => {
+  localStorage.removeItem('jwtToken')
 })
 
 const login = async () => {
+  mensajeError.value = ''
+
+  if (!correo.value || !contrasena.value) {
+    mensajeError.value = 'Debe completar todos los campos'
+    return
+  }
+
   try {
     const response = await axios.post('https://localhost:7296/api/login', {
       Correo: correo.value,
       Contrasena: contrasena.value,
       Rol: selectedTab.value
-    });
+    })
 
-    const token = response.data.token;
-    localStorage.setItem('jwtToken', token);
+    const token = response.data.token
+    localStorage.setItem('jwtToken', token)
 
-    window.location.href = '/ListaBeneficios';
+    if (selectedTab.value === 'dueno') {
+      window.location.href = '/ListaEmpleados'
+    } else {
+      window.location.href = '/ListaBeneficios'
+    }
   } catch (error) {
-    console.error(error.response?.data?.mensaje || 'Error en la solicitud');
+    mensajeError.value = error.response?.data?.mensaje || 'Error en la solicitud'
+    console.error(mensajeError.value)
   }
-};
+}
 </script>
 
 <style scoped>
@@ -143,6 +165,11 @@ input {
   color: #2a2a8e;
   text-align: left;
   text-decoration: none;
+}
+
+.text-danger {
+  color: #dc3545;
+  font-weight: bold;
 }
 
 .fade-slide-enter-active,
