@@ -1,11 +1,14 @@
 ﻿using backend_planilla.Handlers;
 using backend_planilla.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 
 namespace Lista_Beneficios.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ListaBeneficiosController : ControllerBase
@@ -19,6 +22,11 @@ namespace Lista_Beneficios.Controllers
         [HttpGet]
         public List<BeneficioModel> Get()
         {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            Console.WriteLine($"Texto de prueba para ver si sirve el token" +
+                $" Correo: {email} acceso en GET /api/listabeneficios");
+
             var beneficios = _beneficiosHandler.ObtenerBeneficios();
             return beneficios;
         }
@@ -29,6 +37,10 @@ namespace Lista_Beneficios.Controllers
         {
             try
             {
+                var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                Console.WriteLine($"Texto de prueba para ver si sirve el token" +
+                    $" Correo: {email} acceso en POST /api/listabeneficios");
                 if (beneficio == null)
                 {
                     return BadRequest();

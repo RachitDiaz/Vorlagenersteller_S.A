@@ -198,9 +198,11 @@
 
 <script setup>
   import { ref, reactive, onMounted, defineExpose, watch} from 'vue'
+  import { useRouter } from 'vue-router'
   import axios from "axios";
   import Modal from 'bootstrap/js/dist/modal'
 
+  const router = useRouter()
   const modalRef = ref(null)
   let modalInstance = null
   
@@ -314,7 +316,7 @@
       cantidadParametros: form.cantidadParametros, 
       parametros: form.parametros,
     }).then(() => {
-      window.location.href = "/ListaBeneficios";
+      router.push('/ListaBeneficios')
     })
     .catch(error => {
       console.error("Error al guardar beneficio:", error);
