@@ -50,16 +50,3 @@ ADD FechaCreacion datetime DEFAULT GETDATE() NOT NULL,
 	UsuarioCrea int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL,
 	UsuarioModifica int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL;
 
- -- Inserci�n manual para probar algunas funcionalidades en backend
---INSERT INTO Empresa(CedulaJuridica, CedulaAdmin, CedulaDueno, TipoDePago, RazonSocial,
---			Nombre, Descripcion, BeneficiosMaximos, UsuarioCreador, UltimoEnModificar, activo) VALUES
---('3-101-771169', '1-1909-0924', '1-1909-0924', 'Mensual', 'Razon social inventada', 'Nombre inventado', 'Descripcion inventada', 3, 1, 1, 0) 
-
---SELECT * FROM Empresa
-
--- Probando comando para recibir la c�dula de una empresa apartir de un correo de due�o
---SELECT e.CedulaJuridica
---FROM Usuario u
---JOIN Dueno d ON u.Cedula = d.Cedula
---JOIN Empresa e ON d.Cedula = e.CedulaDueno
---WHERE u.Correo = 'shihtangdaniel@gmail.com';

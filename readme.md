@@ -9,6 +9,10 @@
 * Jesús Mena B54291
 * Daniel Shih C27487
 
+## Branching strategy
+
+En este proyecto los pull requests se fueron haciendo a la rama develop, cada integrante utilizo una rama para trabajar individualmente haciendo periodicamente merge con develop y pull request a develop para unir su trabajo al proyecto.
+
 ## Para correr el proyecto
 
 Favor primero revisar los paquetes necesarios para correr cada parte del proyecto:
