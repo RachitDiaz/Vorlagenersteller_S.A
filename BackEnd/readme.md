@@ -3,7 +3,10 @@
 ## Paquetes necesarios para correr el proyecto back-end
 
 Colocarse en la carpeta raiz del proyecto ".../backend-planilla" y correr los siguientes comandos:
-  * `Paquete`
+  * `dotnet add package System.Data.SqlClient`
+  * `dotnet add package Microsoft.AspNetCore.Mvc.Core`
+  * `dotnet add package Microsoft.AspNetCore.Http.Abstractions`
+  * `dotnet add package Microsoft.Data.SqlClient`
 
 ## Volagenersteller Planilla 
 
