@@ -37,7 +37,6 @@ namespace backend_planilla.Handlers
 
             List<EmpresaModel> Empresa = new List<EmpresaModel>();
             string consulta = string.Concat("Select * from Empresa");
-            consulta = string.Concat(consulta, "'");
 
             DataTable tablaResultado = CrearTablaConsulta(consulta);
             foreach (DataRow columna in tablaResultado.Rows)

@@ -258,16 +258,17 @@
     nombre: '',
     cedula: '',
     descripcion: '',
-    correo: "",
-    propietario: "",
-    pago: "",
-    telefono: "",
-    provincia: "",
-    canton: "",
-    distrito: "",
-    otrasSenas: "",
-    razonSocial: "",
+    correo: '',
+    propietario: '',
+    pago: '',
+    telefono: '',
+    provincia: '',
+    canton: '',
+    distrito: '',
+    otrasSenas: '',
+    razonSocial: '',
   })
+
   
   defineExpose({ show })
   </script>

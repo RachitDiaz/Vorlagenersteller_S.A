@@ -8,43 +8,16 @@
             <div class="section-tittle">Datos generales</div>
 
             <div class="section-subtittle">Nombre del empleado</div>
-            <div style="font-weight: bold;"> {{ nombreEmpleado }} {{ apellidoI }} {{ apellidoII }} </div>
+            <div style="font-weight: bold;"> {{ Empleados[1].nombre }} {{ Empleados[1].apellido1 }} {{ Empleados[1].apellido2 }} </div>
 
             <div class="section-subtittle">Cedula del empleado</div>
-            <div> {{cedulaEmpleado}} </div>
+            <div> {{Empleados[1].cedula}} </div>
             
-            <div class="section-subtittle">Empleador</div>
-            <div> {{nombreEmpresa}} </div>
+            <div class="section-subtittle">Posicion</div>
+            <div> {{Empleados[1].posicion}} </div>
             
-            <div class="section-subtittle">Fecha de ingreso</div>
-            <div> {{fechaRegistro}} </div>
-
-            <div class="section-subtittle">Tipo de contrato</div>
-            <div> {{contrato}} </div>
         </div>
 
-        <div class="info-container">
-            <div class="section-tittle"> Informacion detallada</div>
-
-            <div class="subsection-tittle"> Informacion de empleador </div>
-            <div class="section-subtittle">Cedula juridica</div>
-            <div> {{cedulaJuridica}} </div>
-            
-            <div class="subsection-tittle"> Informacion de pago </div>
-            <div class="section-subtittle"> Informacion bancaria </div>
-            <div> {{banco}} </div>
-            <div class="section-subtittle"> Salario bruto </div>
-            <div> {{salario}} </div>
-            
-            <div class="subsection-tittle">Informacion de contacto</div>
-
-            <div class="section-subtittle">Correo electronico</div>
-            <div> {{correoElectronico}} </div>
-            <div class="section-subtittle">Telefono</div>
-            <div> (+501) {{telefono}} </div>
-            <div class="section-subtittle">Direccion</div>
-            <div> {{ provincia }}, {{ canton }}, {{ distrito }}, {{ otrasSenas }} </div>
-        </div>
 
         <div style="width: 35%; margin: 5%;">
         <button type="submit" class="btn-eliminar">Eliminar</button>
@@ -54,38 +27,43 @@
 
 <script>
 
+import axios from 'axios'
 
 export default {
+  
   name: 'InfoEmpleado',
   data() {
     return {
-        nombreEmpleado: 'Nombre',
-        apellidoI: 'Apellido1',
-        apellidoII: 'Apellido2',
-        salario: 'Monto con 2 decimales',
-        contrato: "Tipo de contratacion",
-        cedulaJuridica: 'X-XXX-XXXXXX',
-        cedulaEmpleado: 'X-XXXX-XXXX',
-        correoElectronico: 'correo@ejemplo.vue',
-        telefono: '(+501) XXXX-XXXX',
-        banco: 'Cuenta de deposito',
-        fechaRegistro:"dia/mes/año",
-        tipoPago: "Semanal-1uincenal-Mensual",
-        provincia: "Provincia",
-        canton: "Canton",
-        distrito: "Distrito",
-        otrasSenas: "Otras señas",
-        nombreEmpresa: "Nombre empresa",
-    }
-  },
-  methods: {
-    registrarUsuario() {
-      console.log('Usuario registrado:', this.form);
-      // Aquí puedes hacer un POST a tu backend
+      Empleados: [{
+        "id": 9,
+        "nombre": "nombre",
+        "apellido1": "apellido1",
+        "apellido2": "apellido2",
+        "cedula": "cedula",
+        "posicion": "posicion"
+      },
+
+      {
+        "id": 9,
+        "nombre": "nombre2",
+        "apellido1": "apellido1",
+        "apellido2": "apellido2",
+        "cedula": "cedula",
+        "posicion": "posicion"
+      }]
     }
   },
 
+  methods: {
+    obtenerEmpleados() {
+        axios.get("https://localhost:7296/api/Empleado").then((response) =>
+      { this.Empleados = response.data; });
+    },
+  },
+  
+
   created: function () { 
+    this.obtenerEmpleados();
     },
 }
 </script>
