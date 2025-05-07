@@ -2,44 +2,39 @@
 
     <div class="mb-5" style="text-align: center;" >
 
-        <div class="page-tittle">Informacion de la empresa</div>
+        <div class="page-tittle">Informacion del empleado</div>
 
         <div class="info-container">
             <div class="section-tittle">Datos generales</div>
 
-            <div class="section-subtittle">Nombre de la empresa</div>
-            <div style="font-weight: bold;"> {{ nombre }} </div>
+            <div class="section-subtittle">Nombre del empleado</div>
+            <div style="font-weight: bold;"> {{ nombreEmpleado }} {{ apellidoI }} {{ apellidoII }} </div>
 
-            <div class="section-subtittle">Cedula juridica</div>
-            <div> {{cedulaJuridica}} </div>
+            <div class="section-subtittle">Cedula del empleado</div>
+            <div> {{cedulaEmpleado}} </div>
             
-            <div class="section-subtittle">Estado</div>
-            <div> Activo/Inactivo </div>
+            <div class="section-subtittle">Empleador</div>
+            <div> {{nombreEmpresa}} </div>
             
-            <div class="section-subtittle">Fecha de registro</div>
+            <div class="section-subtittle">Fecha de ingreso</div>
             <div> {{fechaRegistro}} </div>
 
-            <div class="section-subtittle">Tipo de pago</div>
-            <div> {{tipoPago}} </div>
+            <div class="section-subtittle">Tipo de contrato</div>
+            <div> {{contrato}} </div>
         </div>
 
         <div class="info-container">
             <div class="section-tittle"> Informacion detallada</div>
 
-            <div class="subsection-tittle"> Descripcion </div>
-            <div> {{descripcion}}</div>
-            <div class="section-subtittle"> Razon social </div>
-            <div> {{razonSocial}}</div>
-            <div class="section-subtittle"> Empleados </div>
-            <div> Cantidad total de empleados: {{cantidadEmpleados}}</div>
-
-            <div class="subsection-tittle"> Informacion del propietario </div>
-            <div class="section-subtittle">Cedula del propietario</div>
+            <div class="subsection-tittle"> Informacion de empleador </div>
+            <div class="section-subtittle">Cedula juridica</div>
             <div> {{cedulaJuridica}} </div>
             
             <div class="subsection-tittle"> Informacion de pago </div>
-            <div class="section-subtittle"> Tipo de pago </div>
-            <div> {{tipoPago}} </div>
+            <div class="section-subtittle"> Informacion bancaria </div>
+            <div> {{banco}} </div>
+            <div class="section-subtittle"> Salario bruto </div>
+            <div> {{salario}} </div>
             
             <div class="subsection-tittle">Informacion de contacto</div>
 
@@ -58,52 +53,41 @@
 </template>
 
 <script>
-  import { onMounted } from 'vue'
-  import { useRouter } from 'vue-router'
 
-  export default {
 
-  name: 'InfoEmpresa',
+export default {
+  name: 'InfoEmpleado',
   data() {
     return {
-        nombre: 'Nombre empresa',
-        descripcion: 'Descripcion de la empresa',
+        nombreEmpleado: 'Nombre',
+        apellidoI: 'Apellido1',
+        apellidoII: 'Apellido2',
+        salario: 'Monto con 2 decimales',
+        contrato: "Tipo de contratacion",
         cedulaJuridica: 'X-XXX-XXXXXX',
-        cedulaDueno: 'X-XXXX-XXXX',
+        cedulaEmpleado: 'X-XXXX-XXXX',
         correoElectronico: 'correo@ejemplo.vue',
         telefono: '(+501) XXXX-XXXX',
-        razonSocial: 'Razon de la empresa',
-        cantidadEmpleados: '# empleados',
+        banco: 'Cuenta de deposito',
         fechaRegistro:"dia/mes/año",
-        tipoPago: "semanal-quincenal-mensual",
+        tipoPago: "Semanal-1uincenal-Mensual",
         provincia: "Provincia",
         canton: "Canton",
         distrito: "Distrito",
         otrasSenas: "Otras señas",
+        nombreEmpresa: "Nombre empresa",
     }
-  },
-  setup() {
-    const router = useRouter()
-
-    onMounted(() => {
-      const token = localStorage.getItem('jwtToken')
-      if (!token) {
-        alert('Tiene que iniciar sesión primero.');
-        setTimeout(() => {
-          router.push('/login');
-        }, 2000);
-      }
-    })
   },
   methods: {
     registrarUsuario() {
       console.log('Usuario registrado:', this.form);
+      // Aquí puedes hacer un POST a tu backend
     }
   },
 
   created: function () { 
     },
-  }
+}
 </script>
 
 <style scoped>

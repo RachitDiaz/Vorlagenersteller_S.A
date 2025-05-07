@@ -43,12 +43,12 @@ CREATE TABLE EmpresaOfreceBeneficio (
 	CedulaEmpresa char(12) FOREIGN KEY REFERENCES Empresa(CedulaJuridica) NOT NULL,
 	PRIMARY KEY (IDBeneficio, CedulaEmpresa)
 );
--- Hasta ahora se a�aden estas cosas porque no hab�an usuarios antes
---ALTER TABLE Beneficio
---ADD FechaCreacion datetime DEFAULT GETDATE() NOT NULL,
---	FechaModificacion datetime DEFAULT GETDATE() NOT NULL,
---	UsuarioCrea int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL,
---	UsuarioModifica int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL;
+
+ALTER TABLE Beneficio
+ADD FechaCreacion datetime DEFAULT GETDATE() NOT NULL,
+	FechaModificacion datetime DEFAULT GETDATE() NOT NULL,
+	UsuarioCrea int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL,
+	UsuarioModifica int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL;
 
  -- Inserci�n manual para probar algunas funcionalidades en backend
 --INSERT INTO Empresa(CedulaJuridica, CedulaAdmin, CedulaDueno, TipoDePago, RazonSocial,
