@@ -2,17 +2,18 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Identity;
 namespace backend_planilla.Handlers
 {
     public class LoginHandler
     {
         private SqlConnection _conexion;
         private string _rutaConexion;
+        private readonly PasswordHasher<UsuarioModel> _passwordHasher = new PasswordHasher<UsuarioModel>();
         public LoginHandler()
         {
             var builder = WebApplication.CreateBuilder();
-            _rutaConexion =
-            builder.Configuration.GetConnectionString("piTestContext");
+            _rutaConexion = builder.Configuration.GetConnectionString("piTestContext");
             _conexion = new SqlConnection(_rutaConexion);
         }
 
@@ -34,14 +35,14 @@ namespace backend_planilla.Handlers
             var consulta = @"
                     SELECT 
                         u.Correo,
+                        u.Contrasena,
                         CASE WHEN d.Cedula IS NOT NULL THEN 1 ELSE 0 END AS EsDueno
                     FROM Usuario u
                     LEFT JOIN Dueno d ON u.Cedula = d.Cedula
-                    WHERE u.Correo = @correo AND u.Contrasena = @contrasena;";
+                    WHERE u.Correo = @correo;";
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
             comandoParaConsulta.Parameters.AddWithValue("@correo", correo);
-            comandoParaConsulta.Parameters.AddWithValue("@contrasena", contrasena);
 
             _conexion.Open();
             var reader = comandoParaConsulta.ExecuteReader();
@@ -49,13 +50,23 @@ namespace backend_planilla.Handlers
             if (reader.Read())
             {
                 string correoUsuario = reader["Correo"].ToString();
+                string hashAlmacenado = reader["Contraseña"].ToString();
                 bool esDueno = (int)reader["EsDueno"] == 1;
+
+                var usuario = new UsuarioModel { Correo = correoUsuario };
+
+                var resultado = _passwordHasher.VerifyHashedPassword(usuario, hashAlmacenado, contrasena);
+
                 _conexion.Close();
-                return (correoUsuario, esDueno);
+
+                if (resultado == PasswordVerificationResult.Success)
+                {
+                    return (correoUsuario, esDueno);
+                }
             }
 
             _conexion.Close();
-            return (null, false); // Usuario no encontrado
+            return (null, false); // Usuario no encontrado o contraseña incorrecta
         }
     }
 }
