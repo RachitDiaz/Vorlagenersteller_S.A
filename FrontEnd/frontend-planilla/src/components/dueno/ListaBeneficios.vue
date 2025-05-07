@@ -68,6 +68,7 @@
         setTimeout(() => {
           router.push('/login');
         }, 2000);
+        return;
       }
 
       const response = await axios.get('https://localhost:7296/api/ListaBeneficios', {
@@ -78,8 +79,14 @@
 
       benefits.value = response.data;
     } catch (error) {
-      console.error('Error cargando beneficios:', error);
-      alert('Error al cargar los beneficios desde el servidor.');
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem('jwtToken');
+        alert('Sesión expirada o token inválido.');
+        router.push('/login');
+      } else {
+        console.error('Error cargando beneficios:', error);
+        alert('Error al cargar los beneficios desde el servidor.');
+      }
     }
   })
   </script>
