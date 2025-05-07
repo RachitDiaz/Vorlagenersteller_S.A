@@ -1,10 +1,7 @@
-USE piTest
+USE VorlaDB
 CREATE TABLE Administrador (
 	Cedula char(12) PRIMARY KEY NOT NULL FOREIGN KEY REFERENCES Persona(Cedula),
 );
-
---INSERT INTO Administrador(Cedula) VALUES
---('1-1909-0924')
 
 CREATE TABLE Empresa (
 	CedulaJuridica char(12) PRIMARY KEY NOT NULL
@@ -49,4 +46,3 @@ ADD FechaCreacion datetime DEFAULT GETDATE() NOT NULL,
 	FechaModificacion datetime DEFAULT GETDATE() NOT NULL,
 	UsuarioCrea int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL,
 	UsuarioModifica int FOREIGN KEY REFERENCES Usuario(ID) NOT NULL;
-

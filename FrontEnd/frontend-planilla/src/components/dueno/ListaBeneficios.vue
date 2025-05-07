@@ -9,11 +9,11 @@
   
         
         <div class="benefit-list">
-          <div v-for="benefit in benefits" :key="benefit.id" class="benefit-item">
+          <div v-for="beneficio in beneficios" :key="beneficio.id" class="benefit-item">
             <div class="avatar">
-              {{ benefit.nombre.charAt(0) }}
+              {{ beneficio.nombre.charAt(0) }}
             </div>
-            <span class="benefit-name">{{ benefit.nombre }}</span>
+            <span class="benefit-name">{{ beneficio.nombre }}</span>
           </div>
         </div>
 
