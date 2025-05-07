@@ -46,9 +46,11 @@
     </div>
   </template>
   
-  <script setup>
-  import { ref, computed } from 'vue'
+<script setup>
+  import { ref, onMounted, computed } from 'vue'
+  import { useRouter } from 'vue-router'
   
+  const router = useRouter()
   const max = 3
   
   const allBenefits = ref([
@@ -66,6 +68,17 @@
   const availableBenefits = computed(() =>
     allBenefits.value.filter(b => !selected.value.find(s => s.id === b.id))
   )
+
+  onMounted(async () => {
+    const token = localStorage.getItem("jwtToken");
+    
+    if (!token) {
+      alert('Tiene que iniciar sesión primero.');
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
+    }
+  })
   
   function addBenefit(benefit) {
     if (selected.value.length < max) {
@@ -84,7 +97,7 @@
   function accept() {
     console.log('Seleccionados:', selected.value)
   }
-  </script>
+</script>
   
   <style scoped>
   .benefits-container {

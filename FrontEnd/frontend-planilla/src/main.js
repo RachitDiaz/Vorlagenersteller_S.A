@@ -5,7 +5,7 @@ import RegistrarDueno from "./components/RegistrarDueno.vue";
 import Login from "./components/MainLogin.vue";
 import LandingPage from './components/LandingPage.vue';
 import BeneficiosEmpleado from './components/empleado/BeneficiosSeleccionados.vue';
-import AgregarBeneficios from './components/dueno/AgregarBeneficio.vue';
+import ListaBeneficios from './components/dueno/ListaBeneficios.vue';
 import AdministrarEmpleados from './components/dueno/AdministrarEmpleados.vue';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
@@ -16,7 +16,7 @@ import VerEmpleado from './components/VerEmpleado.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/AgregarBeneficios", name: "AgregarBeneficios", component: AgregarBeneficios, meta: { title: 'Agregar Beneficios' } },
+    { path: "/ListaBeneficios", name: "ListaBeneficios", component: ListaBeneficios, meta: { title: 'Lista de beneficios' } },
     { path: "/RegistrarDueno", name: "RegistrarDueño", component: RegistrarDueno, meta: { title: 'Registrar Dueño' } },
     { path: "/ListaEmpresas", name: "ListaEmpresa", component: ListaEmpresas, meta: { title: 'Lista de Empresas' } },
     { path: "/VerEmpresa", name: "VerEmpresa", component: VerEmpresa, meta: { title: 'Informacion de Empresa' } },
@@ -26,6 +26,18 @@ const router = createRouter({
     { path: "/BeneficiosEmpleado", name: "BeneficiosEmpleado", component: BeneficiosEmpleado, meta: { title: 'Beneficios' } },
     { path: "/AdministrarEmpleados", name: "AdministrarEmpleados", component: AdministrarEmpleados, meta: { title: 'Administrar Empleados' } },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/', '/login', '/RegistrarDueno'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('jwtToken');
+
+  if (authRequired && !loggedIn) {
+    return next('/login');
+  }
+
+  next();
 });
 
 createApp(App).use(router).mount('#app')

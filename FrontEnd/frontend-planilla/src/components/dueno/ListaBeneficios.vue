@@ -10,8 +10,10 @@
         
         <div class="benefit-list">
           <div v-for="benefit in benefits" :key="benefit.id" class="benefit-item">
-            <div class="avatar">A</div>
-            <span class="benefit-name">{{ benefit.name }}</span>
+            <div class="avatar">
+              {{ benefit.nombre.charAt(0) }}
+            </div>
+            <span class="benefit-name">{{ benefit.nombre }}</span>
           </div>
         </div>
 
@@ -36,28 +38,50 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
-  import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue'    
+  import { ref, onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
+  import axios from 'axios'
+  import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue'
+
+  const router = useRouter()
 
   const max = 4
   const selectedAmount = ref(0)
   
-  const benefits = [
-    { id: 1, name: 'List item' },
-    { id: 2, name: 'List item' },
-    { id: 3, name: 'List item' },
-    { id: 4, name: 'List item' }
-  ]
-  
+  const benefits = ref([])
   const modalRef = ref(null)
 
-    function showModal() {
+  function showModal() {
     modalRef.value?.show()
-    }
+  }
 
   function submit() {
     alert(`Has aceptado seleccionar hasta ${selectedAmount.value} beneficios por empleado.`)
   }
+
+  onMounted(async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      
+      if (!token) {
+        alert('Tiene que iniciar sesión primero.');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+
+      const response = await axios.get('https://localhost:7296/api/ListaBeneficios', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      benefits.value = response.data;
+    } catch (error) {
+      console.error('Error cargando beneficios:', error);
+      alert('Error al cargar los beneficios desde el servidor.');
+    }
+  })
   </script>
   
   <style scoped>

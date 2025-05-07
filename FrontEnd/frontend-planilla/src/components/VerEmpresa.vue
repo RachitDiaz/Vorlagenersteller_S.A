@@ -58,9 +58,11 @@
 </template>
 
 <script>
+  import { onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
 
+  export default {
 
-export default {
   name: 'InfoEmpresa',
   data() {
     return {
@@ -80,16 +82,28 @@ export default {
         otrasSenas: "Otras señas",
     }
   },
+  setup() {
+    const router = useRouter()
+
+    onMounted(() => {
+      const token = localStorage.getItem('jwtToken')
+      if (!token) {
+        alert('Tiene que iniciar sesión primero.');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+    })
+  },
   methods: {
     registrarUsuario() {
       console.log('Usuario registrado:', this.form);
-      // Aquí puedes hacer un POST a tu backend
     }
   },
 
   created: function () { 
     },
-}
+  }
 </script>
 
 <style scoped>

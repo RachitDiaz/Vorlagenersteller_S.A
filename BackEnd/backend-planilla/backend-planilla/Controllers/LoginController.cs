@@ -1,27 +1,30 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using backend_planilla.Models;
+using backend_planilla.Handlers;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace backend_planilla.Controllers
 {
-    // Indica que esta clase será un controlador de API y que debe manejar solicitudes HTTP automáticamente
     [ApiController]
-
-    // Define la ruta base del controlador: las solicitudes a /api/login serán dirigidas aquí
     [Route("api/[controller]")]
     public class LoginController : ControllerBase
     {
-        public class LoginRequest
+        private readonly LoginHandler _loginHandler;
+        private readonly IConfiguration _config;
+
+        public LoginController(IConfiguration config)
         {
-            public string? Correo { get; set; }
-            public string? Contrasena { get; set; } 
-            public string? Rol { get; set; }
+            _loginHandler = new LoginHandler();
+            _config = config;
         }
 
         [HttpPost]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public IActionResult Login([FromBody] LoginRequestModel request)
         {
-            Console.WriteLine($"Intento de login: Correo={request.Correo}, Rol={request.Rol}");
-
             if (string.IsNullOrWhiteSpace(request.Correo) ||
                 string.IsNullOrWhiteSpace(request.Contrasena) ||
                 string.IsNullOrWhiteSpace(request.Rol))
@@ -29,15 +32,35 @@ namespace backend_planilla.Controllers
                 return BadRequest(new { mensaje = "Correo, contraseña y rol son obligatorios." });
             }
 
-            // Simula la verificación del usuario (aquí van las consultas a la base de datos)
-            if (request.Correo == "admin@empresa.com" && request.Contrasena == "1234")
+            var resultadoValidacion = _loginHandler.ValidarCredenciales(request.Correo, request.Contrasena);
+
+            if (resultadoValidacion.CorreoUsuario != null)
             {
-                // Devuelve HTTP 200 OK
-                return Ok(new { mensaje = $"Bienvenido {request.Rol}" });
+                var rol = resultadoValidacion.EsDueno ? "Dueño" : "NoDueno";
+
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.Email, resultadoValidacion.CorreoUsuario),
+                    new Claim(ClaimTypes.Role, rol)
+                };
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(Convert.ToDouble(_config["Jwt:ExpireHours"])),
+                    signingCredentials: creds
+                );
+
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return Ok(new { token = tokenString });
             }
 
-            // Error 401 Unauthorized
-            return Unauthorized(new { mensaje = "Credenciales incorrectas" });
+            return Unauthorized(new { mensaje = "No hay un usuario registrado con estos datos" });
         }
     }
 }
