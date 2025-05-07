@@ -22,12 +22,12 @@ namespace Lista_Beneficios.Controllers
         [HttpGet]
         public List<BeneficioModel> Get()
         {
-            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                $" Correo: {email} acceso en GET /api/listabeneficios");
+                $" Correo: {correo} acceso en GET /api/listabeneficios");
 
-            var beneficios = _beneficiosHandler.ObtenerBeneficios();
+            var beneficios = _beneficiosHandler.ObtenerBeneficios(correo);
             return beneficios;
         }
 
@@ -37,16 +37,17 @@ namespace Lista_Beneficios.Controllers
         {
             try
             {
-                var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
                 Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                    $" Correo: {email} acceso en POST /api/listabeneficios");
+                    $" Correo: {correo} acceso en POST /api/listabeneficios");
                 if (beneficio == null)
                 {
                     return BadRequest();
                 }
+
                 BeneficiosHandler beneficiosHandler = new BeneficiosHandler();
-                var resultado = beneficiosHandler.CrearBeneficio(beneficio);
+                var resultado = beneficiosHandler.CrearBeneficio(beneficio, correo);
                 return new JsonResult(resultado);
             }
             catch (Exception)
