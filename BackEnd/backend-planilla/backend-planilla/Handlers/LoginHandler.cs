@@ -36,8 +36,8 @@ namespace backend_planilla.Handlers
                         u.Correo,
                         CASE WHEN d.Cedula IS NOT NULL THEN 1 ELSE 0 END AS EsDueno
                     FROM Usuario u
-                    LEFT JOIN Dueño d ON u.Cedula = d.Cedula
-                    WHERE u.Correo = @correo AND u.Contraseña = @contrasena;";
+                    LEFT JOIN Dueno d ON u.Cedula = d.Cedula
+                    WHERE u.Correo = @correo AND u.Contrasena = @contrasena;";
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
             comandoParaConsulta.Parameters.AddWithValue("@correo", correo);

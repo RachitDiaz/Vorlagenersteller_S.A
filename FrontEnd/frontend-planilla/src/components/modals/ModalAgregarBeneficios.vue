@@ -198,11 +198,10 @@
 
 <script setup>
   import { ref, reactive, onMounted, defineExpose, watch} from 'vue'
-  import { useRouter } from 'vue-router'
   import axios from "axios";
   import Modal from 'bootstrap/js/dist/modal'
 
-  const router = useRouter()
+  const token = localStorage.getItem("jwtToken");
   const modalRef = ref(null)
   let modalInstance = null
   
@@ -315,8 +314,12 @@
       mesesMinimos: form.mesesMinimos,
       cantidadParametros: form.cantidadParametros, 
       parametros: form.parametros,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     }).then(() => {
-      router.push('/ListaBeneficios')
+      window.location.href = "/ListaBeneficios";
     })
     .catch(error => {
       console.error("Error al guardar beneficio:", error);
