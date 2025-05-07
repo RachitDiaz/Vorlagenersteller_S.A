@@ -48,7 +48,7 @@
   const max = 4
   const selectedAmount = ref(0)
   
-  const benefits = ref([])
+  const beneficios = ref([])
   const modalRef = ref(null)
 
   function showModal() {
@@ -77,7 +77,7 @@
         }
       });
 
-      benefits.value = response.data;
+      beneficios.value = response.data;
     } catch (error) {
       if (error.response && error.response.status === 401) {
         localStorage.removeItem('jwtToken');

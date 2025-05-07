@@ -1,4 +1,3 @@
-<!-- EmployeeTable.vue -->
 <template>
   <section class="employee-table">
     <div class="header">
@@ -26,12 +25,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="empleado in empleadosFiltrados" :key="empleado.id">
+        <tr v-for="empleado in empleadosFiltrados" :key="empleado.cedulaEmpleado">
           <td>{{ empleado.nombre }}</td>
           <td>{{ empleado.apellido1 }}</td>
           <td>{{ empleado.apellido2 }}</td>
-          <td>{{ empleado.cedula }}</td>
-          <td>{{ empleado.posicion }}</td>
+          <td>{{ empleado.cedulaEmpleado }}</td>
           <td class="acciones">
             <button class="edit">Editar</button>
             <button class="delete">Eliminar</button>
@@ -44,13 +42,14 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter();
+const token = localStorage.getItem("jwtToken");
 export default {
-  name: "AdministrarEmpleados",
+  name: "ListaEmpleados",
   components: {
     ModalAgregarEmpleado
   },
@@ -63,41 +62,51 @@ export default {
   computed: {
     empleadosFiltrados() {
       return this.empleados.filter(e =>
-        e.nombre.toLowerCase().includes(this.search.toLowerCase()) ||
-        e.cedula.includes(this.search)
+        (e?.Nombre?.toLowerCase() ?? "").includes(this.search.toLowerCase()) ||
+        (e?.CedulaEmpleado ?? "").includes(this.search)
       );
     }
-  },
-  setup() {
-    const router = useRouter()
-
-    onMounted(() => {
-      const token = localStorage.getItem('jwtToken')
-      if (!token) {
-        alert('Tiene que iniciar sesión primero.');
-        setTimeout(() => {
-          router.push('/login');
-        }, 2000);
-      }
-    })
   },
   methods: {
     abrirModal() {
       this.$refs.modalAgregarEmpleado.show()
     },
     async obtenerEmpleados() {
+
       try {
-        const response = await axios.get('https://localhost:7296/api/Empleado')
-        this.empleados = response.data
+
+        if (!token) {
+          alert('Tiene que iniciar sesión primero.');
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+          return;
+        }
+
+        const response = await axios.get("https://localhost:7296/api/Empleado", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        this.empleados = response.data;
+        console.log("Empleados recibidos:", response.data);
       } catch (error) {
-        console.error('Error al obtener empleados:', error)
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem('jwtToken');
+          alert('Sesión expirada o token inválido.');
+          router.push('/login');
+        } else {
+          console.error('Error cargando empleados:', error);
+          alert('Error al cargar los empleados desde el servidor.');
+        }
       }
     }
   },
   mounted() {
     this.obtenerEmpleados()
   }
-};
+}
 </script>
 
 

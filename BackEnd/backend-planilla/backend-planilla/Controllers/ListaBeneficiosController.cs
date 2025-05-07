@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
 
-namespace Lista_Beneficios.Controllers
+namespace backend_planilla.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
