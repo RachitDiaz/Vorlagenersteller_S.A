@@ -46,12 +46,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const selectedTab = ref('empleado')
 const correo = ref('')
 const contrasena = ref('')
+
+onMounted(async () => {
+  localStorage.removeItem('jwtToken');
+})
 
 const login = async () => {
   try {

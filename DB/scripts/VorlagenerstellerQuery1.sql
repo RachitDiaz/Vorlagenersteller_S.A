@@ -33,7 +33,7 @@ CREATE TABLE Usuario (
 	ID int Identity PRIMARY KEY NOT NULL,
 	Cedula char(12) FOREIGN KEY REFERENCES Persona(Cedula),
 	Correo char(60) UNIQUE,
-	Contrasena char(30),
+	Contrasena char(200),
 );
 
 CREATE TABLE Dueno (

@@ -44,7 +44,6 @@ CREATE TABLE EmpresaOfreceBeneficio (
 	PRIMARY KEY (IDBeneficio, CedulaEmpresa)
 );
 
--- Hasta ahora se a�aden estas cosas porque no hab�an usuarios antes
 ALTER TABLE Beneficio
 ADD FechaCreacion datetime DEFAULT GETDATE() NOT NULL,
 	FechaModificacion datetime DEFAULT GETDATE() NOT NULL,
