@@ -168,12 +168,14 @@
     </div>
   </div>
 </template>
-
 <script setup>
+/* global defineEmits */
+
 import { ref, reactive, defineExpose, onMounted } from 'vue'
 import Modal from 'bootstrap/js/dist/modal'
 import axios from 'axios'
 
+const emit = defineEmits(['empleado-agregado'])
 const token = localStorage.getItem("jwtToken");
 const modalRef = ref(null)
 let modalInstance = null
@@ -260,7 +262,6 @@ function submitForm() {
     tipoContrato: form.tipoContrato
   }
 
-  console.log("Datos a guardar", form);
   axios.post("https://localhost:7296/api/Empleado", {
     persona: personaData,
     empleado: empleadoData
@@ -272,6 +273,7 @@ function submitForm() {
   .then(() => {
     alert('Empleado registrado con éxito')
     modalInstance.hide()
+    emit('empleado-agregado') // 👈 emitir evento al padre
   })
   .catch(error => {
     console.error("Error al guardar empleado:", error);

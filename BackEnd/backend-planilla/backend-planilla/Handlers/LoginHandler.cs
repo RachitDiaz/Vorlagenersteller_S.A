@@ -50,7 +50,7 @@ namespace backend_planilla.Handlers
             if (reader.Read())
             {
                 string correoUsuario = reader["Correo"].ToString();
-                string hashAlmacenado = reader["Contraseña"].ToString();
+                string hashAlmacenado = reader["Contrasena"].ToString();
                 bool esDueno = (int)reader["EsDueno"] == 1;
 
                 var usuario = new UsuarioModel { Correo = correoUsuario };
