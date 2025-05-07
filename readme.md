@@ -11,7 +11,7 @@
 
 ## Branching strategy
 
-En este proyecto los pull requests se fueron haciendo a la rama develop, cada integrante utilizo una rama para trabajar individualmente haciendo periodicamente merge con develop y pull request a develop para unir su trabajo al proyecto.
+En este proyecto los pull requests se fueron haciendo a la rama develop, cada integrante utilizo una rama para trabajar individualmente haciendo periódicamente merge con develop y pull request a develop para unir su trabajo al proyecto.
 
 ## Para correr el proyecto
 
