@@ -54,15 +54,14 @@
   const max = 3
   
   const allBenefits = ref([
-    { id: 1, name: 'Beneficio 1' },
-    { id: 2, name: 'Beneficio 2' },
-    { id: 3, name: 'Beneficio 3' },
-    { id: 4, name: 'Beneficio 4' }
+    { id: 1, name: 'Piscina' },
+    { id: 2, name: 'Gimnasio' },
+    { id: 3, name: 'Seguro' },
   ])
   
   const selected = ref([
-    { id: 1, name: 'Beneficio 1' },
-    { id: 2, name: 'Beneficio 2' }
+    { id: 1, name: 'Piscina' },
+    { id: 2, name: 'Gimnasio' }
   ])
   
   const availableBenefits = computed(() =>
