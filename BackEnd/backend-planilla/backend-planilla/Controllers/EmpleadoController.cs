@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace backend_planilla.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmpleadoController : ControllerBase
@@ -22,12 +22,12 @@ namespace backend_planilla.Controllers
         [HttpGet]
         public List<EmpleadoModel> Get()
         {
-            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            //var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                $" Correo: {correo} acceso en GET /api/empleadoController");
+            //Console.WriteLine($"Texto de prueba para ver si sirve el token" +
+                //$" Correo: {correo} acceso en GET /api/empleadoController");
 
-            var empleados = _empleadoHandler.ObtenerEmpleados(correo);
+            var empleados = _empleadoHandler.ObtenerEmpleados("shihtangdaniel@gmail.com"/*correo*/);
             return empleados;
         }
 
