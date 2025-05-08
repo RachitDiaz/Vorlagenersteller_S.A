@@ -1,4 +1,4 @@
-USE piTest
+USE VorlaDB
 GO
 
 CREATE TABLE TelefonosEmpresa (

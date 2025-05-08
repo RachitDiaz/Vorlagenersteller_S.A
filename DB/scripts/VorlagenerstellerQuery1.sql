@@ -1,6 +1,6 @@
-CREATE DATABASE piTest
+CREATE DATABASE VorlaDB
 GO
-USE piTest
+USE VorlaDB
 GO
 
 CREATE TABLE Persona (

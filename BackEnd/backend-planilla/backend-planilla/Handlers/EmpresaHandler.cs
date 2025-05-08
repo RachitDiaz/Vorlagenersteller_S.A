@@ -1,5 +1,6 @@
 ﻿using backend_planilla.Models;
 using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -102,8 +103,7 @@ namespace backend_planilla.Handlers
             VALUES(@CedulaJuridica, @CedulaDueno, @CedulaAdmin, @TipoDePago, @RazonSocial, 
             @Nombre, @Descripcion, @BeneficiosMaximos, @FechaDeCreacion, @FechaDeModificacion,
             @UsuarioCreador, @UltimoEnModificar, @activo) ";
-            
-            
+
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
             comandoParaConsulta.Parameters.AddWithValue("@CedulaJuridica", empresa.CedulaJuridica);

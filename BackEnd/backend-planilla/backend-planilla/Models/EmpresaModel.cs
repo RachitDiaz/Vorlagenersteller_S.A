@@ -17,4 +17,33 @@
         public bool Activo { get; set; }
 
     }
- }
+
+    public class CorreoModel
+    {
+        public string cedulaJuridica { get; set; }
+        public string correo { get; set; }
+    }
+
+    public class TelefonoModel
+    {
+        public string cedulaJuridica { get; set; }
+        public string telefono { get; set; }
+    }
+
+    public class DireccionModel
+    {
+        public string cedulaJuridica { get; set; }
+        public string Provincia { get; set; }
+        public string Canton { get; set; }
+        public string distrito { get; set; }
+        public string otrasSenas { get; set; }
+    }
+
+    public class SolicitudAgregarEmpresaModel
+    {
+        public EmpresaModel empresa { get; set; }
+        public CorreoModel correo { get; set; }
+        public TelefonoModel telefono { get; set; }
+        public DireccionModel direccion { get; set; }
+    }
+}
