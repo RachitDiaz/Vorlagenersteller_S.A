@@ -84,12 +84,12 @@
       }],
 
       Direccion:[{
-        ID: "place holder",
+        ID: "id",
         CedulaJuridica: "place holder",
-        Provincia: "place holder",
-        Canton: "place holder",
-        Distrito: "place holder",
-        OtrasSenas: "place holder",
+        Provincia: "provincia",
+        Canton: "canton",
+        Distrito: "distrito",
+        OtrasSenas: "otras señas",
       }],
 
       Telefono:[{

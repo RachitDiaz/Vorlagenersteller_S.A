@@ -8,14 +8,19 @@
             <div class="section-tittle">Datos generales</div>
 
             <div class="section-subtittle">Nombre del empleado</div>
-            <div style="font-weight: bold;"> {{ Empleados[1].nombre }} {{ Empleados[1].apellido1 }} {{ Empleados[1].apellido2 }} </div>
+            <div style="font-weight: bold;"> {{ Empleados[0].nombre }} {{ Empleados[0].apellido1 }} {{ Empleados[0].apellido2 }} </div>
 
             <div class="section-subtittle">Cedula del empleado</div>
-            <div> {{Empleados[1].cedula}} </div>
+            <div> {{Empleados[0].cedulaEmpleado}} </div>
             
             <div class="section-subtittle">Posicion</div>
-            <div> {{Empleados[1].posicion}} </div>
+            <div> {{Empleados[0].tipoContrato}} </div>
             
+            <div class="section-subtittle">Salario bruto</div>
+            <div> {{Empleados[0].salarioBruto}} </div>
+
+            <div class="section-subtittle">Informacion bancaria</div>
+            <div> {{Empleados[0].banco}} </div>
         </div>
 
 
@@ -35,21 +40,23 @@ export default {
   data() {
     return {
       Empleados: [{
-        "id": 9,
-        "nombre": "nombre",
-        "apellido1": "apellido1",
-        "apellido2": "apellido2",
-        "cedula": "cedula",
-        "posicion": "posicion"
+      cedulaEmpleado: "-",
+      cedulaEmpresa: "-",
+      nombre: "-",
+      apellido1: "-",
+      apellido2: "-",
+      banco: "-",
+      salarioBruto: 7,
+      tipoContrato: "-"
       },
 
       {
-        "id": 9,
-        "nombre": "nombre2",
-        "apellido1": "apellido1",
-        "apellido2": "apellido2",
-        "cedula": "cedula",
-        "posicion": "posicion"
+        id: 9,
+        nombre: "nombre2",
+        apellido1: "apellido1",
+        apellido2: "apellido2",
+        cedulaEmpleado: "cedula",
+        posicion: "posicion"
       }]
     }
   },
