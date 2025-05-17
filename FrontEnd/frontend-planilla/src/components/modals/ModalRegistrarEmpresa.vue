@@ -188,7 +188,7 @@
   
   <script setup>
   import { ref, reactive, onMounted, defineExpose } from 'vue'
-  import Modal from 'bootstrap/js/dist/modal'
+  import Modal from 'bootstrap/js/dist/modal'+
   
   const modalRef = ref(null)
   let modalInstance = null

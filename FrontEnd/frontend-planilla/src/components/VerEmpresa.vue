@@ -61,6 +61,7 @@
   import { onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import axios from 'axios'
+  import { backendURL } from '../config/config.js'
 
   export default {
 
@@ -123,7 +124,7 @@
   },
   methods: {
     obtenerEmpresa() {
-        axios.put("https://localhost:7296/api/Empresa/" + this.cedulaQuerry).then((response) =>
+        axios.put(`${backendURL}Empresa`+ this.cedulaQuerry).then((response) =>
       { this.Empresas = response.data; });
     },
   },

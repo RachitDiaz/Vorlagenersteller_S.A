@@ -57,7 +57,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-
+import {backendURL} from "../config/config.js"
+  
 const selectedTab = ref('empleado')
 const correo = ref('')
 const contrasena = ref('')
@@ -76,7 +77,7 @@ const login = async () => {
   }
 
   try {
-    const response = await axios.post('https://localhost:7296/api/login', {
+    const response = await axios.post(`${backendURL}login`, {
       Correo: correo.value,
       Contrasena: contrasena.value,
       Rol: selectedTab.value

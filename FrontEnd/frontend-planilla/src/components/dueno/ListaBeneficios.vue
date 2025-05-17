@@ -42,6 +42,7 @@
   import { useRouter } from 'vue-router'
   import axios from 'axios'
   import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue'
+  import { backendURL } from '../../config/config.js'
 
   const router = useRouter()
 
@@ -71,7 +72,7 @@
         return;
       }
 
-      const response = await axios.get('https://localhost:7296/api/ListaBeneficios', {
+      const response = await axios.get(`${backendURL}ListaBeneficios`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

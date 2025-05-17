@@ -45,6 +45,7 @@
 import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
 import { useRouter } from 'vue-router'
+import { backendURL } from '../../config/config.js'
 
 const router = useRouter();
 const token = localStorage.getItem("jwtToken");
@@ -83,7 +84,7 @@ export default {
           return;
         }
 
-        const response = await axios.get("https://localhost:7296/api/Empleado", {
+        const response = await axios.get(`${backendURL}Empelado`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
