@@ -274,7 +274,7 @@ function submitForm() {
   .then(() => {
     alert('Empleado registrado con éxito')
     modalInstance.hide()
-    emit('empleado-agregado') // 👈 emitir evento al padre
+    emit('empleado-agregado')
   })
   .catch(error => {
     console.error("Error al guardar empleado:", error);

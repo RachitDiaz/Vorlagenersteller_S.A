@@ -23,7 +23,7 @@ namespace backend_planilla.Handlers
         {
             SqlCommand comandoParaConsulta = new
             SqlCommand(consulta, _conexion);
-            SqlDataAdapter adaptadorParaTabla = new
+            SqlDataAdapter  adaptadorParaTabla = new
             SqlDataAdapter(comandoParaConsulta);
             DataTable consultaFormatoTabla = new DataTable();
             _conexion.Open();

@@ -11,8 +11,7 @@ namespace backend_planilla.Handlers
         public BeneficiosHandler()
         {
             var builder = WebApplication.CreateBuilder();
-            _rutaConexion =
-            builder.Configuration.GetConnectionString("piTestContext");
+            _rutaConexion =builder.Configuration.GetConnectionString("piTestContext");
             _conexion = new SqlConnection(_rutaConexion);
         }
         private DataTable CrearTablaConsulta(string consulta, string cedulaEmpresa)
@@ -50,6 +49,7 @@ namespace backend_planilla.Handlers
                     CantidadParametros = Convert.ToInt32(columna["CantidadParametros"])
                 });
             }
+            Console.WriteLine(beneficios);
             return beneficios;
         }
 

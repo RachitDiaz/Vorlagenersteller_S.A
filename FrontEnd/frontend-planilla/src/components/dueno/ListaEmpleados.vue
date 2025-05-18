@@ -83,8 +83,8 @@ export default {
           }, 2000);
           return;
         }
-
-        const response = await axios.get(`${backendURL}Empelado`, {
+        console.log(token);
+        const response = await axios.get(`${backendURL}Empleado`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
