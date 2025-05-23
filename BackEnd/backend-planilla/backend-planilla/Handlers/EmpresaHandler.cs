@@ -1,4 +1,4 @@
-﻿using backend_planilla.Models;
+﻿using backend_planilla.Domain;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;

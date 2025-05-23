@@ -1,4 +1,4 @@
-﻿namespace backend_planilla.Models
+﻿namespace backend_planilla.Domain
 {
     public class EmpresaModel
     {
@@ -39,7 +39,7 @@
         public string otrasSenas { get; set; }
     }
 
-    public class SolicitudAgregarEmpresaModel
+    public class AgregarEmpresaModel
     {
         public EmpresaModel empresa { get; set; }
         public CorreoModel correo { get; set; }
