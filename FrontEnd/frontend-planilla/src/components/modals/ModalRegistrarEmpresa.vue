@@ -206,12 +206,11 @@
   const form = reactive({
     cedulaJuridica: '',
     cedulaDueno: '',
-    cedulaAdmin: '',
     tipoDePago: '',
     razonSocial: '',
     nombre: '',
     descripcion: '',
-    beneficiosMaximos: '',
+    beneficiosMaximos: '0',
     correo: '',
     telefono: '',
     provincia: '',
@@ -223,36 +222,21 @@
   function submitForm() {
     console.log("Datos a guardar", form);
     axios.post("https://localhost:7296/api/Empresa", {
-    empresa: {
     cedulaJuridica: form.cedulaJuridica,
     cedulaDueno: form.cedulaDueno,
-    cedulaAdmin: '1-1907-0218',
     tipoDePago: form.tipoDePago,
     razonSocial: form.nombre,
     nombre: form.nombre,
     descripcion: form.descripcion,
-    beneficiosMaximos: 5,
-    fechaDeModificacion: '2019-01-06T17:16:40',
-    fechaDeCreacion: '2019-01-06T17:16:40',
-    usuarioCreador: 1,
-    ultimoEnModificar: 1,
-    activo: true
-  },
-  correo: {
-    cedulaJuridica: form.cedulaJuridica,
-    correo: form.telefono
-  },
-  telefono: {
-    cedulaJuridica: form.cedulaJuridica,
-    telefono: form.telefono
-  },
-  direccion: {
-    cedulaJuridica: form.cedulaJuridica,
+    beneficiosMaximos: form.beneficiosMaximos,
+    correoDelCreador: 'shihtangdaniel@gmail.com',
+    correo: form.correo,
+    telefono: form.telefono,
     provincia: form.provincia,
     canton: form.canton,
     distrito: form.distrito,
     otrasSenas: form.otrasSenas
-  }
+  
     }, {
       headers: {
         //Authorization: `Bearer ${token}`

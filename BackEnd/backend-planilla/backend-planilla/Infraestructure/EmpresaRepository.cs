@@ -30,19 +30,19 @@ namespace backend_planilla.Infraestructure
 
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
-            comandoParaConsulta.Parameters.AddWithValue("@CedulaJuridica", infoEmpresa.empresa.CedulaJuridica);
-            comandoParaConsulta.Parameters.AddWithValue("@CedulaDueno", infoEmpresa.empresa.CedulaDueno);
-            comandoParaConsulta.Parameters.AddWithValue("@CedulaAdmin", infoEmpresa.empresa.CedulaAdmin);
-            comandoParaConsulta.Parameters.AddWithValue("@TipoDePago", infoEmpresa.empresa.TipoDePago);
-            comandoParaConsulta.Parameters.AddWithValue("@RazonSocial", infoEmpresa.empresa.RazonSocial);
-            comandoParaConsulta.Parameters.AddWithValue("@Nombre", infoEmpresa.empresa.Nombre);
-            comandoParaConsulta.Parameters.AddWithValue("@Descripcion", infoEmpresa.empresa.Descripcion);
-            comandoParaConsulta.Parameters.AddWithValue("@BeneficiosMaximos", infoEmpresa.empresa.BeneficiosMaximos);
-            comandoParaConsulta.Parameters.AddWithValue("@FechaDeCreacion", infoEmpresa.empresa.FechaDeCreacion);
-            comandoParaConsulta.Parameters.AddWithValue("@FechaDeModificacion", infoEmpresa.empresa.FechaDeModificacion);
-            comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", infoEmpresa.empresa.UsuarioCreador);
-            comandoParaConsulta.Parameters.AddWithValue("@UltimoEnModificar", infoEmpresa.empresa.UltimoEnModificar);
-            comandoParaConsulta.Parameters.AddWithValue("@activo", infoEmpresa.empresa.Activo);
+            comandoParaConsulta.Parameters.AddWithValue("@CedulaJuridica", infoEmpresa.CedulaJuridica);
+            comandoParaConsulta.Parameters.AddWithValue("@CedulaDueno", infoEmpresa.CedulaDueno);
+            comandoParaConsulta.Parameters.AddWithValue("@CedulaAdmin", "1-1907-0218");
+            comandoParaConsulta.Parameters.AddWithValue("@TipoDePago", infoEmpresa.TipoDePago);
+            comandoParaConsulta.Parameters.AddWithValue("@RazonSocial", infoEmpresa.RazonSocial);
+            comandoParaConsulta.Parameters.AddWithValue("@Nombre", infoEmpresa.Nombre);
+            comandoParaConsulta.Parameters.AddWithValue("@Descripcion", infoEmpresa.Descripcion);
+            comandoParaConsulta.Parameters.AddWithValue("@BeneficiosMaximos", infoEmpresa.BeneficiosMaximos);
+            comandoParaConsulta.Parameters.AddWithValue("@FechaDeCreacion", DateTime.Today);
+            comandoParaConsulta.Parameters.AddWithValue("@FechaDeModificacion", DateTime.Today);
+            comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", "1");
+            comandoParaConsulta.Parameters.AddWithValue("@UltimoEnModificar", "1");
+            comandoParaConsulta.Parameters.AddWithValue("@activo", "1");
 
             _conexion.Open();
             bool exito = comandoParaConsulta.ExecuteNonQuery() >= 1;

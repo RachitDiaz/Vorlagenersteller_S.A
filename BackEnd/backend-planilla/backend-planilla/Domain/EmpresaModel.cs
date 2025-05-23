@@ -35,15 +35,25 @@
         public string cedulaJuridica { get; set; }
         public string Provincia { get; set; }
         public string Canton { get; set; }
-        public string distrito { get; set; }
-        public string otrasSenas { get; set; }
+        public string Distrito { get; set; }
+        public string OtrasSenas { get; set; }
     }
 
     public class AgregarEmpresaModel
     {
-        public EmpresaModel empresa { get; set; }
-        public CorreoModel correo { get; set; }
-        public TelefonoModel telefono { get; set; }
-        public DireccionModel direccion { get; set; }
+        public string CedulaJuridica { get; set; }
+        public string CedulaDueno { get; set; }
+        public string TipoDePago { get; set; }
+        public string RazonSocial { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public string BeneficiosMaximos { get; set; }
+        public string CorreoDelCreador { get; set; }
+        public string Correo { get; set; }
+        public string Telefono { get; set; }
+        public string Provincia { get; set; }
+        public string Canton { get; set; }
+        public string Distrito { get; set; }
+        public string OtrasSenas { get; set; }
     }
 }
