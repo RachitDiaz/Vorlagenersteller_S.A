@@ -21,28 +21,39 @@ namespace backend_planilla.Infraestructure
         }
         bool IEmpresaRepository.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa)
         {
-            var consulta = @"INSERT INTO Empresa (CedulaJuridica, CedulaDueno, CedulaAdmin, TipoDePago, RazonSocial, 
-            Nombre, Descripcion, BeneficiosMaximos, FechaDeCreacion,FechaDeModificacion,
-            UsuarioCreador, UltimoEnModificar, activo)
-            VALUES(@CedulaJuridica, @CedulaDueno, @CedulaAdmin, @TipoDePago, @RazonSocial, 
-            @Nombre, @Descripcion, @BeneficiosMaximos, @FechaDeCreacion, @FechaDeModificacion,
-            @UsuarioCreador, @UltimoEnModificar, @activo) ";
+            var consulta = @"EXECUTE RegistrarEmpresa
+	                    @CedulaJuridica = @@CedulaJuridica,
+	                    @CedulaDueno = @@CedulaDueno,
+	                    @TipoDePago = @@TipoDePago,
+                        @RazonSocial = @@RazonSocial,
+	                    @Nombre = @@Nombre,
+	                    @Descripcion = @@Descripcion,
+	                    @BeneficiosMaximos = @@BeneficiosMaximos,
+	                    @CorreoCreador = @@CorreoDelCreador,
+	                    @CorreoEmpresa = @@CorreoEmpresa,
+	                    @Telefono = @@Telefono,
+	                    @Provincia = @@Provincia,
+	                    @Canton = @@Canton,
+	                    @Distrito = @@Distrito,
+	                    @OtrasSenas = @@OtrasSenas";
 
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
-            comandoParaConsulta.Parameters.AddWithValue("@CedulaJuridica", infoEmpresa.CedulaJuridica);
-            comandoParaConsulta.Parameters.AddWithValue("@CedulaDueno", infoEmpresa.CedulaDueno);
-            comandoParaConsulta.Parameters.AddWithValue("@CedulaAdmin", "1-1907-0218");
-            comandoParaConsulta.Parameters.AddWithValue("@TipoDePago", infoEmpresa.TipoDePago);
-            comandoParaConsulta.Parameters.AddWithValue("@RazonSocial", infoEmpresa.RazonSocial);
-            comandoParaConsulta.Parameters.AddWithValue("@Nombre", infoEmpresa.Nombre);
-            comandoParaConsulta.Parameters.AddWithValue("@Descripcion", infoEmpresa.Descripcion);
-            comandoParaConsulta.Parameters.AddWithValue("@BeneficiosMaximos", infoEmpresa.BeneficiosMaximos);
-            comandoParaConsulta.Parameters.AddWithValue("@FechaDeCreacion", DateTime.Today);
-            comandoParaConsulta.Parameters.AddWithValue("@FechaDeModificacion", DateTime.Today);
-            comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", "1");
-            comandoParaConsulta.Parameters.AddWithValue("@UltimoEnModificar", "1");
-            comandoParaConsulta.Parameters.AddWithValue("@activo", "1");
+            comandoParaConsulta.Parameters.AddWithValue("@@CedulaJuridica", infoEmpresa.CedulaJuridica);
+            comandoParaConsulta.Parameters.AddWithValue("@@CedulaDueno", infoEmpresa.CedulaDueno);
+            comandoParaConsulta.Parameters.AddWithValue("@@CedulaAdmin", "1-1909-0924");
+            comandoParaConsulta.Parameters.AddWithValue("@@TipoDePago", infoEmpresa.TipoDePago);
+            comandoParaConsulta.Parameters.AddWithValue("@@RazonSocial", infoEmpresa.RazonSocial);
+            comandoParaConsulta.Parameters.AddWithValue("@@Nombre", infoEmpresa.Nombre);
+            comandoParaConsulta.Parameters.AddWithValue("@@Descripcion", infoEmpresa.Descripcion);
+            comandoParaConsulta.Parameters.AddWithValue("@@BeneficiosMaximos", infoEmpresa.BeneficiosMaximos);
+            comandoParaConsulta.Parameters.AddWithValue("@@CorreoDelCreador", infoEmpresa.CorreoDelCreador);
+            comandoParaConsulta.Parameters.AddWithValue("@@CorreoEmpresa", infoEmpresa.Correo);
+            comandoParaConsulta.Parameters.AddWithValue("@@Telefono", infoEmpresa.Telefono);
+            comandoParaConsulta.Parameters.AddWithValue("@@Provincia", infoEmpresa.Provincia);
+            comandoParaConsulta.Parameters.AddWithValue("@@Canton", infoEmpresa.Canton);
+            comandoParaConsulta.Parameters.AddWithValue("@@Distrito", infoEmpresa.Distrito);
+            comandoParaConsulta.Parameters.AddWithValue("@@OtrasSenas", infoEmpresa.OtrasSenas);
 
             _conexion.Open();
             bool exito = comandoParaConsulta.ExecuteNonQuery() >= 1;

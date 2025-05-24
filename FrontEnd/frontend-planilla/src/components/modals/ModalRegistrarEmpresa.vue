@@ -225,7 +225,7 @@
     cedulaJuridica: form.cedulaJuridica,
     cedulaDueno: form.cedulaDueno,
     tipoDePago: form.tipoDePago,
-    razonSocial: form.nombre,
+    razonSocial: form.razonSocial,
     nombre: form.nombre,
     descripcion: form.descripcion,
     beneficiosMaximos: form.beneficiosMaximos,
