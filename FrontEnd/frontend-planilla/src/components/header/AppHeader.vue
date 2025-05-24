@@ -63,6 +63,7 @@ const menuItems = [
 <style scoped>
 .app-header {
   background-color: white;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
