@@ -45,6 +45,7 @@
 
 <script>
 import axios from 'axios'
+import { backendURL } from '../config/config.js'
 
 export default {
   name: 'RegistroUsuario',
@@ -87,7 +88,7 @@ export default {
           direccion: this.form.direccion
         };
 
-        const response = await axios.post('https://localhost:7296/api/Dueno', payload, {
+        const response = await axios.post(`${backendURL}Dueno`, payload, {
           timeout: 8000
         });
 

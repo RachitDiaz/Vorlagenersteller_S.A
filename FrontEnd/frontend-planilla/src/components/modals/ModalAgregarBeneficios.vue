@@ -200,6 +200,7 @@
   import { ref, reactive, onMounted, defineExpose, watch} from 'vue'
   import axios from "axios";
   import Modal from 'bootstrap/js/dist/modal'
+  import { backendURL } from '../../config/config.js'
 
   const token = localStorage.getItem("jwtToken");
   const modalRef = ref(null)
@@ -306,7 +307,7 @@
       form.ServicioExterno  = ''
     }
     console.log("Datos a guardar", form);
-    axios.post("https://localhost:7296/api/ListaBeneficios", {
+    axios.post(`${backendURL}ListaBeneficios`, {
       nombre: form.nombre,
       descripcion: form.descripcion,
       tipo: form.tipo,

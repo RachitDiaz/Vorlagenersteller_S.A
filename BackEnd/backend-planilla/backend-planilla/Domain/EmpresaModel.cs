@@ -56,4 +56,4 @@
         public string Distrito { get; set; }
         public string OtrasSenas { get; set; }
     }
-}
+ }

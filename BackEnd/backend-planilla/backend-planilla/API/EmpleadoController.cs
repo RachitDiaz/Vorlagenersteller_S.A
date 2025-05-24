@@ -11,43 +11,44 @@ namespace backend_planilla.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ListaBeneficiosController : ControllerBase
+    public class EmpleadoController : ControllerBase
     {
-        private readonly BeneficiosHandler _beneficiosHandler;
-        public ListaBeneficiosController()
+        private readonly EmpleadoHandler _empleadoHandler;
+        public EmpleadoController()
         {
-            _beneficiosHandler = new BeneficiosHandler();
+            _empleadoHandler = new EmpleadoHandler();
         }
 
         [HttpGet]
-        public List<BeneficioModel> Get()
+        public List<EmpleadoModel> Get()
         {
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                $" Correo: {correo} acceso en GET /api/listabeneficios");
+                $" Correo: {correo} acceso en GET /api/empleadoController");
 
-            var beneficios = _beneficiosHandler.ObtenerBeneficios(correo);
-            return beneficios;
+            var empleados = _empleadoHandler.ObtenerEmpleados(correo);
+            return empleados;
         }
 
         [HttpPost]
 
-        public async Task<ActionResult<bool>> CrearBeneficio(BeneficioModel beneficio)
+        public async Task<ActionResult<bool>> CrearEmpleado(SolicitudAgregarEmpleadoModel paqueteSolicitudAgregarEmpleado)
         {
             try
             {
                 var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
+                PersonaModel persona = paqueteSolicitudAgregarEmpleado.Persona;
+                EmpleadoModel empleado = paqueteSolicitudAgregarEmpleado.Empleado;
                 Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                    $" Correo: {correo} acceso en POST /api/listabeneficios");
-                if (beneficio == null)
+                    $" Correo: {correo} acceso en POST /api/empleadoController");
+                if (persona == null || empleado == null)
                 {
                     return BadRequest();
                 }
 
-                BeneficiosHandler beneficiosHandler = new BeneficiosHandler();
-                var resultado = beneficiosHandler.CrearBeneficio(beneficio, correo);
+                EmpleadoHandler empleadoHandler = new EmpleadoHandler();
+                var resultado = empleadoHandler.CrearEmpleado(persona, empleado, correo);
                 return new JsonResult(resultado);
             }
             catch (Exception)
