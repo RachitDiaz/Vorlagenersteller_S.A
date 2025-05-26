@@ -11,7 +11,7 @@ using backend_planilla.Domain;
 
 namespace backend_planilla.API
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmpresaController : ControllerBase
@@ -28,7 +28,7 @@ namespace backend_planilla.API
         [HttpPut("{cedula}")]
         public List<EmpresaModel> Get(string cedula)
         {
-            //var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             return _EmpresaHandler.ObtenerEmpresa(cedula);
         }

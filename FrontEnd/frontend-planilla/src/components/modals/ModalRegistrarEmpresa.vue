@@ -246,6 +246,7 @@
     })
     .catch(error => {
       console.error("Error al registrar empresa:", error);
+      alert("Error al registrar empresa\nVerifique que la cedula sea de un dueño en el sistema y la empresa no este ya registrada");
     });
   }
   
