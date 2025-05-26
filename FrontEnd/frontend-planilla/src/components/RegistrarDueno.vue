@@ -1,10 +1,29 @@
 <template>
   <div class="registro-bg">
     <div class="form-container">
-      <form @submit.prevent="registrarUsuario">
+      <form @submit.prevent="registrarDueno">
         <div class="form-group">
           <label>Nombre</label>
           <input v-model="form.nombre" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label>Apellido 1</label>
+          <input v-model="form.nombre" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label>Apellido 2</label>
+          <input v-model="form.nombre" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label>Género</label>
+          <select v-model="form.genero" required>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -15,7 +34,7 @@
         <div class="form-group">
           <label>Correo Electrónico</label>
           <input v-model="form.correo" type="email" placeholder="ejemplo@correo.com" required />
-        </div> 
+        </div>
 
         <div class="form-group">
           <label>Contraseña*</label>
@@ -48,7 +67,7 @@ import axios from 'axios'
 import { backendURL } from '../config/config.js'
 
 export default {
-  name: 'RegistroUsuario',
+  name: 'RegistroDueno',
   data() {
     return {
       form: {
@@ -58,7 +77,8 @@ export default {
         contrasena: '',
         confirmarContrasena: '',
         telefono: '',
-        direccion: ''
+        direccion: '',
+        genero: 'Masculino'
       }
     }
   },
@@ -73,9 +93,9 @@ export default {
         const persona = {
           cedula: this.form.cedula,
           nombre: this.form.nombre,
-          apellido1: 'Ramírez',
-          apellido2: 'Gómez',
-          genero: 'Masculino',
+          apellido1: this.form.apellido1,
+          apellido2: this.form.apellid,
+          genero: this.form.genero,
           usuario: {
             correo: this.form.correo,
             contrasena: this.form.contrasena
