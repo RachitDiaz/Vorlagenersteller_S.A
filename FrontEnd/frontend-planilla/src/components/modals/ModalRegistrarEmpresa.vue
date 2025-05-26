@@ -191,7 +191,7 @@
   import axios from "axios";
   import Modal from 'bootstrap/js/dist/modal'
   
-  //const token = localStorage.getItem("jwtToken");
+  const token = localStorage.getItem("jwtToken");
   const modalRef = ref(null)
   let modalInstance = null
   
@@ -239,13 +239,14 @@
   
     }, {
       headers: {
-        //Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       }
     }).then(() => {
       window.location.href = "/ListaEmpresas";
     })
     .catch(error => {
       console.error("Error al registrar empresa:", error);
+      alert("Error al registrar empresa\nVerifique que la cedula sea de un dueño en el sistema y la empresa no este ya registrada");
     });
   }
   
