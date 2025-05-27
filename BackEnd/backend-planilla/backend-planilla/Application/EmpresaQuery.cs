@@ -4,14 +4,14 @@ using backend_planilla.Infraestructure;
 
 namespace backend_planilla.Application
 {
-    public class EmpresaQuerry : IEmpresaQuerry
+    public class EmpresaQuery : IEmpresaQuery
     {
         private readonly IEmpresaRepository _empresaRepository;
-        public EmpresaQuerry() {
+        public EmpresaQuery() {
             _empresaRepository = new EmpresaRepository();
         }
 
-        bool IEmpresaQuerry.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa)
+        bool IEmpresaQuery.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa)
         {
             // validate empresa input
 

@@ -3,7 +3,7 @@ using backend_planilla.Domain;
 
 namespace backend_planilla.Application
 {
-    public interface IEmpresaQuerry
+    public interface IEmpresaQuery
     {
         bool RegistrarEmpresa(AgregarEmpresaModel empresa);
     }

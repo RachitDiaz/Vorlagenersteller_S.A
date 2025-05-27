@@ -18,11 +18,11 @@ namespace backend_planilla.API
     {
 
         private readonly EmpresaHandler _EmpresaHandler;
-        private readonly IEmpresaQuerry _IEmpresaQuerry;
+        private readonly IEmpresaQuery _IEmpresaQuerry;
         public EmpresaController()
         {
             _EmpresaHandler = new EmpresaHandler();
-            _IEmpresaQuerry = new EmpresaQuerry();
+            _IEmpresaQuerry = new EmpresaQuery();
         }
 
         [HttpPut("{cedula}")]
@@ -50,7 +50,7 @@ namespace backend_planilla.API
                     return BadRequest();
                 }
 
-                IEmpresaQuerry empresaQuerry = new EmpresaQuerry();
+                IEmpresaQuery empresaQuerry = new EmpresaQuery();
                 var resultado = empresaQuerry.RegistrarEmpresa(infoEmpresa);
                 return new JsonResult(resultado);
             }

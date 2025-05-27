@@ -46,7 +46,8 @@ namespace backend_planilla.Handlers
                     Descripcion = Convert.ToString(columna["Descripcion"]),
                     ServicioExterno = Convert.ToString(columna["ServicioExterno"]),
                     MesesMinimos = Convert.ToInt32(columna["MesesMinimos"]),
-                    CantidadParametros = Convert.ToInt32(columna["CantidadParametros"])
+                    CantidadParametros = Convert.ToInt32(columna["CantidadParametros"]),
+                    Id = Convert.ToInt32(columna["ID"]),
                 });
             }
             Console.WriteLine(beneficios);
