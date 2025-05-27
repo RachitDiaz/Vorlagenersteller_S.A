@@ -55,6 +55,12 @@ namespace backend_planilla.API
 
                 IEmpresaQuerry empresaQuerry = new EmpresaQuerry();
                 var resultado = empresaQuerry.RegistrarEmpresa(infoEmpresa);
+
+                if (resultado == false)
+                {
+                    return BadRequest();
+                }
+
                 return new JsonResult(resultado);
             }
             catch (Exception)
