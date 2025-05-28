@@ -55,6 +55,9 @@ namespace backend_planilla.API
                 var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
                 infoEmpresa.Correo = correo;
 
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                infoEmpresa.Correo = correo;
+
                 IEmpresaQuerry empresaQuerry = new EmpresaQuerry();
                 var resultado = empresaQuerry.RegistrarEmpresa(infoEmpresa);
 
