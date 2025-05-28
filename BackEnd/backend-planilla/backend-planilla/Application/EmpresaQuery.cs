@@ -11,11 +11,11 @@ namespace backend_planilla.Application
             _empresaRepository = new EmpresaRepository();
         }
 
-        bool IEmpresaQuery.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa)
+        bool IEmpresaQuery.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa, string correo)
         {
             // validate empresa input
 
-            var resultado = _empresaRepository.RegistrarEmpresa(infoEmpresa);
+            var resultado = _empresaRepository.RegistrarEmpresa(infoEmpresa, correo);
             return resultado;
         }
     }

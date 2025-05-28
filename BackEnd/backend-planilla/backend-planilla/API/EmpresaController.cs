@@ -49,9 +49,9 @@ namespace backend_planilla.API
                 {
                     return BadRequest();
                 }
-
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
                 IEmpresaQuery empresaQuerry = new EmpresaQuery();
-                var resultado = empresaQuerry.RegistrarEmpresa(infoEmpresa);
+                var resultado = empresaQuerry.RegistrarEmpresa(infoEmpresa, correo);
                 return new JsonResult(resultado);
             }
             catch (Exception)

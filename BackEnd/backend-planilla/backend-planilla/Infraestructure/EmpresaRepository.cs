@@ -19,7 +19,7 @@ namespace backend_planilla.Infraestructure
             builder.Configuration.GetConnectionString("piTestContext");
             _conexion = new SqlConnection(_rutaConexion);
         }
-        bool IEmpresaRepository.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa)
+        bool IEmpresaRepository.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa, string correo)
         {
             var consulta = @"EXECUTE RegistrarEmpresa
 	                    @CedulaJuridica = @@CedulaJuridica,
@@ -47,7 +47,7 @@ namespace backend_planilla.Infraestructure
             comandoParaConsulta.Parameters.AddWithValue("@@Nombre", infoEmpresa.Nombre);
             comandoParaConsulta.Parameters.AddWithValue("@@Descripcion", infoEmpresa.Descripcion);
             comandoParaConsulta.Parameters.AddWithValue("@@BeneficiosMaximos", infoEmpresa.BeneficiosMaximos);
-            comandoParaConsulta.Parameters.AddWithValue("@@CorreoDelCreador", infoEmpresa.CorreoDelCreador);
+            comandoParaConsulta.Parameters.AddWithValue("@@CorreoDelCreador", correo);
             comandoParaConsulta.Parameters.AddWithValue("@@CorreoEmpresa", infoEmpresa.Correo);
             comandoParaConsulta.Parameters.AddWithValue("@@Telefono", infoEmpresa.Telefono);
             comandoParaConsulta.Parameters.AddWithValue("@@Provincia", infoEmpresa.Provincia);

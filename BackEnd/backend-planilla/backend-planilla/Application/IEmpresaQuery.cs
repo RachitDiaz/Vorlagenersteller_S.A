@@ -5,6 +5,6 @@ namespace backend_planilla.Application
 {
     public interface IEmpresaQuery
     {
-        bool RegistrarEmpresa(AgregarEmpresaModel empresa);
+        bool RegistrarEmpresa(AgregarEmpresaModel empresa, string correo);
     }
 }

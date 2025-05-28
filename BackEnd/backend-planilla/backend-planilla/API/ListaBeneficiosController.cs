@@ -26,7 +26,6 @@ namespace backend_planilla.Controllers
 
             Console.WriteLine($"Texto de prueba para ver si sirve el token" +
                 $" Correo: {correo} acceso en GET /api/listabeneficios");
-            Console.WriteLine("siiiiiiiiiiii");
             var beneficios = _beneficiosHandler.ObtenerBeneficios(correo);
             Console.WriteLine(beneficios);
             return beneficios;

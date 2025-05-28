@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <header class="app-header">
       <div class="top-bar">
         <div class="title" @click="goToLanding">{{ currentTitle }}</div>
@@ -11,7 +11,7 @@
 
     <nav v-if="isLoggedIn" class="nav-bar">
       <router-link
-        v-for="item in menuItems"
+        v-for="item in filteredMenuItems"
         :key="item.path"
         :to="item.path"
         class="nav-button"
@@ -31,8 +31,26 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
+const rol = ref(localStorage.getItem('rol') || '')
 const token = ref(localStorage.getItem('jwtToken'))
 const isLoggedIn = computed(() => !!token.value)
+
+const filteredMenuItems = computed(() => {
+  return menuItems.filter(item => {
+    const path = item.path
+
+    if (path === '/') return true 
+    if (path === '/VerEmpleado') return true 
+    if (['/ListaBeneficios', '/ListaEmpresas', '/VerEmpresa', '/ListaEmpleados'].includes(path)) {
+      return rol.value === 'dueno'
+    }
+    if (path === '/BeneficiosEmpleado') {
+      return rol.value === 'empleado'
+    }
+
+    return false 
+  })
+})
 
 const handleAuthAction = () => {
   if (isLoggedIn.value) {

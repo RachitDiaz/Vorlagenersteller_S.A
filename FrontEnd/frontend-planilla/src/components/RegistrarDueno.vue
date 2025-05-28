@@ -9,12 +9,12 @@
 
         <div class="form-group">
           <label>Apellido 1</label>
-          <input v-model="form.nombre" type="text" required />
+          <input v-model="form.apellido1" type="text" required />
         </div>
 
         <div class="form-group">
           <label>Apellido 2</label>
-          <input v-model="form.nombre" type="text" required />
+          <input v-model="form.apellido2" type="text" required />
         </div>
 
         <div class="form-group">
@@ -72,6 +72,8 @@ export default {
     return {
       form: {
         nombre: '',
+        apellido1: '',
+        apellido2: '',
         cedula: '',
         correo: '',
         contrasena: '',
@@ -83,7 +85,8 @@ export default {
     }
   },
   methods: {
-    async registrarUsuario() {
+    async registrarDueno() {
+      console.log("Datos a guardar", this.form);
       if (this.form.contrasena !== this.form.confirmarContrasena) {
         alert('Las contraseñas no coinciden');
         return;
@@ -94,7 +97,7 @@ export default {
           cedula: this.form.cedula,
           nombre: this.form.nombre,
           apellido1: this.form.apellido1,
-          apellido2: this.form.apellid,
+          apellido2: this.form.apellido2,
           genero: this.form.genero,
           usuario: {
             correo: this.form.correo,
@@ -109,7 +112,7 @@ export default {
         };
 
         const response = await axios.post(`${backendURL}Dueno`, payload, {
-          timeout: 8000
+          timeout: 2000
         });
 
         if (response.data === true) {
