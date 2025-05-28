@@ -50,16 +50,10 @@ namespace backend_planilla.API
                     return BadRequest();
                 }
                 var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-                infoEmpresa.Correo = correo;
 
-                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-                infoEmpresa.Correo = correo;
 
-                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-                infoEmpresa.Correo = correo;
-
-                IEmpresaQuerry empresaQuerry = new EmpresaQuerry();
-                var resultado = empresaQuerry.RegistrarEmpresa(infoEmpresa);
+                IEmpresaQuery empresaQuery = new EmpresaQuery();
+                var resultado = empresaQuery.RegistrarEmpresa(infoEmpresa, correo);
 
                 if (resultado == false)
                 {
