@@ -58,7 +58,6 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import {backendURL} from "../config/config.js"
-  
 const selectedTab = ref('empleado')
 const correo = ref('')
 const contrasena = ref('')
@@ -85,6 +84,7 @@ const login = async () => {
 
     const token = response.data.token
     localStorage.setItem('jwtToken', token)
+    localStorage.setItem('rol', selectedTab.value)
 
     if (selectedTab.value === 'dueno') {
       window.location.href = '/ListaEmpleados'

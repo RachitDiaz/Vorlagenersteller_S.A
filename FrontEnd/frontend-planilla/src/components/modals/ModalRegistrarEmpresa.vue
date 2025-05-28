@@ -190,6 +190,7 @@
   import { ref, reactive, onMounted, defineExpose } from 'vue'
   import axios from "axios";
   import Modal from 'bootstrap/js/dist/modal'
+  import { backendURL } from '../../config/config.js'
   
   const token = localStorage.getItem("jwtToken");
   const modalRef = ref(null)
@@ -221,7 +222,7 @@
   
   function submitForm() {
     console.log("Datos a guardar", form);
-    axios.post("https://localhost:7296/api/Empresa", {
+    axios.post(`${backendURL}Empresa`, {
     cedulaJuridica: form.cedulaJuridica,
     cedulaDueno: form.cedulaDueno,
     tipoDePago: form.tipoDePago,
@@ -229,7 +230,6 @@
     nombre: form.nombre,
     descripcion: form.descripcion,
     beneficiosMaximos: form.beneficiosMaximos,
-    correoDelCreador: 'shihtangdaniel@gmail.com',
     correo: form.correo,
     telefono: form.telefono,
     provincia: form.provincia,

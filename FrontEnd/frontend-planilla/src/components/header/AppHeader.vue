@@ -1,15 +1,17 @@
 <template>
-  <header class="app-header">
-    <div class="top-bar">
-      <div class="title" @click="goToLanding">{{ currentTitle }}</div>
-      <button @click="handleAuthAction" class="auth-button">
-        {{ isLoggedIn ? 'Cerrar sesión' : 'Iniciar sesión' }}
-      </button>
-    </div>
+  <div >
+    <header class="app-header">
+      <div class="top-bar">
+        <div class="title" @click="goToLanding">{{ currentTitle }}</div>
+        <button @click="handleAuthAction" class="auth-button">
+          {{ isLoggedIn ? 'Cerrar sesión' : 'Iniciar sesión' }}
+        </button>
+      </div>
+    </header>
 
     <nav v-if="isLoggedIn" class="nav-bar">
       <router-link
-        v-for="item in menuItems"
+        v-for="item in filteredMenuItems"
         :key="item.path"
         :to="item.path"
         class="nav-button"
@@ -18,8 +20,9 @@
         {{ item.name }}
       </router-link>
     </nav>
-  </header>
+  </div>
 </template>
+
 
 <script setup>
 import { ref, computed } from 'vue'
@@ -28,8 +31,26 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
+const rol = ref(localStorage.getItem('rol') || '')
 const token = ref(localStorage.getItem('jwtToken'))
 const isLoggedIn = computed(() => !!token.value)
+
+const filteredMenuItems = computed(() => {
+  return menuItems.filter(item => {
+    const path = item.path
+
+    if (path === '/') return true 
+    if (path === '/VerEmpleado') return true 
+    if (['/ListaBeneficios', '/ListaEmpresas', '/VerEmpresa', '/ListaEmpleados'].includes(path)) {
+      return rol.value === 'dueno'
+    }
+    if (path === '/BeneficiosEmpleado') {
+      return rol.value === 'empleado'
+    }
+
+    return false 
+  })
+})
 
 const handleAuthAction = () => {
   if (isLoggedIn.value) {
@@ -65,8 +86,8 @@ const menuItems = [
   background-color: white;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: stretch;
   position: fixed;
   top: 0;
   width: 100%;
@@ -78,6 +99,7 @@ const menuItems = [
   align-items: center;
   justify-content: space-between;
   padding: 0.8rem 1rem;
+  width: 100%
 }
 
 .title {
@@ -102,6 +124,7 @@ const menuItems = [
 
 .nav-bar {
   display: flex;
+  margin-top: 3.6rem;
   justify-content: center;
   flex-wrap: wrap;
   padding: 0.5rem 1rem;

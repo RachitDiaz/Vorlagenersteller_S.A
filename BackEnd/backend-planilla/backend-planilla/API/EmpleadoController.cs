@@ -54,7 +54,7 @@ namespace backend_planilla.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error creando beneficio");
+                    "Error creando empleado.");
             }
         }
 

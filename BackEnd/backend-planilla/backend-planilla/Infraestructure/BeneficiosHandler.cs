@@ -46,10 +46,18 @@ namespace backend_planilla.Handlers
                     Descripcion = Convert.ToString(columna["Descripcion"]),
                     ServicioExterno = Convert.ToString(columna["ServicioExterno"]),
                     MesesMinimos = Convert.ToInt32(columna["MesesMinimos"]),
-                    CantidadParametros = Convert.ToInt32(columna["CantidadParametros"])
+                    CantidadParametros = Convert.ToInt32(columna["CantidadParametros"]),
+                    Id = Convert.ToInt32(columna["ID"]),
                 });
             }
-            Console.WriteLine(beneficios);
+            Console.WriteLine("si llega hasta acá");
+            foreach (var b in beneficios)
+            {
+                Console.WriteLine($"ID: {b.Id}, Nombre: {b.Nombre}, Tipo: {b.Tipo}, Descripción: {b.Descripcion}, " +
+                                  $"Servicio: {b.ServicioExterno}, Meses: {b.MesesMinimos}, Parámetros: {b.CantidadParametros}");
+            }
+
+            Console.WriteLine("sip llega hasta acá");
             return beneficios;
         }
 

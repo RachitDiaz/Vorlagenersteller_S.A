@@ -95,7 +95,7 @@ namespace backend_planilla.Handlers
             return Empresa;
         }
 
-        public bool CrearEmpresa(EmpresaModel empresa)
+        public bool CrearEmpresa(EmpresaModel empresa,string correo)
         {
             var consulta = @"INSERT INTO Empresa (CedulaJuridica, CedulaDueno, CedulaAdmin, TipoDePago, RazonSocial, 
             Nombre, Descripcion, BeneficiosMaximos, FechaDeCreacion,FechaDeModificacion,
@@ -116,7 +116,7 @@ namespace backend_planilla.Handlers
             comandoParaConsulta.Parameters.AddWithValue("@BeneficiosMaximos", empresa.BeneficiosMaximos);
             comandoParaConsulta.Parameters.AddWithValue("@FechaDeCreacion", empresa.FechaDeCreacion);
             comandoParaConsulta.Parameters.AddWithValue("@FechaDeModificacion", empresa.FechaDeModificacion);
-            comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", empresa.UsuarioCreador);
+            comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", correo);
             comandoParaConsulta.Parameters.AddWithValue("@UltimoEnModificar", empresa.UltimoEnModificar);
             comandoParaConsulta.Parameters.AddWithValue("@activo", empresa.Activo);
 
