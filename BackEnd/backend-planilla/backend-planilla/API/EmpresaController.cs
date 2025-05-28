@@ -18,11 +18,11 @@ namespace backend_planilla.API
     {
 
         private readonly EmpresaHandler _EmpresaHandler;
-        private readonly IEmpresaQuerry _IEmpresaQuerry;
+        private readonly IEmpresaQuery _IEmpresaQuerry;
         public EmpresaController()
         {
             _EmpresaHandler = new EmpresaHandler();
-            _IEmpresaQuerry = new EmpresaQuerry();
+            _IEmpresaQuerry = new EmpresaQuery();
         }
 
         [HttpPut("{cedula}")]
@@ -49,6 +49,11 @@ namespace backend_planilla.API
                 {
                     return BadRequest();
                 }
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                infoEmpresa.Correo = correo;
+
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                infoEmpresa.Correo = correo;
 
                 var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
                 infoEmpresa.Correo = correo;

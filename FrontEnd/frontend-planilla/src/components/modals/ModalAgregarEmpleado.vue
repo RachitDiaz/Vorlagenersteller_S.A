@@ -116,7 +116,7 @@
 
             <div class="mb-3">
               <label class="form-label">
-                Banco
+                Cuenta IBAN del banco
               </label>
               <input
                 type="text"
