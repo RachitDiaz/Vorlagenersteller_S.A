@@ -30,7 +30,7 @@ namespace backend_planilla.Application
             if (infoEmpresa.Nombre.Length > tamanoDeNombre) return false;
             if (infoEmpresa.Descripcion.Length > tamanoDeDescripcion) return false;
             if (infoEmpresa.Correo.Length > tamanoDeCorreos) return false;
-            if (infoEmpresa.CorreoDelCreador.Length > tamanoDeCorreos) return false;
+            if (correo.Length > tamanoDeCorreos) return false;
             if (infoEmpresa.Telefono.Length > tamanoDeTelefono) return false;
             if (infoEmpresa.Provincia.Length > tamanoDeDirecciones) return false;
             if (infoEmpresa.Canton.Length > tamanoDeDirecciones) return false;
