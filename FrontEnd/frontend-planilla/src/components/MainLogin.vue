@@ -46,7 +46,7 @@
             :href="selectedTab === 'dueno' ? '/RegistrarDueno' : '#'"
             class="link"
           >
-            {{ selectedTab === 'empleado' ? '¿Olvidó su contraseña?' : 'Crear empresa' }}
+            {{ selectedTab === 'empleado' ? '¿Olvidó su contraseña?' : 'Crear usuario' }}
           </a>
         </form>
       </div>
