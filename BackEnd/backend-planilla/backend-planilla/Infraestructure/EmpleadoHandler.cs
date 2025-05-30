@@ -185,7 +185,7 @@ namespace backend_planilla.Handlers
             return exito;
         }
 
-        public InfoEmpleadoModel? ObtenerInfoEmpleado(string CedulaEmpleado)
+        public InfoEmpleadoModel? ObtenerInfoEmpleado(string cedulaEmpleado)
         {
 
             var consulta = @"Select	Persona.Cedula, Persona.Nombre, Persona.Apellido1, Persona.Apellido2,
@@ -197,7 +197,7 @@ namespace backend_planilla.Handlers
                             WHERE Persona.Cedula = @cedulaBusqueda;";
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
-            comandoParaConsulta.Parameters.AddWithValue("@cedulaBusqueda", CedulaEmpleado);
+            comandoParaConsulta.Parameters.AddWithValue("@cedulaBusqueda", cedulaEmpleado);
 
             _conexion.Open();
 
@@ -228,10 +228,10 @@ namespace backend_planilla.Handlers
             return infoEmpleado;
         }
 
-        public bool EditarInfoEmpleado(InfoEmpleadoModel DatosNuevos, string CedulaEmpleado)
+        public bool EditarInfoEmpleado(InfoEmpleadoModel datosNuevos, string cedulaEmpleado)
         {
 
-            var consulta = @"EXECUTE @CedulaEmpleado = @@CedulaEmpleado,
+            var consulta = @"EXECUTE EditarEmpleado @CedulaEmpleado = @@CedulaEmpleado,
 						@NewCedula = @@NewCedula,
 						@NewNombre = @@NewNombre,
 						@NewApellido1 = @@NewApellido1,
@@ -244,16 +244,16 @@ namespace backend_planilla.Handlers
 
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
-            comandoParaConsulta.Parameters.AddWithValue("@@CedulaEmpleado", CedulaEmpleado);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewCedula", DatosNuevos.Empleado.CedulaEmpleado);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewNombre", DatosNuevos.Empleado.Nombre);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewApellido1", DatosNuevos.Empleado.Apellido1);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewApellido2", DatosNuevos.Empleado.Apellido2);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewGenero", DatosNuevos.Genero);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewBanco", DatosNuevos.Empleado.Banco);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewContrato", DatosNuevos.Empleado.TipoContrato);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewCorreo", DatosNuevos.Correo);
-            comandoParaConsulta.Parameters.AddWithValue("@@NewSalario", DatosNuevos.Empleado.SalarioBruto);
+            comandoParaConsulta.Parameters.AddWithValue("@@CedulaEmpleado", cedulaEmpleado);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewCedula", datosNuevos.Empleado.CedulaEmpleado);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewNombre", datosNuevos.Empleado.Nombre);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewApellido1", datosNuevos.Empleado.Apellido1);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewApellido2", datosNuevos.Empleado.Apellido2);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewGenero", datosNuevos.Genero);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewBanco", datosNuevos.Empleado.Banco);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewContrato", datosNuevos.Empleado.TipoContrato);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewCorreo", datosNuevos.Correo);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewSalario", datosNuevos.Empleado.SalarioBruto);
 
             _conexion.Open();
             bool exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
