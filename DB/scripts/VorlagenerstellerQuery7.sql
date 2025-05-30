@@ -102,10 +102,6 @@ CREATE PROCEDURE EditarEmpleado (@CedulaEmpleado char(12), @NewCedula char(12), 
 				 @NewCorreo char(60), @NewSalario decimal(11,2))
 AS
 BEGIN
-	
-	UPDATE Persona
-	SET Cedula = @NewCedula, Nombre = @NewNombre, Apellido1 = @NewApellido1, Apellido2 = @NewApellido2, Genero = @NewGenero
-	WHERE Cedula = @CedulaEmpleado;
 
 	UPDATE Empleado
 	SET Banco = @NewBanco, SalarioBruto = @NewSalario, TipoContrato = @NewContrato
@@ -115,6 +111,9 @@ BEGIN
 	SET Correo = @NewCorreo
 	WHERE Cedula = @CedulaEmpleado;
 
+	UPDATE Persona
+	SET Cedula = @NewCedula, Nombre = @NewNombre, Apellido1 = @NewApellido1, Apellido2 = @NewApellido2, Genero = @NewGenero
+	WHERE Cedula = @CedulaEmpleado;
+
 END;
 GO
-
