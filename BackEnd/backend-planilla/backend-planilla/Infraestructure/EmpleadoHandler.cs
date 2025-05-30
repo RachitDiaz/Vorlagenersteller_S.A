@@ -1,12 +1,14 @@
 ﻿using backend_planilla.Models;
+using backend_planilla.Domain;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
+using backend_planilla.Infraestructure;
 namespace backend_planilla.Handlers
 {
-    public class EmpleadoHandler
+    public class EmpleadoHandler : IEmpleadoRepository
     {
         private SqlConnection _conexion;
         private string _rutaConexion;
@@ -180,6 +182,83 @@ namespace backend_planilla.Handlers
             _conexion.Open();
             var exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
             _conexion.Close();
+            return exito;
+        }
+
+        public InfoEmpleadoModel? ObtenerInfoEmpleado(string CedulaEmpleado)
+        {
+
+            var consulta = @"Select	Persona.Cedula, Persona.Nombre, Persona.Apellido1, Persona.Apellido2,
+                            Persona.Genero, Empleado.Banco, Empleado.SalarioBruto, Empleado.CedulaEmpresa,
+                            Empleado.TipoContrato, Usuario.Correo
+                            From Persona
+                            INNER JOIN Empleado ON Empleado.CedulaEmpleado = Persona.Cedula
+                            INNER JOIN Usuario ON Usuario.Cedula = Persona.Cedula
+                            WHERE Persona.Cedula = @cedulaBusqueda;";
+            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+
+            comandoParaConsulta.Parameters.AddWithValue("@cedulaBusqueda", CedulaEmpleado);
+
+            _conexion.Open();
+
+            var lector = comandoParaConsulta.ExecuteReader();
+            InfoEmpleadoModel? infoEmpleado = null;
+
+            if (lector.Read())
+            {
+                infoEmpleado = new InfoEmpleadoModel {
+                    Empleado = new EmpleadoModel
+                    {
+                        CedulaEmpleado = lector["Cedula"].ToString(),
+                        CedulaEmpresa = lector["CedulaEmpresa"].ToString(),
+                        Nombre = lector["Nombre"].ToString(),
+                        Apellido1 = lector["Apellido1"].ToString(),
+                        Apellido2 = lector["Apellido2"].ToString(),
+                        Banco = lector["Cedula"].ToString(),
+                        SalarioBruto = Convert.ToDecimal(lector["SalarioBruto"]),
+                        TipoContrato = lector["TipoContrato"].ToString()
+                    },
+                    Genero = lector["Genero"].ToString(),
+                    Correo = lector["Correo"].ToString()
+                };
+                
+            }
+            _conexion.Close();
+
+            return infoEmpleado;
+        }
+
+        public bool EditarInfoEmpleado(InfoEmpleadoModel DatosNuevos, string CedulaEmpleado)
+        {
+
+            var consulta = @"EXECUTE @CedulaEmpleado = @@CedulaEmpleado,
+						@NewCedula = @@NewCedula,
+						@NewNombre = @@NewNombre,
+						@NewApellido1 = @@NewApellido1,
+						@NewApellido2 = @@NewApellido2,
+						@NewGenero = @@NewGenero, 
+						@NewBanco = @@NewBanco,
+						@NewContrato = @@NewContrato, 
+						@NewCorreo = @@NewCorreo,
+						@NewSalario = @@NewSalario";
+
+            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+
+            comandoParaConsulta.Parameters.AddWithValue("@@CedulaEmpleado", CedulaEmpleado);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewCedula", DatosNuevos.Empleado.CedulaEmpleado);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewNombre", DatosNuevos.Empleado.Nombre);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewApellido1", DatosNuevos.Empleado.Apellido1);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewApellido2", DatosNuevos.Empleado.Apellido2);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewGenero", DatosNuevos.Genero);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewBanco", DatosNuevos.Empleado.Banco);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewContrato", DatosNuevos.Empleado.TipoContrato);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewCorreo", DatosNuevos.Correo);
+            comandoParaConsulta.Parameters.AddWithValue("@@NewSalario", DatosNuevos.Empleado.SalarioBruto);
+
+            _conexion.Open();
+            bool exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
+            _conexion.Close();
+
             return exito;
         }
 
