@@ -1,4 +1,4 @@
-﻿namespace backend_planilla.Models
+﻿namespace backend_planilla.Domain
 {
     public class ParametroBeneficioModel
     {

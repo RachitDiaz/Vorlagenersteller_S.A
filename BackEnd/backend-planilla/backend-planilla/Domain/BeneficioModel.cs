@@ -1,7 +1,7 @@
-﻿using backend_planilla.Models;
+﻿using backend_planilla.Domain;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace backend_planilla.Models
+namespace backend_planilla.Domain
 {
     public class BeneficioModel
     {
