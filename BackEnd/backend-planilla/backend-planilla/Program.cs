@@ -43,8 +43,6 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader();
         });
 });
-
-builder.Services.AddScoped<BeneficiosHandler>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
