@@ -49,36 +49,62 @@
 <script setup>
   import { ref, onMounted, computed } from 'vue'
   import { useRouter } from 'vue-router'
+  import { backendURL } from '../../config/config.js'
   
   
   const router = useRouter()
   const max = 3
   
-  const allBenefits = ref([
-    { id: 1, name: 'Piscina' },
-    { id: 2, name: 'Gimnasio' },
-    { id: 3, name: 'Seguro' },
-  ])
+  const allBenefits = ref([])
   
-  const selected = ref([
-    { id: 1, name: 'Piscina' },
-    { id: 2, name: 'Gimnasio' }
-  ])
+  const selected = ref([])
   
   const availableBenefits = computed(() =>
     allBenefits.value.filter(b => !selected.value.find(s => s.id === b.id))
   )
 
   onMounted(async () => {
-    const token = localStorage.getItem("jwtToken");
-    
-    if (!token) {
-      alert('Tiene que iniciar sesión primero.');
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
-    }
-  })
+  const token = localStorage.getItem("jwtToken");
+
+  if (!token) {
+    alert("Tiene que iniciar sesión primero.");
+    setTimeout(() => {
+      router.push("/login");
+    }, 2000);
+    return;
+  }
+
+  try {
+    const headers = {
+      "Authorization": `Bearer ${token}`
+    };
+
+    const responseDisp = await fetch(`${backendURL}BeneficioEmpleado/listar`, {
+      method: "GET",
+      headers
+    });
+    const beneficios = await responseDisp.json();
+    allBenefits.value = beneficios.map(b => ({
+      id: b.id,
+      name: b.nombre
+    }));
+
+    const responseSel = await fetch(`${backendURL}BeneficioEmpleado/elegidos`, {
+      method: "GET",
+      headers
+    });
+    const seleccionados = await responseSel.json();
+    selected.value = seleccionados.map(b => ({
+      id: b.id,
+      name: b.nombre
+    }));
+
+  } catch (error) {
+    console.error("Error al cargar beneficios:", error);
+    alert("No se pudieron cargar los beneficios.");
+  }
+});
+
   
   function addBenefit(benefit) {
     if (selected.value.length < max) {
@@ -94,9 +120,39 @@
     console.log('Cancelado')
   }
   
-  function accept() {
-    console.log('Seleccionados:', selected.value)
+  async function accept() {
+  const token = localStorage.getItem("jwtToken");
+  const cedulaEmpleado = "2-2222-2222"; 
+
+  const payload = {
+    cedulaEmpleado,
+    beneficios: selected.value.map(b => b.id)
+  };
+
+  try {
+    const response = await fetch(`${backendURL}BeneficioEmpleado/actualizar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.exito) {
+      alert("Beneficios actualizados exitosamente.");
+    } else {
+      alert("Hubo un error al actualizar los beneficios.");
+      console.error(data);
+    }
+
+  } catch (err) {
+    console.error("Error en la solicitud:", err);
+    alert("Error al conectar con el servidor.");
   }
+}
 </script>
   
   <style scoped>
