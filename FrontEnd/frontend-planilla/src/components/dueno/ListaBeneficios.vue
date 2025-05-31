@@ -72,7 +72,7 @@
         return;
       }
 
-      const response = await axios.get(`${backendURL}ListaBeneficios`, {
+      const response = await axios.get(`${backendURL}Beneficios`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
