@@ -206,7 +206,8 @@ namespace backend_planilla.Handlers
 
             if (lector.Read())
             {
-                infoEmpleado = new InfoEmpleadoModel {
+                infoEmpleado = new InfoEmpleadoModel
+                {
                     Empleado = new EmpleadoModel
                     {
                         CedulaEmpleado = lector["Cedula"].ToString(),
@@ -214,12 +215,13 @@ namespace backend_planilla.Handlers
                         Nombre = lector["Nombre"].ToString(),
                         Apellido1 = lector["Apellido1"].ToString(),
                         Apellido2 = lector["Apellido2"].ToString(),
-                        Banco = lector["Cedula"].ToString(),
+                        Banco = lector["Banco"].ToString(),
                         SalarioBruto = Convert.ToDecimal(lector["SalarioBruto"]),
                         TipoContrato = lector["TipoContrato"].ToString()
                     },
                     Genero = lector["Genero"].ToString(),
-                    Correo = lector["Correo"].ToString()
+                    Correo = lector["Correo"].ToString(),
+                    CedulaEditable = true
                 };
                 
             }

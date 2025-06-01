@@ -7,6 +7,7 @@ namespace backend_planilla.Domain
         public EmpleadoModel Empleado { get; set; }
         public string Genero { get; set; }
         public string Correo { get; set; }
+        public bool CedulaEditable { get; set; }
     }
 
     public class SolicitudEditarEmpleadoModel
