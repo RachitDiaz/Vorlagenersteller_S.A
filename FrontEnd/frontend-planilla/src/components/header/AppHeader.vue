@@ -44,7 +44,7 @@ const filteredMenuItems = computed(() => {
     if (['/ListaBeneficios', '/ListaEmpresas', '/VerEmpresa', '/ListaEmpleados'].includes(path)) {
       return rol.value === 'dueno'
     }
-    if (path === '/BeneficiosEmpleado') {
+    if (['/BeneficiosEmpleado', '/RegistroHoras'].includes(path)) {
       return rol.value === 'empleado'
     }
 
@@ -78,6 +78,7 @@ const menuItems = [
   { name: 'Lista Empleados', path: '/ListaEmpleados' },
   { name: 'Ver Empleado', path: '/VerEmpleado' },
   { name: 'Beneficios Empleado', path: '/BeneficiosEmpleado' },
+  { name: 'Registro de Horas', path: '/RegistroHoras' },
 ]
 </script>
 

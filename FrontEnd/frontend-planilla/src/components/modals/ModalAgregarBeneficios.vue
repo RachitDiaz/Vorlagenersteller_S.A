@@ -307,7 +307,7 @@
       form.ServicioExterno  = ''
     }
     console.log("Datos a guardar", form);
-    axios.post(`${backendURL}ListaBeneficios`, {
+    axios.post(`${backendURL}Beneficios`, {
       nombre: form.nombre,
       descripcion: form.descripcion,
       tipo: form.tipo,
