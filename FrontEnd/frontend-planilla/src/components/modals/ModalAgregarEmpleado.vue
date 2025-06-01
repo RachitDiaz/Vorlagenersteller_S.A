@@ -133,6 +133,7 @@
                 type="number"
                 class="form-control"
                 v-model="form.salarioBruto"
+                step=".01"
               />
             </div>
 
