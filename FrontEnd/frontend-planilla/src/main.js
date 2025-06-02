@@ -9,10 +9,10 @@ import ListaBeneficios from './components/dueno/ListaBeneficios.vue';
 import ListaEmpleados from './components/dueno/ListaEmpleados.vue';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import ListaEmpresas from './components/ListaEmpresas.vue';
-import VerEmpresa from './components/VerEmpresa.vue';
+import ListaEmpresas from './components/dueno/ListaEmpresas.vue';
+import VerEmpresa from './components/dueno/VerEmpresa.vue';
 import VerEmpleado from './components/VerEmpleado.vue';
-import RegistrarHoras from './components/RegistrarHoras.vue';
+import RegistrarHoras from './components/empleado/RegistrarHoras.vue';
 
 const router = createRouter({
   history: createWebHistory(),

@@ -9,5 +9,7 @@ namespace backend_planilla.Infraestructure
         List<BeneficioSimpleModel> ObtenerBeneficiosParaEmpleado(string correo);
 
         List<BeneficioSimpleModel> ObtenerBeneficiosSeleccionadosPorEmpleado(string correo);
+
+        string ObtenerCedulaEmpleadoDesdeCorreo(string correo);
     }
 }

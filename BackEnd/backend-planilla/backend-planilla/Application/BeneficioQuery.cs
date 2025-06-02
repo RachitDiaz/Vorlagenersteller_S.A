@@ -25,5 +25,10 @@ namespace backend_planilla.Application
         {
             return _repo.ObtenerBeneficiosSeleccionadosPorEmpleado(correo);
         }
+
+        public string ObtenerCedulaEmpleadoDesdeCorreo(string correo)
+        {
+            return _repo.ObtenerCedulaEmpleadoDesdeCorreo(correo);
+        }
     }
 }

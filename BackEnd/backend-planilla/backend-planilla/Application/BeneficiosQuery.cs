@@ -14,7 +14,7 @@ namespace backend_planilla.Application
             _beneficiosRepository = new BeneficiosRepository();
         }
 
-        
+
         public bool FormatoCedulaValido(string correo)
         {
             return Regex.IsMatch(correo, @"^\d-\d{3}-\d{6}$");
@@ -64,7 +64,8 @@ namespace backend_planilla.Application
                 if (resultado != -1)
                 {
                     exito = _beneficiosRepository.CrearRelacionEmpresaBeneficio(cedulaEmpresa, resultado);
-                } else
+                }
+                else
                 {
                     throw new Exception("No se pudo ingresar el beneficio");
                 }

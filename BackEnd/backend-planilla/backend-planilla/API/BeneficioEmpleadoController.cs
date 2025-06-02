@@ -1,4 +1,5 @@
-﻿using backend_planilla.Application;
+﻿using System.Security.Claims;
+using backend_planilla.Application;
 using backend_planilla.Domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,48 +16,69 @@ namespace backend_planilla.Controllers
             _beneficioQuery = new BeneficioQuery();
         }
 
+        // POST para actualizar beneficios elegidos por el empleado
         [HttpPost("actualizar")]
-        public IActionResult ActualizarBeneficios([FromBody] BeneficioEmpleadoModel model)
+        public IActionResult ActualizarBeneficios([FromBody] Dictionary<string, List<int>> body)
         {
-            if (model == null || model.CedulaEmpleado == null || model.Beneficios == null)
-                return BadRequest("Datos incompletos.");
+            if (body == null || !body.ContainsKey("beneficios"))
+                return BadRequest("Lista de beneficios vacía.");
 
-            var resultado = _beneficioQuery.ActualizarBeneficiosEmpleado(model.CedulaEmpleado, model.Beneficios);
+            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (correo == null)
+                return Unauthorized("Token inválido.");
+
+            var cedulaEmpleado = _beneficioQuery.ObtenerCedulaEmpleadoDesdeCorreo(correo);
+            if (cedulaEmpleado == null)
+                return NotFound("No se encontró un empleado con ese correo.");
+
+            var beneficios = body["beneficios"];
+            var resultado = _beneficioQuery.ActualizarBeneficiosEmpleado(cedulaEmpleado, beneficios);
             return Ok(new { exito = resultado });
         }
 
+
+        //  GET para obtener la lista de beneficios disponibles para la empresa del dueño
         [HttpGet("listar")]
         public IActionResult ObtenerBeneficiosDisponibles()
         {
             try
             {
-                var correo = User.Identity?.Name; // Asegúrate de que el JWT tenga el claim del correo en `sub` o `email`
-                if (correo == null)
+                Console.WriteLine("1");
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                Console.WriteLine("2");
+                Console.WriteLine(correo);
+                Console.WriteLine("3");
+                if (string.IsNullOrWhiteSpace(correo))
                     return Unauthorized("Token no válido o correo no encontrado.");
 
-                var lista = _beneficioQuery.ObtenerBeneficiosParaEmpleado(correo);
-                return Ok(lista);
+                var beneficiosDisponibles = _beneficioQuery.ObtenerBeneficiosParaEmpleado(correo);
+                return Ok(beneficiosDisponibles);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error al obtener beneficios: {ex.Message}");
+                Console.WriteLine($"Error en listar: {ex.Message}");
+                return StatusCode(500, $"Error al obtener beneficios disponibles: {ex.Message}");
             }
         }
 
+        //  GET para obtener la lista de beneficios que ya tiene seleccionados el empleado
         [HttpGet("elegidos")]
         public IActionResult ObtenerBeneficiosSeleccionados()
         {
             try
             {
-                var correo = User.Identity?.Name;
-                if (correo == null)
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                Console.WriteLine(correo);
+                if (string.IsNullOrWhiteSpace(correo))
                     return Unauthorized("Token no válido o correo no encontrado.");
 
-                var beneficios = _beneficioQuery.ObtenerBeneficiosSeleccionadosPorEmpleado(correo);
-                return Ok(beneficios);
+                var beneficiosSeleccionados = _beneficioQuery.ObtenerBeneficiosSeleccionadosPorEmpleado(correo);
+
+                return Ok(beneficiosSeleccionados);
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error en elegidos: {ex.Message}");
                 return StatusCode(500, $"Error al obtener beneficios seleccionados: {ex.Message}");
             }
         }

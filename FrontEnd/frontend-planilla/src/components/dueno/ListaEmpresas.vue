@@ -10,7 +10,7 @@
   <script setup>
   import { ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import ModalRegistrarEmpresa from './modals/ModalRegistrarEmpresa.vue'
+  import ModalRegistrarEmpresa from '../modals/ModalRegistrarEmpresa.vue'
   const router = useRouter()
   
   const modalRef = ref(null)

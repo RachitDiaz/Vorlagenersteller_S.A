@@ -36,8 +36,8 @@ namespace backend_planilla.Controllers
 
             if (resultadoValidacion.CorreoUsuario != null)
             {
-                var rol = resultadoValidacion.EsDueno ? "Dueño" : "NoDueno";
-
+                var rol = resultadoValidacion.EsDueno ? "Dueno" : "Empleado";
+                Console.WriteLine(rol);
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.Email, resultadoValidacion.CorreoUsuario),

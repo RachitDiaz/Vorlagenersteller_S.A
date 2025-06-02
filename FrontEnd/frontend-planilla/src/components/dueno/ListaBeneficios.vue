@@ -63,7 +63,7 @@
   onMounted(async () => {
     try {
       const token = localStorage.getItem("jwtToken");
-      
+      console.log('Token:', token);
       if (!token) {
         alert('Tiene que iniciar sesión primero.');
         setTimeout(() => {

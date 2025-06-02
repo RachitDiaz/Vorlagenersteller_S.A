@@ -44,116 +44,91 @@
         <button class="button-purple" @click="accept">Aceptar</button>
       </div>
     </div>
-  </template>
-  
-<script setup>
-  import { ref, onMounted, computed } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { backendURL } from '../../config/config.js'
-  
-  
-  const router = useRouter()
-  const max = 3
-  
-  const allBenefits = ref([])
-  
-  const selected = ref([])
-  
-  const availableBenefits = computed(() =>
-    allBenefits.value.filter(b => !selected.value.find(s => s.id === b.id))
-  )
+</template>
 
-  onMounted(async () => {
-  const token = localStorage.getItem("jwtToken");
+ <script setup>
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { backendURL } from '../../config/config.js'
+
+const router = useRouter()
+const max = 3
+
+const allBenefits = ref([])
+const selected = ref([])
+
+const availableBenefits = computed(() =>
+  allBenefits.value.filter(b => !selected.value.find(s => s.id === b.id))
+)
+
+onMounted(async () => {
+  const token = localStorage.getItem("jwtToken")
+  console.log("Token JWT:", token)
 
   if (!token) {
-    alert("Tiene que iniciar sesión primero.");
-    setTimeout(() => {
-      router.push("/login");
-    }, 2000);
-    return;
+    alert("Tiene que iniciar sesión primero.")
+    setTimeout(() => router.push("/login"), 2000)
+    return
   }
 
+  const headers = { Authorization: `Bearer ${token}` }
+
   try {
-    const headers = {
-      "Authorization": `Bearer ${token}`
-    };
-
-    const responseDisp = await fetch(`${backendURL}BeneficioEmpleado/listar`, {
-      method: "GET",
-      headers
-    });
-    const beneficios = await responseDisp.json();
-    allBenefits.value = beneficios.map(b => ({
-      id: b.id,
-      name: b.nombre
-    }));
-
-    const responseSel = await fetch(`${backendURL}BeneficioEmpleado/elegidos`, {
-      method: "GET",
-      headers
-    });
-    const seleccionados = await responseSel.json();
-    selected.value = seleccionados.map(b => ({
-      id: b.id,
-      name: b.nombre
-    }));
-
+    // Lista de beneficios disponibles (para la empresa del dueño)
+    const { data: disponibles } = await axios.get(`${backendURL}BeneficioEmpleado/listar`, { headers })
+    allBenefits.value = disponibles.map(b => ({ id: b.id, name: b.nombre }))
+    console.log("Beneficios disponibles:", allBenefits.value)
+    // Beneficios seleccionados por el empleado (identificado por correo del token)
+    const { data: elegidos } = await axios.get(`${backendURL}BeneficioEmpleado/elegidos`, { headers })
+    selected.value = elegidos.map(b => ({ id: b.id, name: b.nombre }))
+    console.log("Beneficios seleccionados:", selected.value)
   } catch (error) {
-    console.error("Error al cargar beneficios:", error);
-    alert("No se pudieron cargar los beneficios.");
+    console.error("Error cargando beneficios:", error)
+    alert("No se pudieron cargar los beneficios.")
   }
-});
+})
 
-  
-  function addBenefit(benefit) {
-    if (selected.value.length < max) {
-      selected.value.push(benefit)
-    }
+function addBenefit(benefit) {
+  if (selected.value.length < max) {
+    selected.value.push(benefit)
   }
-  
-  function removeBenefit(index) {
-    selected.value.splice(index, 1)
-  }
-  
-  function cancel() {
-    console.log('Cancelado')
-  }
-  
-  async function accept() {
-  const token = localStorage.getItem("jwtToken");
-  const cedulaEmpleado = "2-2222-2222"; 
+}
 
-  const payload = {
-    cedulaEmpleado,
-    beneficios: selected.value.map(b => b.id)
-  };
+function removeBenefit(index) {
+  selected.value.splice(index, 1)
+}
+
+function cancel() {
+  console.log('Cancelado')
+}
+
+async function accept() {
+  const token = localStorage.getItem("jwtToken")
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
 
   try {
-    const response = await fetch(`${backendURL}BeneficioEmpleado/actualizar`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
+    const { data } = await axios.post(
+      `${backendURL}BeneficioEmpleado/actualizar`,
+      { beneficios: selected.value.map(b => b.id) },
+      { headers }
+    )
 
-    const data = await response.json();
-
-    if (response.ok && data.exito) {
-      alert("Beneficios actualizados exitosamente.");
+    if (data.exito) {
+      alert("Beneficios actualizados exitosamente.")
     } else {
-      alert("Hubo un error al actualizar los beneficios.");
-      console.error(data);
+      alert("Hubo un error al actualizar los beneficios.")
     }
-
   } catch (err) {
-    console.error("Error en la solicitud:", err);
-    alert("Error al conectar con el servidor.");
+    console.error("Error en solicitud:", err)
+    alert("Error al conectar con el servidor.")
   }
 }
 </script>
+
   
   <style scoped>
   .benefits-container {

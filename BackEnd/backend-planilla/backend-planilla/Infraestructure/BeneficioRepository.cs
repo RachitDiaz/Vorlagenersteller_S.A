@@ -43,7 +43,7 @@ namespace backend_planilla.Infraestructure
                 CommandType = CommandType.StoredProcedure
             };
             comando.Parameters.AddWithValue("@CorreoUsuario", correo);
-
+            Console.WriteLine("si");
             _conexion.Open();
             using (var reader = comando.ExecuteReader())
             {
@@ -85,6 +85,27 @@ namespace backend_planilla.Infraestructure
             _conexion.Close();
 
             return beneficios;
+        }
+
+        public string ObtenerCedulaEmpleadoDesdeCorreo(string correo)
+        {
+            var consulta = @"SELECT e.CedulaEmpleado
+                     FROM Empleado e
+                     JOIN Usuario u ON e.CedulaEmpleado = u.Cedula
+                     WHERE u.Correo = @Correo";
+
+            var comando = new SqlCommand(consulta, _conexion);
+            comando.Parameters.AddWithValue("@Correo", correo);
+
+            _conexion.Open();
+            var reader = comando.ExecuteReader();
+
+            string cedula = null;
+            if (reader.Read())
+                cedula = reader["CedulaEmpleado"].ToString();
+
+            _conexion.Close();
+            return cedula;
         }
     }
 }

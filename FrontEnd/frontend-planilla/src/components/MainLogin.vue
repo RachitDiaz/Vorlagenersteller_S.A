@@ -2,14 +2,14 @@
   <div class="container">
     <div class="tab-selector">
       <button
-        :class="['tab', selectedTab === 'empleado' ? 'active' : '']"
-        @click="selectedTab = 'empleado'"
+        :class="['tab', selectedTab === 'Empleado' ? 'active' : '']"
+        @click="selectedTab = 'Empleado'"
       >
         Empleado
       </button>
       <button
-        :class="['tab', selectedTab === 'dueno' ? 'active' : '']"
-        @click="selectedTab = 'dueno'"
+        :class="['tab', selectedTab === 'Dueno' ? 'active' : '']"
+        @click="selectedTab = 'Dueno'"
       >
         Dueño
       </button>
@@ -23,7 +23,7 @@
             <input
               type="email"
               v-model="correo"
-              :placeholder="selectedTab === 'empleado' ? 'Correo de la empresa' : 'Correo personal'"
+              :placeholder="selectedTab === 'Empleado' ? 'Correo de la empresa' : 'Correo personal'"
               required
             />
           </div>
@@ -43,10 +43,10 @@
           </p>
 
           <a
-            :href="selectedTab === 'dueno' ? '/RegistrarDueno' : '#'"
+            :href="selectedTab === 'Dueno' ? '/RegistrarDueno' : '#'"
             class="link"
           >
-            {{ selectedTab === 'empleado' ? '¿Olvidó su contraseña?' : 'Crear usuario' }}
+            {{ selectedTab === 'Empleado' ? '¿Olvidó su contraseña?' : 'Crear usuario' }}
           </a>
         </form>
       </div>
@@ -58,7 +58,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import {backendURL} from "../config/config.js"
-const selectedTab = ref('empleado')
+const selectedTab = ref('Empleado')
 const correo = ref('')
 const contrasena = ref('')
 const mensajeError = ref('')
@@ -85,11 +85,11 @@ const login = async () => {
     const token = response.data.token
     localStorage.setItem('jwtToken', token)
     localStorage.setItem('rol', selectedTab.value)
-
-    if (selectedTab.value === 'dueno') {
+    console.log(selectedTab.value);
+    if (selectedTab.value === 'Dueno') {
       window.location.href = '/ListaEmpleados'
     } else {
-      window.location.href = '/ListaBeneficios'
+      window.location.href = '/RegistroHoras'
     }
   } catch (error) {
     mensajeError.value = error.response?.data?.mensaje || 'Error en la solicitud'
