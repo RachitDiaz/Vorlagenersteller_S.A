@@ -1,9 +1,9 @@
 <template>
-  <div class="modal fade" id="modalAgregarEmpleado" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" ref="modalRef">
+  <div class="modal fade" id="modalEditarEmpleado" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" ref="modalRef">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalLabel">Registrar nuevo empleado</h5>
+          <h5 class="modal-title" id="modalLabel">Editar datos del empleado</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -15,10 +15,21 @@
                 <span v-if="errores.nombre" class="text-danger">*</span>
               </label>
               <input
+                v-show="idEditable"
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid': errores.nombre }"
-                v-model="form.nombre"
+                v-model="infoEmpleado.empleado.nombre"
+                required
+              />
+              
+              <input
+                v-show="!idEditable"
+                disabled
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': errores.nombre }"
+                v-model="infoEmpleado.empleado.nombre"
                 required
               />
             </div>
@@ -29,10 +40,21 @@
                 <span v-if="errores.apellido1" class="text-danger">*</span>
               </label>
               <input
+                v-show="idEditable"
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid': errores.apellido1 }"
-                v-model="form.apellido1"
+                v-model="infoEmpleado.empleado.apellido1"
+                required
+              />
+
+              <input
+                v-show="!idEditable"
+                disabled
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': errores.apellido1 }"
+                v-model="infoEmpleado.empleado.apellido1"
                 required
               />
             </div>
@@ -43,10 +65,21 @@
                 <span v-if="errores.apellido2" class="text-danger">*</span>
               </label>
               <input
+                v-show="idEditable"
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid': errores.apellido2 }"
-                v-model="form.apellido2"
+                v-model="infoEmpleado.empleado.apellido2"
+                required
+              />
+
+              <input
+                v-show="!idEditable"
+                disabled
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': errores.apellido2 }"
+                v-model="infoEmpleado.empleado.apellido2"
                 required
               />
             </div>
@@ -59,10 +92,9 @@
               <select
                 class="form-select"
                 :class="{ 'is-invalid': errores.genero }"
-                v-model="form.genero"
+                v-model="infoEmpleado.genero"
                 required
               >
-                <option value="">Seleccione una opción</option>
                 <option>Masculino</option>
                 <option>Femenino</option>
                 <option>Otro</option>
@@ -78,23 +110,7 @@
                 type="email"
                 class="form-control"
                 :class="{ 'is-invalid': errores.correo }"
-                v-model="form.usuario.correo"
-                required
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">
-                Contraseña
-                <span v-if="errores.contrasena" class="text-danger">*</span>
-              </label>
-              <input
-                type="password"
-                class="form-control"
-                :class="{ 'is-invalid': errores.contrasena }"
-                v-model="form.usuario.contrasena"
-                minlength="6"
-                maxlength="30"
+                v-model="infoEmpleado.correo"
                 required
               />
             </div>
@@ -105,11 +121,23 @@
                 <span v-if="errores.cedula" class="text-danger">*</span>
               </label>
               <input
+                v-show="idEditable"
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid': errores.cedula }"
                 placeholder="x-xxxx-xxxx"
-                v-model="form.cedula"
+                v-model="infoEmpleado.empleado.cedulaEmpleado"
+                required
+              />
+
+              <input
+                v-show="!idEditable"
+                disabled
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': errores.cedula }"
+                placeholder="x-xxxx-xxxx"
+                v-model="infoEmpleado.empleado.cedulaEmpleado"
                 required
               />
             </div>
@@ -121,7 +149,7 @@
               <input
                 type="text"
                 class="form-control"
-                v-model="form.banco"
+                v-model="infoEmpleado.empleado.banco"
               />
             </div>
 
@@ -132,8 +160,9 @@
               <input
                 type="number"
                 class="form-control"
-                v-model="form.salarioBruto"
+                min="0"
                 step=".01"
+                v-model="infoEmpleado.empleado.salarioBruto"
               />
             </div>
 
@@ -145,10 +174,9 @@
               <select
                 class="form-select"
                 :class="{ 'is-invalid': errores.tipoContrato }"
-                v-model="form.tipoContrato"
+                v-model="infoEmpleado.empleado.tipoContrato"
                 required
               >
-                <option value="">Seleccione una opción</option>
                 <option>Tiempo completo</option>
                 <option>Medio tiempo</option>
                 <option>Servicios profesionales</option>
@@ -160,7 +188,7 @@
             </p>
 
             <div class="d-flex justify-content-end gap-2">
-              <button type="submit" class="btn btn-primary">Registrar</button>
+              <button type="submit" class="btn btn-primary">Aceptar</button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
             </div>
           </form>
@@ -175,41 +203,86 @@
 import { ref, reactive, defineExpose, onMounted } from 'vue'
 import Modal from 'bootstrap/js/dist/modal'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 import { backendURL } from '../../config/config.js'
 
 const emit = defineEmits(['empleado-agregado'])
 const token = localStorage.getItem("jwtToken");
+const router = useRouter();
 const modalRef = ref(null)
 let modalInstance = null
+let cedulaParametro =  ""
+let idEditable = false
+
+const infoEmpleado =  reactive({
+  empleado: {
+  cedulaEmpleado: "",
+  cedulaEmpresa: "",
+  nombre: "",
+  apellido1: "",
+  apellido2: "",
+  banco: "",
+  salarioBruto: 0,
+  tipoContrato: ""
+  },
+  genero: "",
+  correo: "",
+  cedulaEditable: true
+})
+
+
+
 
 onMounted(() => {
   modalInstance = new Modal(modalRef.value)
 })
 
-function show() {
+function show(cedulaBusqueda) {
   modalInstance?.show()
+  
+  try {
+    if (!token) {
+      alert('Tiene que iniciar sesión primero.');
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
+      return;
+    }
+
+    console.log(token);
+    axios.get(`${backendURL}Empleado/GetInfoEmpleado`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      params: {
+        cedulaEmpleado: `${cedulaBusqueda}`
+      }
+    }).then((response) => {
+      infoEmpleado.empleado = response.data.empleado;
+      infoEmpleado.genero = response.data.genero;
+      infoEmpleado.correo = response.data.correo;
+      infoEmpleado.cedulaEditable = response.data.cedulaEditable;
+      cedulaParametro = infoEmpleado.empleado.cedulaEmpleado;
+      infoEmpleado.empleado.cedulaEmpleado = cedulaParametro.substring(0, cedulaParametro.length - 1);
+      idEditable = infoEmpleado.cedulaEditable;
+    });
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('jwtToken');
+      alert('Sesión expirada o token inválido.');
+      router.push('/login');
+    } else {
+      console.error('Error cargando empleados:', error);
+      alert('Error al cargar los empleados desde el servidor.');
+    }
+  }
 }
 
 defineExpose({ show })
 
-const form = reactive({
-  usuario: {
-    correo: '',
-    contrasena: ''
-  },
-  cedula: '',
-  nombre: '',
-  apellido1: '',
-  apellido2: '',
-  genero: '',
-  banco: '',
-  salarioBruto: '',
-  tipoContrato: ''
-})
 
 const errores = reactive({
   correo: false,
-  contrasena: false,
   cedula: false,
   tipoContrato: false,
   nombre: false,
@@ -221,14 +294,12 @@ const errores = reactive({
 const mensajeError = ref('')
 
 function validarCampos() {
-  errores.correo = !form.usuario.correo.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
-  errores.contrasena = form.usuario.contrasena.length < 6 || form.usuario.contrasena.length > 30
-  errores.cedula = !form.cedula.match(/^\d-\d{4}-\d{4}$/)
-  errores.tipoContrato = !form.tipoContrato
-  errores.nombre = !form.nombre
-  errores.apellido1 = !form.apellido1
-  errores.apellido2 = !form.apellido2
-  errores.genero = !form.genero
+  errores.cedula = !infoEmpleado.empleado.cedulaEmpleado.match(/^\d-\d{4}-\d{4}$/)
+  errores.tipoContrato = !infoEmpleado.empleado.tipoContrato
+  errores.nombre = !infoEmpleado.empleado.nombre
+  errores.apellido1 = !infoEmpleado.empleado.apellido1
+  errores.apellido2 = !infoEmpleado.empleado.apellido2
+  errores.genero = !infoEmpleado.genero
 
   return !(errores.correo || errores.contrasena || errores.cedula || errores.tipoContrato || errores.nombre || errores.apellido1 || errores.apellido2 || errores.genero)
 }
@@ -241,44 +312,22 @@ function submitForm() {
     return
   }
 
-  const personaData = {
-    cedula: form.cedula,
-    nombre: form.nombre,
-    apellido1: form.apellido1,
-    apellido2: form.apellido2,
-    genero: form.genero,
-    usuario: {
-      correo: form.usuario.correo,
-      contrasena: form.usuario.contrasena
-    }
-  }
-
-  const empleadoData = {
-    cedulaEmpleado: form.cedula,
-    cedulaEmpresa: '',
-    nombre: form.nombre,
-    apellido1: form.apellido1,
-    apellido2: form.apellido2,
-    banco: form.banco || null,
-    salarioBruto: parseFloat(form.salarioBruto) || null,
-    tipoContrato: form.tipoContrato
-  }
-
-  axios.post(`${backendURL}Empleado/CrearEmpleado`, {
-    persona: personaData,
-    empleado: empleadoData
+  axios.post(`${backendURL}Empleado/EditarInfoEmpleado`, {
+    infoEmpleado: infoEmpleado,
+    cedulaAEditar: cedulaParametro
   }, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
   .then(() => {
-    alert('Empleado registrado con éxito')
+    alert('Empleado editado con éxito')
     modalInstance.hide()
-    emit('empleado-agregado')
+    emit('empleado-editado')
+    window.location.href = "/ListaEmpleados";
   })
   .catch(error => {
-    console.error("Error al guardar empleado:", error);
+    console.error("Error al editar empleado:", error);
   })
 }
 </script>
