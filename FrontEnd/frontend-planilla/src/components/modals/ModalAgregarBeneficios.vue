@@ -210,7 +210,7 @@
                   </div>
                 </div>
 
-                <div class="mb-3" v-if="form.tipo !== 'API' && param.tipoDeDatoParametro">
+                <div class="mb-3" v-if="form.tipo !== 'API' && param.tipoValorParametro">
                   <label class="form-label">* Valor del parámetro</label>
                   <input
                     v-model="param.valorDelParametro"
@@ -220,6 +220,8 @@
                     required
                     @invalid="mensajeParametro"
                     @input="borrarMensaje"
+                    :min=0
+                    :max="param.tipoValorParametro === 'Porcentaje' ? 100 : undefined"
                   />
                 </div>
 
@@ -337,7 +339,7 @@
   }
 
   function textoTemporal(index) {
-    const tipo = form.parametros[index]?.tipoParametro
+    const tipo = form.parametros[index]?.tipoValorParametro
     if (tipo === 'Fijo') return 'Ingrese el monto fijo (ej. 5000)'
     if (tipo === 'Porcentaje') return 'Ingrese el porcentaje (ej. 10)'
     return ''
