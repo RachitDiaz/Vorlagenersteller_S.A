@@ -12,6 +12,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import ListaEmpresas from './components/ListaEmpresas.vue';
 import VerEmpresa from './components/VerEmpresa.vue';
 import VerEmpleado from './components/VerEmpleado.vue';
+import RegistrarHoras from './components/RegistrarHoras.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +26,7 @@ const router = createRouter({
     { path: "/", name: "LandingPage", component: LandingPage, meta: { title: 'Landing Page' } },
     { path: "/BeneficiosEmpleado", name: "BeneficiosEmpleado", component: BeneficiosEmpleado, meta: { title: 'Beneficios' } },
     { path: "/ListaEmpleados", name: "ListaEmpleados", component: ListaEmpleados, meta: { title: 'Administrar Empleados' } },
+    { path: "/RegistroHoras", name: "RegistroHoras", component: RegistrarHoras, meta: { title: 'Registro de Horas' } },
   ],
 });
 

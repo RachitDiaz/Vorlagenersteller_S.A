@@ -1,5 +1,7 @@
 ﻿using backend_planilla.Handlers;
 using backend_planilla.Models;
+using backend_planilla.Domain;
+using backend_planilla.Application;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,18 +11,18 @@ using System.Security.Claims;
 namespace backend_planilla.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class EmpleadoController : ControllerBase
     {
-        private readonly EmpleadoHandler _empleadoHandler;
+        private readonly IEmpleadoQuery _empleadoHandler;
         public EmpleadoController()
         {
-            _empleadoHandler = new EmpleadoHandler();
+            _empleadoHandler = new EmpleadoQuery();
         }
 
         [HttpGet]
-        public List<EmpleadoModel> Get()
+        public List<EmpleadoModel> GetEmpleadosEmpresa()
         {
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
@@ -31,8 +33,16 @@ namespace backend_planilla.Controllers
             return empleados;
         }
 
-        [HttpPost]
+        [HttpGet]
+        public InfoEmpleadoModel? GetInfoEmpleado(string cedulaEmpleado)
+        {
+            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
+            var infoEmpleado = _empleadoHandler.ObtenerInfoEmpleado(cedulaEmpleado);
+            return infoEmpleado;
+        }
+
+        [HttpPost]
         public async Task<ActionResult<bool>> CrearEmpleado(SolicitudAgregarEmpleadoModel paqueteSolicitudAgregarEmpleado)
         {
             try
@@ -55,6 +65,31 @@ namespace backend_planilla.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "Error creando empleado.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<bool>> EditarInfoEmpleado(SolicitudEditarEmpleadoModel SolicitudEditarEmpleado)
+        {
+            try
+            {
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                InfoEmpleadoModel informacionNueva = SolicitudEditarEmpleado.InfoEmpleado;
+                string cedulaEmpleado = SolicitudEditarEmpleado.CedulaAEditar;
+
+                if (informacionNueva == null || cedulaEmpleado == null)
+                {
+                    return BadRequest();
+                }
+
+                EmpleadoHandler empleadoHandler = new EmpleadoHandler();
+                var resultado = empleadoHandler.EditarInfoEmpleado(informacionNueva, cedulaEmpleado);
+                return new JsonResult(resultado);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error editando empleado.");
             }
         }
 
