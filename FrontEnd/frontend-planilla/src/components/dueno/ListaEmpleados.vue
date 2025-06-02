@@ -31,19 +31,21 @@
           <td>{{ empleado.apellido2 }}</td>
           <td>{{ empleado.cedulaEmpleado }}</td>
           <td class="acciones">
-            <button class="edit">Editar</button>
+            <button class="edit" @click="abrirEdicion(empleado.cedulaEmpleado)">Editar</button>
             <button class="delete">Eliminar</button>
           </td>
         </tr>
       </tbody>
     </table>
     <ModalAgregarEmpleado ref="modalAgregarEmpleado" />
+    <ModalEditarEmpleado ref="modalEditarEmpleado" />
   </section>
 </template>
 
 <script>
 import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
+import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue'
 import { useRouter } from 'vue-router'
 import { backendURL } from '../../config/config.js'
 
@@ -52,7 +54,8 @@ const token = localStorage.getItem("jwtToken");
 export default {
   name: "ListaEmpleados",
   components: {
-    ModalAgregarEmpleado
+    ModalAgregarEmpleado,
+    ModalEditarEmpleado
   },
   data() {
     return {
@@ -72,6 +75,9 @@ export default {
     abrirModal() {
       this.$refs.modalAgregarEmpleado.show()
     },
+    abrirEdicion(cedulaEmpleado)  {
+      this.$refs.modalEditarEmpleado.show(cedulaEmpleado)
+    },
     async obtenerEmpleados() {
 
       try {
@@ -84,7 +90,7 @@ export default {
           return;
         }
         console.log(token);
-        const response = await axios.get(`${backendURL}Empleado`, {
+        const response = await axios.get(`${backendURL}Empleado/GetEmpleadosEmpresa`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

@@ -8,6 +8,9 @@ namespace backend_planilla.Infraestructure
         int ObtenerIdUsuario(string correo);
         List<BeneficioModel> ObtenerBeneficios(string cedulaEmpresa);
         int CrearBeneficio(BeneficioModel beneficio, string cedulaEmpresa, int IDUsuario);
-        bool CrearRelacionEmpresaBeneficio(string cedulaEmpresa, int idBeneficio);
+        bool CrearParametros(List<ParametroBeneficioModel> parametros, int IdBeneficio);
+        bool ExisteBeneficio(string cedulaEmpresa, string nombreBeneficio);
+        int CopiarAPI(string nombreBeneficio, string cedulaEmpresa, int idUsuario);
+        bool CopiarParametros(int idBeneficioNuevo, string nombreBeneficioCopiar);
     }
 }

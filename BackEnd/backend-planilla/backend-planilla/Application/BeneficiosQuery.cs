@@ -1,4 +1,5 @@
 ﻿using backend_planilla.Domain;
+using backend_planilla.Exceptions;
 using backend_planilla.Infraestructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
@@ -47,7 +48,7 @@ namespace backend_planilla.Application
 
         public bool CrearBeneficio(BeneficioModel beneficio, string correo)
         {
-            bool exito;
+            bool exito = false;
             if (!EsCorreoValido(correo))
                 throw new FormatException("El formato del correo no es válido.");
             var cedulaEmpresa = _beneficiosRepository.ObtenerCedulaJuridica(correo);
@@ -55,26 +56,47 @@ namespace backend_planilla.Application
             if (string.IsNullOrEmpty(cedulaEmpresa))
                 throw new KeyNotFoundException("No se encontró una cédula jurídica relacionada a este correo");
 
-            var IDUsuario = _beneficiosRepository.ObtenerIdUsuario(correo);
-            if (IDUsuario == -1)
+            var idUsuario = _beneficiosRepository.ObtenerIdUsuario(correo);
+            if (idUsuario == -1)
                 throw new KeyNotFoundException("No se encontró una cédula de persona relacionada a este correo");
             try
             {
-                var resultado = _beneficiosRepository.CrearBeneficio(beneficio, cedulaEmpresa, IDUsuario);
-                if (resultado != -1)
+                if (_beneficiosRepository.ExisteBeneficio(cedulaEmpresa, beneficio.Nombre))
+                    throw new ResourceAlreadyExistsException("La empresa ya tiene este beneficio registrado");
+                if (beneficio.Tipo == "API")
                 {
-                    exito = _beneficiosRepository.CrearRelacionEmpresaBeneficio(cedulaEmpresa, resultado);
-                }
-                else
+                    exito = CopiarBeneficioAPI(beneficio.Nombre, cedulaEmpresa, idUsuario);
+                } else
                 {
-                    throw new Exception("No se pudo ingresar el beneficio");
+                    var resultado = _beneficiosRepository.CrearBeneficio(beneficio, cedulaEmpresa, idUsuario);
+                    if (resultado != -1)
+                    {
+                        exito = _beneficiosRepository.CrearParametros(beneficio.Parametros, resultado);
+                    } else
+                    {
+                        throw new Exception("No se pudo ingresar el beneficio");
+                    }
                 }
+                    
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
             return exito;
+        }
+
+        public bool CopiarBeneficioAPI(string nombreBeneficio, string cedulaEmpresa, int idUsuario)
+        {
+            bool exito = false;
+            try
+            {
+                var idBeneficioNuevo = _beneficiosRepository.CopiarAPI(nombreBeneficio, cedulaEmpresa, idUsuario);
+                exito = _beneficiosRepository.CopiarParametros(idBeneficioNuevo, nombreBeneficio);
+            }
+            catch(Exception ex) { throw; }
+            return exito;
+
         }
     }
 }

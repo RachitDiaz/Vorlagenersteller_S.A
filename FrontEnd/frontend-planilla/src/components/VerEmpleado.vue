@@ -63,7 +63,7 @@ export default {
 
   methods: {
     obtenerEmpleados() {
-        axios.get(`${backendURL}Empleado`).then((response) =>
+        axios.get(`${backendURL}Empleado/Get`).then((response) =>
       { this.Empleados = response.data; });
     },
   },
