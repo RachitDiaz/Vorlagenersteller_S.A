@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
+using backend_planilla.Exceptions;
 
 namespace backend_planilla.API
 {
@@ -29,7 +30,6 @@ namespace backend_planilla.API
             try
             {
                 var beneficios = _beneficiosHandler.GetBeneficios(correo);
-                Console.WriteLine(beneficios);
                 return Ok(beneficios);
             }
             catch (FormatException ex)
@@ -68,10 +68,22 @@ namespace backend_planilla.API
                 var resultado = beneficiosHandler.CrearBeneficio(beneficio, correo);
                 return new JsonResult(resultado);
             }
+            catch (ResourceAlreadyExistsException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (FormatException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error creando beneficio");
+                    "Error creando beneficio. Intente de nuevo");
             }
         }
 
