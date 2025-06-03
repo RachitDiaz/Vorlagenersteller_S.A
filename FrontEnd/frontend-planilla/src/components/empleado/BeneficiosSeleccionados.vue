@@ -44,60 +44,86 @@
         <button class="button-purple" @click="accept">Aceptar</button>
       </div>
     </div>
-  </template>
-  
-<script setup>
-  import { ref, onMounted, computed } from 'vue'
-  import { useRouter } from 'vue-router'
-  
-  
-  const router = useRouter()
-  const max = 3
-  
-  const allBenefits = ref([
-    { id: 1, name: 'Piscina' },
-    { id: 2, name: 'Gimnasio' },
-    { id: 3, name: 'Seguro' },
-  ])
-  
-  const selected = ref([
-    { id: 1, name: 'Piscina' },
-    { id: 2, name: 'Gimnasio' }
-  ])
-  
-  const availableBenefits = computed(() =>
-    allBenefits.value.filter(b => !selected.value.find(s => s.id === b.id))
-  )
+</template>
 
-  onMounted(async () => {
-    const token = localStorage.getItem("jwtToken");
-    
-    if (!token) {
-      alert('Tiene que iniciar sesión primero.');
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
+ <script setup>
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { backendURL } from '../../config/config.js'
+
+const router = useRouter()
+const max = 3
+
+const allBenefits = ref([])
+const selected = ref([])
+
+const availableBenefits = computed(() =>
+  allBenefits.value.filter(b => !selected.value.find(s => s.id === b.id))
+)
+
+onMounted(async () => {
+  const token = localStorage.getItem("jwtToken")
+
+  if (!token) {
+    alert("Tiene que iniciar sesión primero.")
+    setTimeout(() => router.push("/login"), 2000)
+    return
+  }
+
+  const headers = { Authorization: `Bearer ${token}` }
+
+  try {
+    const { data: disponibles } = await axios.get(`${backendURL}BeneficioEmpleado/listar`, { headers })
+    allBenefits.value = disponibles.map(b => ({ id: b.id, name: b.nombre }))
+    const { data: elegidos } = await axios.get(`${backendURL}BeneficioEmpleado/elegidos`, { headers })
+    selected.value = elegidos.map(b => ({ id: b.id, name: b.nombre }))
+  } catch (error) {
+    console.error("Error cargando beneficios:", error)
+    alert("No se pudieron cargar los beneficios.")
+  }
+})
+
+function addBenefit(benefit) {
+  if (selected.value.length < max) {
+    selected.value.push(benefit)
+  }
+}
+
+function removeBenefit(index) {
+  selected.value.splice(index, 1)
+}
+
+function cancel() {
+  console.log('Cancelado')
+}
+
+async function accept() {
+  const token = localStorage.getItem("jwtToken")
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+
+  try {
+    const { data } = await axios.post(
+      `${backendURL}BeneficioEmpleado/actualizar`,
+      { beneficios: selected.value.map(b => b.id) },
+      { headers }
+    )
+
+    if (data.exito) {
+      alert("Beneficios actualizados exitosamente.")
+    } else {
+      alert("Hubo un error al actualizar los beneficios.")
     }
-  })
-  
-  function addBenefit(benefit) {
-    if (selected.value.length < max) {
-      selected.value.push(benefit)
-    }
+  } catch (err) {
+    console.error("Error en solicitud:", err)
+    alert("Error al conectar con el servidor.")
   }
-  
-  function removeBenefit(index) {
-    selected.value.splice(index, 1)
-  }
-  
-  function cancel() {
-    console.log('Cancelado')
-  }
-  
-  function accept() {
-    console.log('Seleccionados:', selected.value)
-  }
+}
 </script>
+
   
   <style scoped>
   .benefits-container {

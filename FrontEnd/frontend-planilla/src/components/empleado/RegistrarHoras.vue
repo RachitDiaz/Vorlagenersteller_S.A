@@ -36,7 +36,7 @@
 
 <script>
 import axios from 'axios'
-import { backendURL } from '../config/config.js'
+import { backendURL } from '../../config/config.js'
 
 export default {
   name: 'RegistroHoras',

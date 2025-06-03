@@ -72,17 +72,17 @@ function submit() {
     ${selectedAmount.value} beneficios por empleado.`);
 }
 
-onMounted(async () => {
-  try {
-    const token = localStorage.getItem('jwtToken');
-
-    if (!token) {
-      alert('Tiene que iniciar sesión primero.');
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
-      return;
-    }
+  onMounted(async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      console.log('Token:', token);
+      if (!token) {
+        alert('Tiene que iniciar sesión primero.');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+        return;
+      }
 
     const response = await axios.get(`${backendURL}Beneficios`, {
       headers: {

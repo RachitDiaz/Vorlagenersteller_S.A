@@ -55,7 +55,7 @@ namespace backend_planilla.Controllers
                 if (persona == null || empleado == null)
                 {
                     return BadRequest();
-                }
+                }   
 
                 EmpleadoHandler empleadoHandler = new EmpleadoHandler();
                 var resultado = empleadoHandler.CrearEmpleado(persona, empleado, correo);
