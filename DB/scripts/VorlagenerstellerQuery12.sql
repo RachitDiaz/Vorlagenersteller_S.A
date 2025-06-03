@@ -8,8 +8,11 @@ CREATE TABLE EligeBeneficio (
 );
 
 
-CREATE OR ALTER PROCEDURE ObtenerBeneficiosEmpleado
+CREATE OR ALTER FUNCTION dbo.FnObtenerCedulaEmpresaDesdeCorreo
+(
     @CorreoUsuario CHAR(60)
+)
+RETURNS CHAR(12)
 AS
 BEGIN
     DECLARE @CedulaEmpleado CHAR(12);
@@ -19,29 +22,47 @@ BEGIN
     FROM Usuario
     WHERE RTRIM(Correo) = RTRIM(@CorreoUsuario);
 
-    IF @CedulaEmpleado IS NULL
-    BEGIN
-        RAISERROR('No se encontró la cédula del usuario.', 16, 1);
-        RETURN;
-    END
-
     SELECT TOP 1 @CedulaEmpresa = CedulaEmpresa
     FROM Empleado
-    WHERE RTRIM(CedulaEmpleado) = RTRIM(@CedulaEmpleado);
+    WHERE CedulaEmpleado = @CedulaEmpleado;
 
-    IF @CedulaEmpresa IS NULL
-    BEGIN
-        RAISERROR('No se encontró la empresa del empleado.', 16, 1);
-        RETURN;
-    END
-
-    SELECT B.ID, B.Nombre
-    FROM Beneficio B
-    WHERE RTRIM(B.CedulaEmpresa) = RTRIM(@CedulaEmpresa);
+    RETURN @CedulaEmpresa;
 END;
 GO
 
--- maybe this is not needed, but it is a good practice to have the procedure in the same file
+CREATE OR ALTER FUNCTION dbo.FnObtenerBeneficiosParaEmpleado
+(
+    @CorreoUsuario CHAR(60)
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT B.ID, B.Nombre
+    FROM Beneficio B
+    WHERE RTRIM(B.CedulaEmpresa) = RTRIM(dbo.FnObtenerCedulaEmpresaDesdeCorreo(@CorreoUsuario))
+);
+GO
+
+CREATE OR ALTER FUNCTION dbo.FnObtenerBeneficiosSeleccionados
+(
+    @CorreoUsuario CHAR(60)
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT B.ID, B.Nombre
+    FROM EligeBeneficio EB
+    JOIN Beneficio B ON EB.IDBeneficio = B.ID
+    WHERE EB.CedulaEmpleado = (
+        SELECT TOP 1 Cedula
+        FROM Usuario
+        WHERE RTRIM(Correo) = RTRIM(@CorreoUsuario)
+    )
+);
+GO
+
 CREATE PROCEDURE ActualizarBeneficiosEmpleado
     @CedulaEmpleado CHAR(12),
     @ListaBeneficios NVARCHAR(MAX)
@@ -59,35 +80,3 @@ BEGIN
     FROM OPENJSON(@json);
 END;
 GO
-
-SELECT * FROM Empleado
-SELECT *FROM Persona
-SELECT * FROM Dueno
-SELECT * FROM Usuario
-SELECT * FROM Beneficio
-
-UPDATE Beneficio
-SET CedulaEmpresa = '3-234-231233'
-WHERE ID IN (1005, 1006, 1007);
-
-DECLARE @IDPiscina INT, @IDGimnasio INT, @IDSeguro INT;
-
-SELECT @IDPiscina = ID FROM Beneficio WHERE Nombre = 'Piscina';
-SELECT @IDGimnasio = ID FROM Beneficio WHERE Nombre = 'Gimnasio';
-SELECT @IDSeguro = ID FROM Beneficio WHERE Nombre = 'Seguro';
-
-CREATE PROCEDURE ObtenerBeneficiosSeleccionados
-    @CorreoUsuario CHAR(60)
-AS
-BEGIN
-    DECLARE @CedulaEmpleado CHAR(12)
-
-    SELECT TOP 1 @CedulaEmpleado = Cedula
-    FROM Usuario
-    WHERE Correo = @CorreoUsuario;
-
-    SELECT B.ID, B.Nombre
-    FROM EligeBeneficio EB
-    JOIN Beneficio B ON EB.IDBeneficio = B.ID
-    WHERE EB.CedulaEmpleado = @CedulaEmpleado;
-END;

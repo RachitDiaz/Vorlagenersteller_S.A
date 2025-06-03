@@ -23,24 +23,50 @@ namespace backend_planilla.Infraestructure
 
         public string ObtenerCedulaJuridica(string correo)
         {
-            var consulta = @"SELECT e.CedulaJuridica
-                             FROM Usuario u
-                             JOIN Dueno d ON u.Cedula = d.Cedula
-                             JOIN Empresa e ON d.Cedula = e.CedulaDueno
-                             WHERE u.Correo = @Correo;";
-            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
-
-            comandoParaConsulta.Parameters.AddWithValue("@Correo", correo);
-
-            _conexion.Open();
-            var reader = comandoParaConsulta.ExecuteReader();
             string cedulaEmpresa = "";
 
-            if (reader.Read())
+            var consultaDueño = @"
+        SELECT e.CedulaJuridica
+        FROM Usuario u
+        JOIN Dueno d ON u.Cedula = d.Cedula
+        JOIN Empresa e ON d.Cedula = e.CedulaDueno
+        WHERE u.Correo = @Correo;";
+
+            var consultaEmpleado = @"
+        SELECT e.CedulaEmpresa
+        FROM Usuario u
+        JOIN Empleado e ON u.Cedula = e.CedulaEmpleado
+        WHERE u.Correo = @Correo;";
+
+            using (var comando = new SqlCommand(consultaDueño, _conexion))
             {
-                cedulaEmpresa = reader["CedulaJuridica"].ToString();
+                comando.Parameters.AddWithValue("@Correo", correo);
+                _conexion.Open();
+                var reader = comando.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    cedulaEmpresa = reader["CedulaJuridica"].ToString();
+                }
+                _conexion.Close();
             }
-            _conexion.Close();
+
+            if (string.IsNullOrEmpty(cedulaEmpresa))
+            {
+                using (var comando = new SqlCommand(consultaEmpleado, _conexion))
+                {
+                    comando.Parameters.AddWithValue("@Correo", correo);
+                    _conexion.Open();
+                    var reader = comando.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        cedulaEmpresa = reader["CedulaEmpresa"].ToString();
+                    }
+                    _conexion.Close();
+                }
+            }
+
             return cedulaEmpresa;
         }
 

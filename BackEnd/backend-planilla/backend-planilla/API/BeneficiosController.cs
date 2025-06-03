@@ -25,8 +25,6 @@ namespace backend_planilla.API
         {
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            Console.WriteLine($"Texto de prueba para ver si sirve el token\n" +
-                $" Correo: {correo} acceso en GET /api/beneficios");
             try
             {
                 var beneficios = _beneficiosHandler.GetBeneficios(correo);
@@ -56,9 +54,6 @@ namespace backend_planilla.API
             try
             {
                 var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-                Console.WriteLine($"Texto de prueba para ver si sirve el token\n " +
-                    $" Correo: {correo} acceso en POST /api/beneficios");
                 if (beneficio == null)
                 {
                     return BadRequest("No se envió ningun beneficio para agregar");

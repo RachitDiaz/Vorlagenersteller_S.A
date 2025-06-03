@@ -64,7 +64,6 @@ const availableBenefits = computed(() =>
 
 onMounted(async () => {
   const token = localStorage.getItem("jwtToken")
-  console.log("Token JWT:", token)
 
   if (!token) {
     alert("Tiene que iniciar sesión primero.")
@@ -75,14 +74,10 @@ onMounted(async () => {
   const headers = { Authorization: `Bearer ${token}` }
 
   try {
-    // Lista de beneficios disponibles (para la empresa del dueño)
     const { data: disponibles } = await axios.get(`${backendURL}BeneficioEmpleado/listar`, { headers })
     allBenefits.value = disponibles.map(b => ({ id: b.id, name: b.nombre }))
-    console.log("Beneficios disponibles:", allBenefits.value)
-    // Beneficios seleccionados por el empleado (identificado por correo del token)
     const { data: elegidos } = await axios.get(`${backendURL}BeneficioEmpleado/elegidos`, { headers })
     selected.value = elegidos.map(b => ({ id: b.id, name: b.nombre }))
-    console.log("Beneficios seleccionados:", selected.value)
   } catch (error) {
     console.error("Error cargando beneficios:", error)
     alert("No se pudieron cargar los beneficios.")

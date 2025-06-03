@@ -39,6 +39,7 @@ namespace backend_planilla.Application
                 throw new FormatException("El formato de la cédula no es el correcto");
 
             var cedulaEmpresa = _beneficiosRepository.ObtenerCedulaJuridica(correo);
+            Console.WriteLine(cedulaEmpresa);
             if (string.IsNullOrEmpty(cedulaEmpresa))
                 throw new KeyNotFoundException("No se encontró una cédula jurídica relacionada a este correo");
 

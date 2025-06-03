@@ -20,7 +20,6 @@ namespace backend_planilla.Infraestructure
         public bool ActualizarBeneficiosEmpleado(string cedulaEmpleado, List<int> beneficios)
         {
             string beneficiosJson = JsonSerializer.Serialize(beneficios.Select(id => new { id }));
-
             string query = "EXEC ActualizarBeneficiosEmpleado @CedulaEmpleado, @ListaBeneficios";
             SqlCommand command = new SqlCommand(query, _conexion);
 
@@ -37,13 +36,10 @@ namespace backend_planilla.Infraestructure
         public List<BeneficioSimpleModel> ObtenerBeneficiosParaEmpleado(string correo)
         {
             var beneficios = new List<BeneficioSimpleModel>();
-
-            var comando = new SqlCommand("ObtenerBeneficiosEmpleado", _conexion)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            var query = "SELECT ID, Nombre FROM dbo.FnObtenerBeneficiosParaEmpleado(@CorreoUsuario)";
+            var comando = new SqlCommand(query, _conexion);
             comando.Parameters.AddWithValue("@CorreoUsuario", correo);
-            Console.WriteLine("si");
+
             _conexion.Open();
             using (var reader = comando.ExecuteReader())
             {
@@ -64,10 +60,8 @@ namespace backend_planilla.Infraestructure
         public List<BeneficioSimpleModel> ObtenerBeneficiosSeleccionadosPorEmpleado(string correo)
         {
             var beneficios = new List<BeneficioSimpleModel>();
-            var comando = new SqlCommand("ObtenerBeneficiosSeleccionados", _conexion)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            var query = "SELECT ID, Nombre FROM dbo.FnObtenerBeneficiosSeleccionados(@CorreoUsuario)";
+            var comando = new SqlCommand(query, _conexion);
             comando.Parameters.AddWithValue("@CorreoUsuario", correo);
 
             _conexion.Open();
@@ -90,9 +84,9 @@ namespace backend_planilla.Infraestructure
         public string ObtenerCedulaEmpleadoDesdeCorreo(string correo)
         {
             var consulta = @"SELECT e.CedulaEmpleado
-                     FROM Empleado e
-                     JOIN Usuario u ON e.CedulaEmpleado = u.Cedula
-                     WHERE u.Correo = @Correo";
+                             FROM Empleado e
+                             JOIN Usuario u ON e.CedulaEmpleado = u.Cedula
+                             WHERE u.Correo = @Correo";
 
             var comando = new SqlCommand(consulta, _conexion);
             comando.Parameters.AddWithValue("@Correo", correo);

@@ -43,11 +43,8 @@ namespace backend_planilla.Controllers
         {
             try
             {
-                Console.WriteLine("1");
                 var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-                Console.WriteLine("2");
                 Console.WriteLine(correo);
-                Console.WriteLine("3");
                 if (string.IsNullOrWhiteSpace(correo))
                     return Unauthorized("Token no válido o correo no encontrado.");
 
