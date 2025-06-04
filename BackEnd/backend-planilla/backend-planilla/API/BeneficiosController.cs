@@ -47,9 +47,8 @@ namespace backend_planilla.API
             }
         }
 
-        [HttpPost]
-
-        public async Task<ActionResult<bool>> CrearBeneficio(BeneficioModel beneficio)
+        [HttpPost("Agregar")]
+        public async Task<ActionResult<bool>> CrearBeneficio([FromBody] BeneficioModel beneficio)
         {
             try
             {
@@ -74,6 +73,41 @@ namespace backend_planilla.API
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error creando beneficio. Intente de nuevo");
+            }
+        }
+
+        [HttpPost("Modificar")]
+        public async Task<ActionResult<bool>> ModificarBeneficio([FromBody] ModificarBeneficioModel Beneficios)
+        {
+            try
+            {
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                BeneficiosQuery beneficiosHandler = new();
+                var resultado = beneficiosHandler.ModificarBeneficio(Beneficios.modificado, Beneficios.original, correo);
+                return new JsonResult(resultado);
+            }
+            catch (ResourceAlreadyExistsException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (FormatException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Conflict(ex.Message);
             }
             catch (Exception)
             {
