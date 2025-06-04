@@ -16,9 +16,21 @@ namespace backend_planilla.Controllers
     public class EmpleadoController : ControllerBase
     {
         private readonly IEmpleadoQuery _empleadoHandler;
-        public EmpleadoController()
+        private readonly IGetDeduccionBeneficiosQuery _query;
+        public EmpleadoController(IGetDeduccionBeneficiosQuery query)
         {
             _empleadoHandler = new EmpleadoQuery();
+            _query = query;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDeducciones([FromQuery] string cedula)
+        {
+            if (string.IsNullOrWhiteSpace(cedula))
+                return BadRequest("Debe indicar una cédula.");
+
+            var resultado = await _query.ExecuteAsync(cedula);
+            return Ok(resultado);
         }
 
         [HttpGet]
@@ -57,7 +69,7 @@ namespace backend_planilla.Controllers
                     return BadRequest();
                 }   
 
-                EmpleadoHandler empleadoHandler = new EmpleadoHandler();
+                EmpleadoRepository empleadoHandler = new EmpleadoRepository();
                 var resultado = empleadoHandler.CrearEmpleado(persona, empleado, correo);
                 return new JsonResult(resultado);
             }
@@ -82,7 +94,7 @@ namespace backend_planilla.Controllers
                     return BadRequest();
                 }
 
-                EmpleadoHandler empleadoHandler = new EmpleadoHandler();
+                EmpleadoRepository empleadoHandler = new EmpleadoRepository();
                 var resultado = empleadoHandler.EditarInfoEmpleado(informacionNueva, cedulaEmpleado);
                 return new JsonResult(resultado);
             }

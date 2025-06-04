@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using backend_planilla.Infraestructure;
+using System.Data.Common;
 namespace backend_planilla.Handlers
 {
-    public class EmpleadoHandler : IEmpleadoRepository
+    public class EmpleadoRepository : IEmpleadoRepository
     {
         private SqlConnection _conexion;
         private string _rutaConexion;
         private readonly PasswordHasher<UsuarioModel> _passwordHasher = new PasswordHasher<UsuarioModel>();
-        public EmpleadoHandler()
+        public EmpleadoRepository()
         {
             var builder = WebApplication.CreateBuilder();
             _rutaConexion =
@@ -223,7 +224,7 @@ namespace backend_planilla.Handlers
                     Correo = lector["Correo"].ToString(),
                     CedulaEditable = true
                 };
-                
+
             }
             _conexion.Close();
 
@@ -264,5 +265,55 @@ namespace backend_planilla.Handlers
             return exito;
         }
 
+    
+
+    public async Task<decimal> ObtenerSalarioBruto(string cedulaEmpleado)
+        {
+            var query = "SELECT SalarioBruto FROM Empleado WHERE CedulaEmpleado = @Cedula";
+            using var cmd = new SqlCommand(query, _conexion);
+            cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
+            _conexion.Open();
+            var result = await cmd.ExecuteScalarAsync();
+            return Convert.ToDecimal(result);
+        }
+
+        public async Task<List<DeduccionBeneficioModel>> ObtenerBeneficiosEmpleado(string cedulaEmpleado)
+        {
+            var beneficios = new List<DeduccionBeneficioModel>();
+            var query = @"SELECT B.ID, B.Nombre, PB.TipoValorParametro AS Tipo, PB.ValorDelParametro AS Monto
+                        FROM EligeBeneficio EB
+                        JOIN Beneficio B ON EB.IDBeneficio = B.ID
+                        JOIN ParametrosBeneficio PB ON PB.IDBeneficio = B.ID
+                        WHERE EB.CedulaEmpleado = @Cedula
+                        AND PB.TipoValorParametro IS NOT NULL";
+
+            using var cmd = new SqlCommand(query, _conexion);
+            cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
+
+            try
+            {
+                if (_conexion.State != ConnectionState.Open)
+                    _conexion.Open();
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    beneficios.Add(new DeduccionBeneficioModel
+                    {
+                        IDBeneficio = reader.GetInt32(0),
+                        Nombre = reader.GetString(1),
+                        Tipo = reader.GetString(2),
+                        Monto = decimal.TryParse(reader["Monto"].ToString(), out var val) ? val : 0
+                    });
+                }
+            }
+            finally
+            {
+                if (_conexion.State != ConnectionState.Closed)
+                    _conexion.Close();
+            }
+
+            return beneficios;
+        }
     }
 }
