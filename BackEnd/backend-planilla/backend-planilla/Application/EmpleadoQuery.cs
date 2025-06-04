@@ -9,7 +9,7 @@ namespace backend_planilla.Application
     {
         private readonly IEmpleadoRepository _empleadoRepository;
         public EmpleadoQuery() {
-            _empleadoRepository = new EmpleadoHandler();
+            _empleadoRepository = new EmpleadoRepository();
         }
         public bool CrearEmpleado(PersonaModel persona, EmpleadoModel empleado, string correo)
         {
