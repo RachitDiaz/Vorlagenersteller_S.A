@@ -29,44 +29,12 @@
     </table>
   </div>
 </template>
-
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { backendURL } from '../../config/config.js'
 
-import { useRouter } from 'vue-router'  
-
-const planillas = ref([
-  {
-    periodo: 'Enero 2025',
-    totalBruto: 10000000,
-    deducciones: {
-      obligatorias: 700000,
-      beneficios: 300000,
-    },
-    totalNeto: 9000000,
-  },
-  {
-    periodo: 'Febrero 2025',
-    totalBruto: 0,
-    deducciones: {
-      obligatorias: 0,
-      beneficios: 0,
-    },
-    totalNeto: 0,
-  },
-])
-
-function agregarPlanilla() {
-  planillas.value.push({
-    periodo: 'Nuevo Periodo',
-    totalBruto: 0,
-    deducciones: {
-      obligatorias: 0,
-      beneficios: 0,
-    },
-    totalNeto: 0,
-  })
-}
+const planillas = ref([])
 
 function formatoMoneda(valor) {
   return new Intl.NumberFormat('es-CR', {
@@ -75,6 +43,59 @@ function formatoMoneda(valor) {
     minimumFractionDigits: 0,
   }).format(valor)
 }
+
+const token = localStorage.getItem("jwtToken")
+
+async function cargarPlanilla() {
+  try {
+    const empleadosResponse = await axios.get(`${backendURL}Empleado/GetEmpleadosEmpresa` , {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    const empleados = empleadosResponse.data
+
+    const datosPlanilla = await Promise.all(
+      empleados.map(async (empleado) => {
+        const salarioBruto = empleado.salarioBruto
+
+        const [beneficiosRes, obligatoriasRes] = await Promise.all([
+          axios.get(`${backendURL}Empleado/GetDeducciones?cedula=${empleado.cedulaEmpleado}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          axios.get(`${backendURL}DeduccionesPlanilla/${salarioBruto}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ])
+
+        const beneficios = beneficiosRes.data.total
+        const obligatorias = obligatoriasRes.data.total
+
+        const totalNeto = salarioBruto - beneficios - obligatorias
+
+        return {
+          periodo: 'Junio 2025',
+          totalBruto: salarioBruto,
+          deducciones: {
+            obligatorias,
+            beneficios
+          },
+          totalNeto
+        }
+      })
+    )
+
+    planillas.value = datosPlanilla
+  } catch (error) {
+    console.error("Error al cargar planilla:", error)
+  }
+}
+
+
+onMounted(() => {
+  cargarPlanilla()
+})
 </script>
 
 <style scoped>
