@@ -6,7 +6,7 @@ CREATE TABLE EligeBeneficio (
 	IDBeneficio int FOREIGN KEY REFERENCES Beneficio(ID) NOT NULL,
 	PRIMARY KEY (IDBeneficio, CedulaEmpleado)
 );
-
+GO
 
 CREATE OR ALTER FUNCTION dbo.FnObtenerCedulaEmpresaDesdeCorreo
 (
