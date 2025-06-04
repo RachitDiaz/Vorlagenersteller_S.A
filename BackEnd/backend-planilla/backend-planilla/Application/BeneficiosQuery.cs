@@ -15,13 +15,12 @@ namespace backend_planilla.Application
         {
             _beneficiosRepository = new BeneficiosRepository();
         }
-
-
-        public bool FormatoCedulaValido(string correo)
+        public BeneficiosQuery(IBeneficiosRepository beneficiosRepository)
         {
-            return Regex.IsMatch(correo, @"^\d-\d{3}-\d{6}$");
+            _beneficiosRepository = beneficiosRepository;
         }
-        public bool EsCorreoValido(string correo)
+
+        private bool EsCorreoValido(string correo)
         {
             try
             {
@@ -36,8 +35,8 @@ namespace backend_planilla.Application
 
         public List<BeneficioModel> GetBeneficios(string correo)
         {
-            if (FormatoCedulaValido(correo))
-                throw new FormatException("El formato de la cédula no es el correcto");
+            if (!EsCorreoValido(correo))
+                throw new FormatException("El formato del correo no es válido");
 
             var cedulaEmpresa = _beneficiosRepository.ObtenerCedulaJuridica(correo);
             Console.WriteLine(cedulaEmpresa);
