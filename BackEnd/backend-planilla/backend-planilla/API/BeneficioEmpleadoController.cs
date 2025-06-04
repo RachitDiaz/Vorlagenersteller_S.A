@@ -16,7 +16,7 @@ namespace backend_planilla.Controllers
             _beneficioQuery = new BeneficioQuery();
         }
 
-        // POST para actualizar beneficios elegidos por el empleado
+
         [HttpPost("actualizar")]
         public IActionResult ActualizarBeneficios([FromBody] Dictionary<string, List<int>> body)
         {
@@ -37,7 +37,6 @@ namespace backend_planilla.Controllers
         }
 
 
-        //  GET para obtener la lista de beneficios disponibles para la empresa del dueño
         [HttpGet("listar")]
         public IActionResult ObtenerBeneficiosDisponibles()
         {
@@ -58,7 +57,7 @@ namespace backend_planilla.Controllers
             }
         }
 
-        //  GET para obtener la lista de beneficios que ya tiene seleccionados el empleado
+
         [HttpGet("elegidos")]
         public IActionResult ObtenerBeneficiosSeleccionados()
         {
