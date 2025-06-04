@@ -9,14 +9,22 @@
         </p>
 
         <div class="benefit-list">
-          <div v-for="beneficio in beneficiosEmpresa"
-            :key="beneficio.id" class="benefit-item">
+          <button
+            v-for="beneficio in beneficiosEmpresa"
+            :key="beneficio.id"
+            class="benefit-item"
+            :disabled="beneficio.tipo === 'API'"
+            @click="abrirModalModificar(beneficio)"
+          >
             <div class="avatar">
               {{ beneficio.nombre.charAt(0) }}
             </div>
             <span class="benefit-name">{{ beneficio.nombre }}</span>
-          </div>
+          </button>
         </div>
+
+        <ModalModificarBeneficio ref="modalModificar"
+          :beneficio="beneficioSeleccionado"/>
 
         <button class="add-benefit "
           @click="showModal">Añadir beneficios</button>
@@ -46,6 +54,7 @@ import {ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
 import axios from 'axios';
 import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue';
+import ModalModificarBeneficio from '../modals/ModalModificarBeneficio.vue';
 import {backendURL} from '../../config/config.js';
 
 const router = useRouter();
@@ -56,6 +65,17 @@ const selectedAmount = ref(0);
 const beneficiosEmpresa = ref([]);
 const beneficiosAPI = ref([]);
 const modalRef = ref(null);
+const modalModificar = ref(null);
+const beneficioSeleccionado = ref(null);
+
+/**
+ * Mostrar modal para modificar beneficio
+ * @param {Beneficio} beneficio seleccionado para modificar
+ */
+function abrirModalModificar(beneficio) {
+  beneficioSeleccionado.value = { ...beneficio };
+  modalModificar.value?.show(beneficio);
+}
 
 /**
  * Mostrar el formulario para agregar beneficios
@@ -217,6 +237,30 @@ function submit() {
     border-radius: 1rem;
     box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.2);
     cursor: pointer;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    padding: 0.6rem 1rem;
+    background-color: white;
+    border: 1px solid #d1c4e9;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  .benefit-item:hover:not(:disabled) {
+    background-color: #ede7f6;
+    box-shadow: 0 4px 8px rgba(122, 85, 170, 0.1);
+  }
+
+  .benefit-item:disabled {
+    cursor: not-allowed;
+    opacity: 1;
   }
   </style>
 

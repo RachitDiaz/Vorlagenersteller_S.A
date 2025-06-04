@@ -24,36 +24,22 @@ namespace backend_planilla.Infraestructure
         public string ObtenerCedulaJuridica(string correo)
         {
             string cedulaEmpresa = "";
-
-            var consultaDueño = @"
-        SELECT e.CedulaJuridica
-        FROM Usuario u
-        JOIN Dueno d ON u.Cedula = d.Cedula
-        JOIN Empresa e ON d.Cedula = e.CedulaDueno
-        WHERE u.Correo = @Correo;";
-
-            var consultaEmpleado = @"
-        SELECT e.CedulaEmpresa
-        FROM Usuario u
-        JOIN Empleado e ON u.Cedula = e.CedulaEmpleado
-        WHERE u.Correo = @Correo;";
-
-            using (var comando = new SqlCommand(consultaDueño, _conexion))
+            try
             {
-                comando.Parameters.AddWithValue("@Correo", correo);
-                _conexion.Open();
-                var reader = comando.ExecuteReader();
+                var consultaDueño = @"
+                                      SELECT e.CedulaJuridica
+                                      FROM Usuario u
+                                      JOIN Dueno d ON u.Cedula = d.Cedula
+                                      JOIN Empresa e ON d.Cedula = e.CedulaDueno
+                                      WHERE u.Correo = @Correo;";
 
-                if (reader.Read())
-                {
-                    cedulaEmpresa = reader["CedulaJuridica"].ToString();
-                }
-                _conexion.Close();
-            }
+                var consultaEmpleado = @"
+                                         SELECT e.CedulaEmpresa
+                                         FROM Usuario u
+                                         JOIN Empleado e ON u.Cedula = e.CedulaEmpleado
+                                         WHERE u.Correo = @Correo;";
 
-            if (string.IsNullOrEmpty(cedulaEmpresa))
-            {
-                using (var comando = new SqlCommand(consultaEmpleado, _conexion))
+                using (var comando = new SqlCommand(consultaDueño, _conexion))
                 {
                     comando.Parameters.AddWithValue("@Correo", correo);
                     _conexion.Open();
@@ -61,32 +47,69 @@ namespace backend_planilla.Infraestructure
 
                     if (reader.Read())
                     {
-                        cedulaEmpresa = reader["CedulaEmpresa"].ToString();
+                        cedulaEmpresa = reader["CedulaJuridica"].ToString();
                     }
+                }
+
+                if (string.IsNullOrEmpty(cedulaEmpresa))
+                {
+                    using (var comando = new SqlCommand(consultaEmpleado, _conexion))
+                    {
+                        comando.Parameters.AddWithValue("@Correo", correo);
+                        _conexion.Open();
+                        var reader = comando.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            cedulaEmpresa = reader["CedulaEmpresa"].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
                     _conexion.Close();
                 }
             }
-
             return cedulaEmpresa;
         }
 
         public int ObtenerIdUsuario(string correo)
         {
-            var consulta = @"SELECT ID FROM Usuario
-                             WHERE Correo = @CorreoUsuario;";
-            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
-
-            comandoParaConsulta.Parameters.AddWithValue("@CorreoUsuario", correo);
-
-            _conexion.Open();
-            var reader = comandoParaConsulta.ExecuteReader();
             int IDUsuario = -1;
-
-            if (reader.Read())
+            try
             {
-                IDUsuario = Convert.ToInt32(reader["ID"]);
+                var consulta = @"SELECT ID FROM Usuario
+                                 WHERE Correo = @CorreoUsuario;";
+                var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+
+                comandoParaConsulta.Parameters.AddWithValue("@CorreoUsuario", correo);
+
+                _conexion.Open();
+                var reader = comandoParaConsulta.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    IDUsuario = Convert.ToInt32(reader["ID"]);
+                }
             }
-            _conexion.Close();
+            catch(Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
             return IDUsuario;
         }
 
@@ -112,25 +135,80 @@ namespace backend_planilla.Infraestructure
 	                            OR
 	                            (CedulaEmpresa IS NULL AND Tipo = 'API');";
             DataTable tablaResultado = CrearTablaConsulta(consulta, cedulaEmpresa);
-            foreach (DataRow columna in tablaResultado.Rows)
+            try
             {
-                
-                beneficios.Add(
-                new BeneficioModel
+                foreach (DataRow columna in tablaResultado.Rows)
                 {
-                    Nombre = Convert.ToString(columna["Nombre"]),
-                    Tipo = Convert.ToString(columna["Tipo"]),
-                    Descripcion = Convert.ToString(columna["Descripcion"]),
-                    CedulaEmpresa = Convert.ToString(columna["CedulaEmpresa"]),
-                    MesesMinimos = Convert.ToInt32(columna["MesesMinimos"]),
-                    CantidadParametros = Convert.ToInt32(columna["CantidadParametros"])
-                });
+                    int Id = Convert.ToInt32(columna["ID"]);
+                    beneficios.Add(
+                    new BeneficioModel
+                    {
+                        Id = Id,
+                        Nombre = Convert.ToString(columna["Nombre"]),
+                        Tipo = Convert.ToString(columna["Tipo"]),
+                        Descripcion = Convert.ToString(columna["Descripcion"]),
+                        CedulaEmpresa = Convert.ToString(columna["CedulaEmpresa"]),
+                        MesesMinimos = Convert.ToInt32(columna["MesesMinimos"]),
+                        CantidadParametros = Convert.ToInt32(columna["CantidadParametros"]),
+                        Parametros = ObtenerParametrosBeneficio(Id)
+                    });
+                }
             }
-            #pragma warning restore IDE0028
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine($"Error SQL: {sqlEx.Message}");
+                throw new Exception(sqlEx.Message);
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+#pragma warning restore IDE0028
             return beneficios;
         }
 
-        public int CrearBeneficio(BeneficioModel beneficio, string cedulaEmpresa, int IDUsuario)
+        public List<ParametroBeneficioModel> ObtenerParametrosBeneficio(int idBeneficio)
+        {
+            var parametros = new List<ParametroBeneficioModel>();
+            try
+            {
+                var query = @"SELECT * FROM ParametrosBeneficio WHERE IDBeneficio = @IDBeneficio";
+                using var command = new SqlCommand(query, _conexion);
+                command.Parameters.AddWithValue("@IDBeneficio", idBeneficio);
+
+                _conexion.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    parametros.Add(new ParametroBeneficioModel
+                    {
+                        IDParametro = Convert.ToInt32(reader["IDParametro"]),
+                        IDBeneficio = Convert.ToInt32(reader["IDBeneficio"]),
+                        Nombre = Convert.ToString(reader["Nombre"]),
+                        TipoDeDatoParametro = Convert.ToString(reader["TipoDeDatoParametro"]),
+                        TipoValorParametro = Convert.ToString(reader["TipoValorParametro"]),
+                        ValorDelParametro = Convert.ToInt32(reader["ValorDelParametro"])
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+            return parametros;
+        }
+
+        public int CrearBeneficio(BeneficioModel beneficio, string cedulaEmpresa, int idUsuario)
         {
             int idBeneficio = -1;
             var consulta = @"INSERT INTO [dbo].[Beneficio] ([Nombre], [Tipo] ,[Descripcion],
@@ -150,8 +228,8 @@ namespace backend_planilla.Infraestructure
                     comandoParaConsulta.Parameters.AddWithValue("@Descripcion", beneficio.Descripcion);
                     comandoParaConsulta.Parameters.AddWithValue("@MesesMinimos", beneficio.MesesMinimos);
                     comandoParaConsulta.Parameters.AddWithValue("@CantidadParametros", beneficio.CantidadParametros);
-                    comandoParaConsulta.Parameters.AddWithValue("@UsuarioCrea", IDUsuario);
-                    comandoParaConsulta.Parameters.AddWithValue("@UsuarioModifica", IDUsuario);
+                    comandoParaConsulta.Parameters.AddWithValue("@UsuarioCrea", idUsuario);
+                    comandoParaConsulta.Parameters.AddWithValue("@UsuarioModifica", idUsuario);
                     comandoParaConsulta.Parameters.AddWithValue("@CedulaEmpresa", cedulaEmpresa);
 
                     _conexion.Open();
@@ -191,7 +269,7 @@ namespace backend_planilla.Infraestructure
             return idBeneficio;
         }
 
-        public bool CrearParametros(List<ParametroBeneficioModel> parametros, int IdBeneficio)
+        public bool CrearParametros(List<ParametroBeneficioModel> parametros, int idBeneficio)
         {
             bool exito = false;
             try
@@ -204,7 +282,7 @@ namespace backend_planilla.Infraestructure
                 {
                     using (var comandoParaConsulta = new SqlCommand(query, _conexion))
                     {
-                        comandoParaConsulta.Parameters.AddWithValue("@IDBeneficio", IdBeneficio);
+                        comandoParaConsulta.Parameters.AddWithValue("@IDBeneficio", idBeneficio);
                         comandoParaConsulta.Parameters.AddWithValue("@Nombre", p.Nombre);
                         comandoParaConsulta.Parameters.AddWithValue("@TipoDeDatoParametro", p.TipoDeDatoParametro);
                         comandoParaConsulta.Parameters.AddWithValue("@TipoValorParametro", p.TipoValorParametro);
@@ -258,7 +336,10 @@ namespace backend_planilla.Infraestructure
             }
             finally
             {
-                _conexion.Close();
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
             }
         }
 
@@ -385,6 +466,109 @@ namespace backend_planilla.Infraestructure
                 }
             }
 #pragma warning restore IDE0063
+            return exito;
+        }
+
+        public bool SePuedeModificar(int idBeneficio, string cedulaEmpresa)
+        {
+            try
+            {
+                var consulta = @"SELECT * FROM EligeBeneficio
+                                 WHERE EligeBeneficio.IDBeneficio = @IDBeneficio;";
+                var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+
+                comandoParaConsulta.Parameters.AddWithValue("@IDBeneficio", idBeneficio);
+                _conexion.Open();
+                var reader = comandoParaConsulta.ExecuteReader();
+                return !reader.HasRows;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en BeneficiosRepository.SePuedeModificar: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+        }
+        public bool ModificarBeneficio(BeneficioModel beneficioModificado, int idUsuario)
+        {
+            bool exito = false;
+            try
+            {
+                var consulta = @"UPDATE Beneficio
+                                 SET 
+                                     Nombre = @NuevoNombre,
+                                     Descripcion = @NuevaDescripcion,
+                                     Tipo = @NuevoTipo,
+                                     MesesMinimos = @NuevosMesesMinimos,
+                                     CantidadParametros = @CantidadParametros,
+                                     UsuarioModifica = @UsuarioModifica
+                                 WHERE 
+                                     Id = @IdBeneficio;";
+                var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+
+                comandoParaConsulta.Parameters.AddWithValue("@IdBeneficio", beneficioModificado.Id);
+                comandoParaConsulta.Parameters.AddWithValue("@NuevoNombre", beneficioModificado.Nombre);
+                comandoParaConsulta.Parameters.AddWithValue("@NuevaDescripcion", beneficioModificado.Descripcion);
+                comandoParaConsulta.Parameters.AddWithValue("@NuevoTipo", beneficioModificado.Tipo);
+                comandoParaConsulta.Parameters.AddWithValue("@NuevosMesesMinimos", beneficioModificado.MesesMinimos);
+                comandoParaConsulta.Parameters.AddWithValue("@CantidadParametros", beneficioModificado.CantidadParametros);
+                comandoParaConsulta.Parameters.AddWithValue("@UsuarioModifica", idUsuario);
+                _conexion.Open();
+                exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
+                if (exito)
+                {
+                    Console.WriteLine($"Modificado con éxito el beneficio");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en BeneficiosRepository.ModificarBeneficio: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+            return exito;
+        }
+
+        public bool ModificarParametros(List<ParametroBeneficioModel> parametros, int idBeneficio)
+        {
+            bool exito = false;
+            try
+            {
+                var consulta = @"DELETE FROM ParametrosBeneficio
+                                 WHERE IDBeneficio = @IDBeneficio;";
+                var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+
+                comandoParaConsulta.Parameters.AddWithValue("@IDBeneficio", idBeneficio);
+                _conexion.Open();
+                comandoParaConsulta.ExecuteNonQuery();
+                _conexion.Close();
+                Console.WriteLine("Creando parámetros");
+                exito = CrearParametros(parametros, idBeneficio);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en BeneficiosRepository.ModificarBeneficio: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
             return exito;
         }
     }

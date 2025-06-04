@@ -8,5 +8,8 @@ namespace backend_planilla.Application
     {
         List<BeneficioModel> GetBeneficios(string correo);
         bool CrearBeneficio(BeneficioModel beneficio, string correo);
+        bool CopiarBeneficioAPI(string nombreBeneficio, string cedulaEmpresa, int idUsuario);
+        bool ModificarBeneficio(BeneficioModel beneficioModificado,
+            BeneficioModel beneficioOriginal, string correo);
     }
 }
