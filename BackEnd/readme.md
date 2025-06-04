@@ -7,6 +7,7 @@ Colocarse en la carpeta raiz del proyecto ".../backend-planilla" y correr los si
   * `dotnet add package Microsoft.AspNetCore.Mvc.Core`
   * `dotnet add package Microsoft.AspNetCore.Http.Abstractions`
   * `dotnet add package Microsoft.Data.SqlClient`
+  * `dotnet add package Moq`
 
 ## Volagenersteller Planilla 
 
