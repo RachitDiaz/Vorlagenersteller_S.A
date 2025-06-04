@@ -11,6 +11,11 @@ namespace backend_planilla.Application
             _empresaRepository = new EmpresaRepository();
         }
 
+        public EmpresaQuery(IEmpresaRepository empresaRepository)
+        {
+            _empresaRepository = empresaRepository;
+        }
+
         bool IEmpresaQuery.RegistrarEmpresa(AgregarEmpresaModel infoEmpresa, string correo)
         {
             var tamanoDeCedula = 12;
