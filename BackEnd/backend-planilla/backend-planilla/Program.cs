@@ -37,6 +37,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 builder.Services.AddScoped<IGetDeduccionBeneficiosQuery, GetDeduccionBeneficiosQuery>();
 builder.Services.AddScoped<CalcularDeduccionesPlanilla>();
+builder.Services.AddScoped<IPlanillaRepository>(sp =>
+    new PlanillaRepository(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IGenerarPlanillaService, GenerarPlanillaService>();
 
 builder.Services.AddCors(options =>
 {
