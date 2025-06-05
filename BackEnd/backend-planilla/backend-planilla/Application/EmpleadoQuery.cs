@@ -11,6 +11,10 @@ namespace backend_planilla.Application
         public EmpleadoQuery() {
             _empleadoRepository = new EmpleadoRepository();
         }
+        public EmpleadoQuery(IEmpleadoRepository empleadoRepository)
+        {
+            _empleadoRepository = empleadoRepository;
+        }
         public bool CrearEmpleado(PersonaModel persona, EmpleadoModel empleado, string correo)
         {
             return _empleadoRepository.CrearEmpleado(persona, empleado, correo);
