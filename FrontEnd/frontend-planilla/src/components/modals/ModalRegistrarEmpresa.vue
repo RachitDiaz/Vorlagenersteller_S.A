@@ -27,7 +27,7 @@
               <div class="mb-3">
                 <label class="form-label">Cedula Juridica <span style="color:red;">*</span></label>
                 <input
-                  v-model="form.cedula"
+                  v-model="form.cedulaJuridica"
                   type= "text"
                   class= "form-control"
                   placeholder= "X-XXX-XXXXXX"
@@ -70,7 +70,7 @@
               <div class="mb-3">
                 <label class="form-label">Cedula de propietario <span style="color:red;">*</span></label>
                 <input
-                  v-model="form.propietario"
+                  v-model="form.cedulaDueno"
                   type="text"
                   class="form-control"
                   placeholder= "X-XXXX-XXXX"
@@ -83,16 +83,16 @@
 
               <div class="mb-3">
                 <label class="form-label">Tipo de pago <span style="color:red;">*</span></label>
-                <select v-model="form.pago"
-                  class="form-control"
+                <select v-model="form.tipoDePago"
+                  class="form-select"
                   required
                   placeholder= "Seleccione la frecuencia de pago"
                   @invalid="mensajePago"
                   @input="borrarMensaje"
                   >
-                    <option :value="{ string: 'Mensual' }"> Mensual </option>
-                    <option :value="{ string: 'Quincenal' }"> Quincenal </option>
-                    <option :value="{ string: 'Semanal' }"> Semanal </option>
+                    <option> Mensual </option>
+                    <option> Quincenal </option>
+                    <option> Semanal </option>
                 </select>
                 
               </div>
@@ -188,8 +188,11 @@
   
   <script setup>
   import { ref, reactive, onMounted, defineExpose } from 'vue'
+  import axios from "axios";
   import Modal from 'bootstrap/js/dist/modal'
+  import { backendURL } from '../../config/config.js'
   
+  const token = localStorage.getItem("jwtToken");
   const modalRef = ref(null)
   let modalInstance = null
   
@@ -200,17 +203,55 @@
   function show() {
     modalInstance?.show()
   }
+
+  const form = reactive({
+    cedulaJuridica: '',
+    cedulaDueno: '',
+    tipoDePago: '',
+    razonSocial: '',
+    nombre: '',
+    descripcion: '',
+    beneficiosMaximos: '0',
+    correo: '',
+    telefono: '',
+    provincia: '',
+    canton: '',
+    distrito: '',
+    otrasSenas: '',
+  })
   
   function submitForm() {
-    if (!form.nombre.trim()) {
-      alert("El nombre de la empresa es obligatorio.")
-      return
-    }
-    console.log(form)
+    console.log("Datos a guardar", form);
+    axios.post(`${backendURL}Empresa`, {
+    cedulaJuridica: form.cedulaJuridica,
+    cedulaDueno: form.cedulaDueno,
+    tipoDePago: form.tipoDePago,
+    razonSocial: form.razonSocial,
+    nombre: form.nombre,
+    descripcion: form.descripcion,
+    beneficiosMaximos: form.beneficiosMaximos,
+    correo: form.correo,
+    telefono: form.telefono,
+    provincia: form.provincia,
+    canton: form.canton,
+    distrito: form.distrito,
+    otrasSenas: form.otrasSenas
+  
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(() => {
+      window.location.href = "/ListaEmpresas";
+    })
+    .catch(error => {
+      console.error("Error al registrar empresa:", error);
+      alert("Error al registrar empresa\nVerifique que la cedula sea de un dueño en el sistema y la empresa no este ya registrada");
+    });
   }
   
   function mensajeNombre(event) {
-    event.target.setCustomValidity("Debe ingresar el nombre del beneficio, de entre 6 y 50 caracteres")
+    event.target.setCustomValidity("Debe ingresar el nombre de la empresa, de entre 6 y 50 caracteres")
   }
 
   function mensajeCedula(event) {
@@ -252,23 +293,6 @@
   function borrarMensaje(event) {
     event.target.setCustomValidity("")
   }
-  
-  
-  const form = reactive({
-    nombre: '',
-    cedula: '',
-    descripcion: '',
-    correo: '',
-    propietario: '',
-    pago: '',
-    telefono: '',
-    provincia: '',
-    canton: '',
-    distrito: '',
-    otrasSenas: '',
-    razonSocial: '',
-  })
-
   
   defineExpose({ show })
   </script>

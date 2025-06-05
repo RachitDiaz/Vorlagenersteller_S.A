@@ -2,14 +2,14 @@
   <div class="container">
     <div class="tab-selector">
       <button
-        :class="['tab', selectedTab === 'empleado' ? 'active' : '']"
-        @click="selectedTab = 'empleado'"
+        :class="['tab', selectedTab === 'Empleado' ? 'active' : '']"
+        @click="selectedTab = 'Empleado'"
       >
         Empleado
       </button>
       <button
-        :class="['tab', selectedTab === 'dueno' ? 'active' : '']"
-        @click="selectedTab = 'dueno'"
+        :class="['tab', selectedTab === 'Dueno' ? 'active' : '']"
+        @click="selectedTab = 'Dueno'"
       >
         Dueño
       </button>
@@ -23,7 +23,7 @@
             <input
               type="email"
               v-model="correo"
-              :placeholder="selectedTab === 'empleado' ? 'Correo de la empresa' : 'Correo personal'"
+              :placeholder="selectedTab === 'Empleado' ? 'Correo de la empresa' : 'Correo personal'"
               required
             />
           </div>
@@ -43,10 +43,10 @@
           </p>
 
           <a
-            :href="selectedTab === 'dueno' ? '/RegistrarDueno' : '#'"
+            :href="selectedTab === 'Dueno' ? '/RegistrarDueno' : '#'"
             class="link"
           >
-            {{ selectedTab === 'empleado' ? '¿Olvidó su contraseña?' : 'Crear empresa' }}
+            {{ selectedTab === 'Empleado' ? '¿Olvidó su contraseña?' : 'Crear usuario' }}
           </a>
         </form>
       </div>
@@ -57,8 +57,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-
-const selectedTab = ref('empleado')
+import {backendURL} from "../config/config.js"
+const selectedTab = ref('Empleado')
 const correo = ref('')
 const contrasena = ref('')
 const mensajeError = ref('')
@@ -76,7 +76,7 @@ const login = async () => {
   }
 
   try {
-    const response = await axios.post('https://localhost:7296/api/login', {
+    const response = await axios.post(`${backendURL}login`, {
       Correo: correo.value,
       Contrasena: contrasena.value,
       Rol: selectedTab.value
@@ -84,11 +84,12 @@ const login = async () => {
 
     const token = response.data.token
     localStorage.setItem('jwtToken', token)
-
-    if (selectedTab.value === 'dueno') {
+    localStorage.setItem('rol', selectedTab.value)
+    console.log(selectedTab.value);
+    if (selectedTab.value === 'Dueno') {
       window.location.href = '/ListaEmpleados'
     } else {
-      window.location.href = '/ListaBeneficios'
+      window.location.href = '/RegistroHoras'
     }
   } catch (error) {
     mensajeError.value = error.response?.data?.mensaje || 'Error en la solicitud'

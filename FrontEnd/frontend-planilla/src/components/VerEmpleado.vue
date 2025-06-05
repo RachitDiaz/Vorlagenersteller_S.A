@@ -33,7 +33,7 @@
 <script>
 
 import axios from 'axios'
-
+import { backendURL } from '../config/config.js'
 export default {
   
   name: 'InfoEmpleado',
@@ -63,7 +63,7 @@ export default {
 
   methods: {
     obtenerEmpleados() {
-        axios.get("https://localhost:7296/api/Empleado").then((response) =>
+        axios.get(`${backendURL}Empleado/Get`).then((response) =>
       { this.Empleados = response.data; });
     },
   },

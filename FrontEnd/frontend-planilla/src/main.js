@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+  import { createApp } from 'vue'
 import App from './App.vue'
 import { createRouter, createWebHistory } from "vue-router";
 import RegistrarDueno from "./components/RegistrarDueno.vue";
@@ -7,16 +7,19 @@ import LandingPage from './components/LandingPage.vue';
 import BeneficiosEmpleado from './components/empleado/BeneficiosSeleccionados.vue';
 import ListaBeneficios from './components/dueno/ListaBeneficios.vue';
 import ListaEmpleados from './components/dueno/ListaEmpleados.vue';
+import Planilla from './components/dueno/Planilla.vue';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import ListaEmpresas from './components/ListaEmpresas.vue';
-import VerEmpresa from './components/VerEmpresa.vue';
+import ListaEmpresas from './components/dueno/ListaEmpresas.vue';
+import VerEmpresa from './components/dueno/VerEmpresa.vue';
 import VerEmpleado from './components/VerEmpleado.vue';
+import RegistrarHoras from './components/empleado/RegistrarHoras.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/ListaBeneficios", name: "ListaBeneficios", component: ListaBeneficios, meta: { title: 'Lista de beneficios' } },
+    { path : "/VerPlanilla", name: "VerPlanilla", component: Planilla, meta: { title: 'Planilla' } },
     { path: "/RegistrarDueno", name: "RegistrarDueño", component: RegistrarDueno, meta: { title: 'Registrar Dueño' } },
     { path: "/ListaEmpresas", name: "ListaEmpresa", component: ListaEmpresas, meta: { title: 'Lista de Empresas' } },
     { path: "/VerEmpresa", name: "VerEmpresa", component: VerEmpresa, meta: { title: 'Informacion de Empresa' } },
@@ -25,6 +28,7 @@ const router = createRouter({
     { path: "/", name: "LandingPage", component: LandingPage, meta: { title: 'Landing Page' } },
     { path: "/BeneficiosEmpleado", name: "BeneficiosEmpleado", component: BeneficiosEmpleado, meta: { title: 'Beneficios' } },
     { path: "/ListaEmpleados", name: "ListaEmpleados", component: ListaEmpleados, meta: { title: 'Administrar Empleados' } },
+    { path: "/RegistroHoras", name: "RegistroHoras", component: RegistrarHoras, meta: { title: 'Registro de Horas' } },
   ],
 });
 

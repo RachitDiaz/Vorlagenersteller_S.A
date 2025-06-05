@@ -1,10 +1,29 @@
 <template>
   <div class="registro-bg">
     <div class="form-container">
-      <form @submit.prevent="registrarUsuario">
+      <form @submit.prevent="registrarDueno">
         <div class="form-group">
           <label>Nombre</label>
           <input v-model="form.nombre" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label>Apellido 1</label>
+          <input v-model="form.apellido1" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label>Apellido 2</label>
+          <input v-model="form.apellido2" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label>Género</label>
+          <select v-model="form.genero" required>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -15,7 +34,7 @@
         <div class="form-group">
           <label>Correo Electrónico</label>
           <input v-model="form.correo" type="email" placeholder="ejemplo@correo.com" required />
-        </div> 
+        </div>
 
         <div class="form-group">
           <label>Contraseña*</label>
@@ -45,24 +64,29 @@
 
 <script>
 import axios from 'axios'
+import { backendURL } from '../config/config.js'
 
 export default {
-  name: 'RegistroUsuario',
+  name: 'RegistroDueno',
   data() {
     return {
       form: {
         nombre: '',
+        apellido1: '',
+        apellido2: '',
         cedula: '',
         correo: '',
         contrasena: '',
         confirmarContrasena: '',
         telefono: '',
-        direccion: ''
+        direccion: '',
+        genero: 'Masculino'
       }
     }
   },
   methods: {
-    async registrarUsuario() {
+    async registrarDueno() {
+      console.log("Datos a guardar", this.form);
       if (this.form.contrasena !== this.form.confirmarContrasena) {
         alert('Las contraseñas no coinciden');
         return;
@@ -72,9 +96,9 @@ export default {
         const persona = {
           cedula: this.form.cedula,
           nombre: this.form.nombre,
-          apellido1: 'Ramírez',
-          apellido2: 'Gómez',
-          genero: 'Masculino',
+          apellido1: this.form.apellido1,
+          apellido2: this.form.apellido2,
+          genero: this.form.genero,
           usuario: {
             correo: this.form.correo,
             contrasena: this.form.contrasena
@@ -87,8 +111,8 @@ export default {
           direccion: this.form.direccion
         };
 
-        const response = await axios.post('https://localhost:7296/api/Dueno', payload, {
-          timeout: 8000
+        const response = await axios.post(`${backendURL}Dueno`, payload, {
+          timeout: 2000
         });
 
         if (response.data === true) {

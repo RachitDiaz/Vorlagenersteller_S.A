@@ -116,7 +116,7 @@
 
             <div class="mb-3">
               <label class="form-label">
-                Banco
+                Cuenta IBAN del banco
               </label>
               <input
                 type="text"
@@ -133,6 +133,7 @@
                 type="number"
                 class="form-control"
                 v-model="form.salarioBruto"
+                step=".01"
               />
             </div>
 
@@ -174,6 +175,7 @@
 import { ref, reactive, defineExpose, onMounted } from 'vue'
 import Modal from 'bootstrap/js/dist/modal'
 import axios from 'axios'
+import { backendURL } from '../../config/config.js'
 
 const emit = defineEmits(['empleado-agregado'])
 const token = localStorage.getItem("jwtToken");
@@ -262,7 +264,7 @@ function submitForm() {
     tipoContrato: form.tipoContrato
   }
 
-  axios.post("https://localhost:7296/api/Empleado", {
+  axios.post(`${backendURL}Empleado/CrearEmpleado`, {
     persona: personaData,
     empleado: empleadoData
   }, {
@@ -273,7 +275,7 @@ function submitForm() {
   .then(() => {
     alert('Empleado registrado con éxito')
     modalInstance.hide()
-    emit('empleado-agregado') // 👈 emitir evento al padre
+    emit('empleado-agregado')
   })
   .catch(error => {
     console.error("Error al guardar empleado:", error);
