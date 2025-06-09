@@ -265,9 +265,9 @@ namespace backend_planilla.Handlers
             return exito;
         }
 
-    
 
-    public async Task<decimal> ObtenerSalarioBruto(string cedulaEmpleado)
+
+        public async Task<decimal> ObtenerSalarioBruto(string cedulaEmpleado)
         {
             var query = "SELECT SalarioBruto FROM Empleado WHERE CedulaEmpleado = @Cedula";
             using var cmd = new SqlCommand(query, _conexion);
@@ -314,6 +314,30 @@ namespace backend_planilla.Handlers
             }
 
             return beneficios;
+        }
+    
+
+    public async Task<string> ObtenerGeneroEmpleado(string cedulaEmpleado)
+        {
+            var query = "SELECT Genero FROM Persona WHERE Cedula = @Cedula";
+            using var cmd = new SqlCommand(query, _conexion);
+            cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
+
+            if (_conexion.State != ConnectionState.Open)
+                _conexion.Open();
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return reader["Genero"].ToString()?.ToLower() switch
+                {
+                    "m" => "male",
+                    "f" => "female",
+                    _ => "male"
+                };
+            }
+
+            throw new Exception("No se encontró el género del empleado.");
         }
     }
 }

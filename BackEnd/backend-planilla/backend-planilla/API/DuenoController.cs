@@ -20,7 +20,6 @@ namespace backend_planilla.Controllers
         {
             try
             {
-                Console.WriteLine("si llego al post");
                 if (dueno == null || dueno.Persona == null || dueno.Persona.Usuario == null)
                     return BadRequest();
                     
