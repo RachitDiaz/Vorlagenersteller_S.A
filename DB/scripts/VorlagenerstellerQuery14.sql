@@ -1,11 +1,12 @@
 USE VorlaDB
+Go
 
 ALTER TABLE Empleado
 ADD Editable bit default 1; 
 go
 
 CREATE TRIGGER trg_UpdateEditableEmpleado
-ON PlanillaMensualEmpresa
+ON PlanillaMensualEmpleado
 AFTER INSERT
 AS
 BEGIN
