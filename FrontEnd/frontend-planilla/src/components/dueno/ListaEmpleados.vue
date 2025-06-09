@@ -30,6 +30,7 @@
           <td>{{ empleado.apellido1 }}</td>
           <td>{{ empleado.apellido2 }}</td>
           <td>{{ empleado.cedulaEmpleado }}</td>
+          <td>Empleado</td>
           <td class="acciones">
             <button class="edit" @click="abrirEdicion(empleado.cedulaEmpleado)">Editar</button>
             <button class="delete">Eliminar</button>
