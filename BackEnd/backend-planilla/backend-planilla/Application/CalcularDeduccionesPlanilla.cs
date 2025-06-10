@@ -19,15 +19,15 @@ namespace backend_planilla.Application
             // Cálculo de deducciones
             var result = new DeduccionesPlanillaModel
             {
-                SEM_Empleado = Math.Round(salarioBruto * porcentajeSEMEmpleado, 2),
-                IVM_Empleado = Math.Round(salarioBruto * porcentajeIVMEmpleado, 2),
-                LPT_Empleado = Math.Round(salarioBruto * porcentajeLPTEmpleado, 2),
+                SEMEmpleado = Math.Round(salarioBruto * porcentajeSEMEmpleado, 2),
+                IVMEmpleado = Math.Round(salarioBruto * porcentajeIVMEmpleado, 2),
+                LPTEmpleado = Math.Round(salarioBruto * porcentajeLPTEmpleado, 2),
 
-                SEM_Patrono = Math.Round(salarioBruto * porcentajeSEMPatrono, 2),
-                IVM_Patrono = Math.Round(salarioBruto * porcentajeIVMPatrono, 2),
-                LPT_Patrono = Math.Round(salarioBruto * porcentajeLPTPatrono, 2),
+                SEMPatrono = Math.Round(salarioBruto * porcentajeSEMPatrono, 2),
+                IVMPatrono = Math.Round(salarioBruto * porcentajeIVMPatrono, 2),
+                LPTPatrono = Math.Round(salarioBruto * porcentajeLPTPatrono, 2),
 
-                Renta = Math.Round(CalcularRenta(salarioBruto), 2)
+                ImpuestoRenta = Math.Round(CalcularRenta(salarioBruto), 2)
             };
 
             return result;
