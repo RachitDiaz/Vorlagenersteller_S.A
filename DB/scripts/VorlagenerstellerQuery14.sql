@@ -1,4 +1,5 @@
 USE VorlaDB
+Go
 
 ALTER TABLE Empleado
 ADD Editable bit default 1; 

@@ -2,18 +2,18 @@
 {
     public class DeduccionesPlanillaModel
     {
-        public decimal SEM_Empleado { get; set; }
-        public decimal SEM_Patrono { get; set; }
+        public decimal SEMEmpleado { get; set; }
+        public decimal SEMPatrono { get; set; }
 
-        public decimal IVM_Empleado { get; set; }
-        public decimal IVM_Patrono { get; set; }
+        public decimal IVMEmpleado { get; set; }
+        public decimal IVMPatrono { get; set; }
 
-        public decimal LPT_Empleado { get; set; }
-        public decimal LPT_Patrono { get; set; }
+        public decimal LPTEmpleado { get; set; }
+        public decimal LPTPatrono { get; set; }
 
-        public decimal Renta { get; set; }
+        public decimal ImpuestoRenta { get; set; }
 
-        public decimal TotalEmpleado => SEM_Empleado + IVM_Empleado + LPT_Empleado + Renta;
-        public decimal TotalPatrono => SEM_Patrono + IVM_Patrono + LPT_Patrono;
+        public decimal TotalEmpleado => SEMEmpleado + IVMEmpleado + LPTEmpleado + ImpuestoRenta;
+        public decimal TotalPatrono => SEMPatrono + IVMPatrono + LPTPatrono;
     }
 }
