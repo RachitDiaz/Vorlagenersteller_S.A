@@ -4,27 +4,38 @@ namespace backend_planilla.Application
 {
     public class CalculoDeduccionesObligatorias
     {
-        private readonly decimal porcentajeSEMEmpleado = 0.055m;
-        private readonly decimal porcentajeIVMEmpleado = 0.0417m;
-        private readonly decimal porcentajeBPOPEmpleado = 0.01m;
+        private const decimal porcentajeSEMEmpleado = 0.055m;
+        private const decimal porcentajeIVMEmpleado = 0.0417m;
+        private const decimal porcentajeBPOPEmpleado = 0.01m;
 
-        private readonly decimal porcentajeSEMPatrono = 0.0925m;
-        private readonly decimal porcentajeIVMPatrono = 0.0542m;
-        private readonly decimal porcentajeBPOPPatrono = 0.005m;
-        private readonly decimal porcentajeAsignacionesFamiliaresPatrono = 0.05m;
-        private readonly decimal porcentajeIMASPatrono = 0.005m;
-        private readonly decimal porcentajeINAPatrono = 0.0150m;
-        private readonly decimal porcentajeFCLPatrono = 0.0150m;
-        private readonly decimal porcentajeOPCPatrono = 0.02m;
-        private readonly decimal porcentajeINSPatrono = 0.01m;
+        private const decimal porcentajeSEMPatrono = 0.0925m;
+        private const decimal porcentajeIVMPatrono = 0.0542m;
+        private const decimal porcentajeBPOPPatrono = 0.005m;
+        private const decimal porcentajeAsignacionesFamiliaresPatrono = 0.05m;
+        private const decimal porcentajeIMASPatrono = 0.005m;
+        private const decimal porcentajeINAPatrono = 0.0150m;
+        private const decimal porcentajeFCLPatrono = 0.0150m;
+        private const decimal porcentajeOPCPatrono = 0.02m;
+        private const decimal porcentajeINSPatrono = 0.01m;
+
+        private const decimal tramo1Limite = 922000;
+        private const decimal tramo2Limite = 1352000;
+        private const decimal tramo3Limite = 2373000;
+        private const decimal tramo4Limite = 4745000;
+
+        private const decimal porcentaje1 = 0.10m;
+        private const decimal porcentaje2 = 0.15m;
+        private const decimal porcentaje3 = 0.20m;
+        private const decimal porcentaje4 = 0.25m;
 
         public DeduccionesObligatoriasModel CalculoMensual(decimal salarioBruto)
         {
-            var result = new DeduccionesObligatoriasModel
+            var resultado = new DeduccionesObligatoriasModel
             {
                 SEMEmpleado = Math.Round(salarioBruto * porcentajeSEMEmpleado, 2),
                 IVMEmpleado = Math.Round(salarioBruto * porcentajeIVMEmpleado, 2),
                 BPPOEmpleado = Math.Round(salarioBruto * porcentajeBPOPEmpleado, 2),
+                ImpuestoRenta = Math.Round(CalcularRenta(salarioBruto), 2),
 
                 SEMPatrono = Math.Round(salarioBruto * porcentajeSEMPatrono, 2),
                 IVMPatrono = Math.Round(salarioBruto * porcentajeIVMPatrono, 2),
@@ -34,26 +45,37 @@ namespace backend_planilla.Application
                 INAPatrono = Math.Round(salarioBruto * porcentajeINAPatrono, 2),
                 FCLPatrono = Math.Round(salarioBruto * porcentajeFCLPatrono, 2),
                 OPCPatrono = Math.Round(salarioBruto * porcentajeOPCPatrono, 2),
-                INSPatrono = Math.Round(salarioBruto * porcentajeINSPatrono, 2),
-
-                ImpuestoRenta = Math.Round(CalcularRenta(salarioBruto), 2)
+                INSPatrono = Math.Round(salarioBruto * porcentajeINSPatrono, 2)
             };
 
-            return result;
+            return resultado;
+        }
+
+        public DeduccionesObligatoriasModel CalculoQuincenal(decimal salarioBruto)
+        {
+            var resultado = CalculoMensual(salarioBruto);
+
+            return new DeduccionesObligatoriasModel
+            {
+                SEMEmpleado = Math.Round(resultado.SEMEmpleado / 2, 2),
+                IVMEmpleado = Math.Round(resultado.IVMEmpleado / 2, 2),
+                BPPOEmpleado = Math.Round(resultado.BPPOEmpleado / 2, 2),
+                ImpuestoRenta = Math.Round(resultado.ImpuestoRenta / 2, 2),
+
+                SEMPatrono = Math.Round(resultado.SEMPatrono / 2, 2),
+                IVMPatrono = Math.Round(resultado.IVMPatrono / 2, 2),
+                BPOPPatrono = Math.Round(resultado.BPOPPatrono / 2, 2),
+                AsignacionesFamiliaresPatrono = Math.Round(resultado.AsignacionesFamiliaresPatrono / 2, 2),
+                IMASPatrono = Math.Round(resultado.IMASPatrono / 2, 2),
+                INAPatrono = Math.Round(resultado.INAPatrono / 2, 2),
+                FCLPatrono = Math.Round(resultado.FCLPatrono / 2, 2),
+                OPCPatrono = Math.Round(resultado.OPCPatrono / 2, 2),
+                INSPatrono = Math.Round(resultado.INSPatrono / 2, 2)
+            };
         }
 
         private decimal CalcularRenta(decimal salario)
         {
-            decimal tramo1Limite = 922000;
-            decimal tramo2Limite = 1352000;
-            decimal tramo3Limite = 2373000;
-            decimal tramo4Limite = 4745000;
-
-            decimal porcentaje1 = 0.10m;
-            decimal porcentaje2 = 0.15m;
-            decimal porcentaje3 = 0.20m;
-            decimal porcentaje4 = 0.25m;
-
             decimal renta = 0;
 
             if (salario > tramo4Limite)

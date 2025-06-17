@@ -15,13 +15,23 @@ namespace backend_planilla.API
             _calcular = calcular;
         }
 
-        [HttpGet("{salarioBruto}")]
-        public ActionResult<DeduccionesObligatoriasModel> Calcular(decimal salarioBruto)
+        [HttpGet("mensual/{salarioBruto}")]
+        public ActionResult<DeduccionesObligatoriasModel> CalcularMensual(decimal salarioBruto)
         {
             if (salarioBruto <= 0)
                 return BadRequest("El salario debe ser mayor a cero.");
 
             var resultado = _calcular.CalculoMensual(salarioBruto);
+            return Ok(resultado);
+        }
+
+        [HttpGet("quincenal/{salarioBruto}")]
+        public ActionResult<DeduccionesObligatoriasModel> CalcularQuincenal(decimal salarioBruto)
+        {
+            if (salarioBruto <= 0)
+                return BadRequest("El salario debe ser mayor a cero.");
+
+            var resultado = _calcular.CalculoQuincenal(salarioBruto);
             return Ok(resultado);
         }
     }
