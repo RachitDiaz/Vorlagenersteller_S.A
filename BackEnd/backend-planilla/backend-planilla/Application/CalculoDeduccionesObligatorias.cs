@@ -2,30 +2,39 @@
 
 namespace backend_planilla.Application
 {
-    public class CalcularDeduccionesPlanilla
+    public class CalculoDeduccionesObligatorias
     {
-        public DeduccionesPlanillaModel Calcular(decimal salarioBruto)
+        private readonly decimal porcentajeSEMEmpleado = 0.055m;
+        private readonly decimal porcentajeIVMEmpleado = 0.0417m;
+        private readonly decimal porcentajeBPOPEmpleado = 0.01m;
+
+        private readonly decimal porcentajeSEMPatrono = 0.0925m;
+        private readonly decimal porcentajeIVMPatrono = 0.0542m;
+        private readonly decimal porcentajeBPOPPatrono = 0.005m;
+        private readonly decimal porcentajeAsignacionesFamiliaresPatrono = 0.05m;
+        private readonly decimal porcentajeIMASPatrono = 0.005m;
+        private readonly decimal porcentajeINAPatrono = 0.0150m;
+        private readonly decimal porcentajeFCLPatrono = 0.0150m;
+        private readonly decimal porcentajeOPCPatrono = 0.02m;
+        private readonly decimal porcentajeINSPatrono = 0.01m;
+
+        public DeduccionesObligatoriasModel CalculoMensual(decimal salarioBruto)
         {
-            // Porcentajes empleados
-            decimal porcentajeSEMEmpleado = 0.055m;
-            decimal porcentajeIVMEmpleado = 0.0417m;
-            decimal porcentajeLPTEmpleado = 0.01m;
-
-            // Porcentajes patrono
-            decimal porcentajeSEMPatrono = 0.0925m;
-            decimal porcentajeIVMPatrono = 0.0542m;
-            decimal porcentajeLPTPatrono = 0.0475m;
-
-            // Cálculo de deducciones
-            var result = new DeduccionesPlanillaModel
+            var result = new DeduccionesObligatoriasModel
             {
                 SEMEmpleado = Math.Round(salarioBruto * porcentajeSEMEmpleado, 2),
                 IVMEmpleado = Math.Round(salarioBruto * porcentajeIVMEmpleado, 2),
-                LPTEmpleado = Math.Round(salarioBruto * porcentajeLPTEmpleado, 2),
+                BPPOEmpleado = Math.Round(salarioBruto * porcentajeBPOPEmpleado, 2),
 
                 SEMPatrono = Math.Round(salarioBruto * porcentajeSEMPatrono, 2),
                 IVMPatrono = Math.Round(salarioBruto * porcentajeIVMPatrono, 2),
-                LPTPatrono = Math.Round(salarioBruto * porcentajeLPTPatrono, 2),
+                BPOPPatrono = Math.Round(salarioBruto * porcentajeBPOPPatrono, 2),
+                AsignacionesFamiliaresPatrono = Math.Round(salarioBruto * porcentajeAsignacionesFamiliaresPatrono, 2),
+                IMASPatrono = Math.Round(salarioBruto * porcentajeIMASPatrono, 2),
+                INAPatrono = Math.Round(salarioBruto * porcentajeINAPatrono, 2),
+                FCLPatrono = Math.Round(salarioBruto * porcentajeFCLPatrono, 2),
+                OPCPatrono = Math.Round(salarioBruto * porcentajeOPCPatrono, 2),
+                INSPatrono = Math.Round(salarioBruto * porcentajeINSPatrono, 2),
 
                 ImpuestoRenta = Math.Round(CalcularRenta(salarioBruto), 2)
             };

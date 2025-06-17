@@ -6,22 +6,22 @@ namespace backend_planilla.API
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DeduccionesPlanillaController : ControllerBase
+    public class DeduccionesObligatoriasController : ControllerBase
     {
-        private readonly CalcularDeduccionesPlanilla _calcular;
+        private readonly CalculoDeduccionesObligatorias _calcular;
 
-        public DeduccionesPlanillaController(CalcularDeduccionesPlanilla calcular)
+        public DeduccionesObligatoriasController(CalculoDeduccionesObligatorias calcular)
         {
             _calcular = calcular;
         }
 
         [HttpGet("{salarioBruto}")]
-        public ActionResult<DeduccionesPlanillaModel> Calcular(decimal salarioBruto)
+        public ActionResult<DeduccionesObligatoriasModel> Calcular(decimal salarioBruto)
         {
             if (salarioBruto <= 0)
                 return BadRequest("El salario debe ser mayor a cero.");
 
-            var resultado = _calcular.Calcular(salarioBruto);
+            var resultado = _calcular.CalculoMensual(salarioBruto);
             return Ok(resultado);
         }
     }
