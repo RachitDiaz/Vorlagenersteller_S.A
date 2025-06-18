@@ -18,17 +18,17 @@ namespace backend_planilla.Application
         private const decimal porcentajeOPCPatrono = 0.02m;
         private const decimal porcentajeINSPatrono = 0.01m;
 
-        private const decimal tramo1Limite = 922000;
-        private const decimal tramo2Limite = 1352000;
-        private const decimal tramo3Limite = 2373000;
-        private const decimal tramo4Limite = 4745000;
+        private const decimal rentaTramo1Limite = 922000;
+        private const decimal rentaTramo2Limite = 1352000;
+        private const decimal rentaTramo3Limite = 2373000;
+        private const decimal rentaTramo4Limite = 4745000;
 
-        private const decimal porcentaje1 = 0.10m;
-        private const decimal porcentaje2 = 0.15m;
-        private const decimal porcentaje3 = 0.20m;
-        private const decimal porcentaje4 = 0.25m;
+        private const decimal rentaPorcentaje1 = 0.10m;
+        private const decimal rentaPorcentaje2 = 0.15m;
+        private const decimal rentaPorcentaje3 = 0.20m;
+        private const decimal rentaPorcentaje4 = 0.25m;
 
-        public DeduccionesObligatoriasModel CalculoMensual(decimal salarioBruto)
+        public DeduccionesObligatoriasModel CalcularDeduccionMensual(decimal salarioBruto)
         {
             var resultado = new DeduccionesObligatoriasModel
             {
@@ -51,9 +51,9 @@ namespace backend_planilla.Application
             return resultado;
         }
 
-        public DeduccionesObligatoriasModel CalculoQuincenal(decimal salarioBruto)
+        public DeduccionesObligatoriasModel CalcularDeduccionQuincenal(decimal salarioBruto)
         {
-            var resultado = CalculoMensual(salarioBruto);
+            var resultado = CalcularDeduccionMensual(salarioBruto);
 
             return new DeduccionesObligatoriasModel
             {
@@ -78,27 +78,27 @@ namespace backend_planilla.Application
         {
             decimal renta = 0;
 
-            if (salario > tramo4Limite)
+            if (salario > rentaTramo4Limite)
             {
-                renta += (salario - tramo4Limite) * porcentaje4;
-                salario = tramo4Limite;
+                renta += (salario - rentaTramo4Limite) * rentaPorcentaje4;
+                salario = rentaTramo4Limite;
             }
 
-            if (salario > tramo3Limite)
+            if (salario > rentaTramo3Limite)
             {
-                renta += (salario - tramo3Limite) * porcentaje3;
-                salario = tramo3Limite;
+                renta += (salario - rentaTramo3Limite) * rentaPorcentaje3;
+                salario = rentaTramo3Limite;
             }
 
-            if (salario > tramo2Limite)
+            if (salario > rentaTramo2Limite)
             {
-                renta += (salario - tramo2Limite) * porcentaje2;
-                salario = tramo2Limite;
+                renta += (salario - rentaTramo2Limite) * rentaPorcentaje2;
+                salario = rentaTramo2Limite;
             }
 
-            if (salario > tramo1Limite)
+            if (salario > rentaTramo1Limite)
             {
-                renta += (salario - tramo1Limite) * porcentaje1;
+                renta += (salario - rentaTramo1Limite) * rentaPorcentaje1;
             }
 
             return Math.Round(renta, 2);

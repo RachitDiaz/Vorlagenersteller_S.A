@@ -21,7 +21,7 @@ namespace backend_planilla.API
             if (salarioBruto <= 0)
                 return BadRequest("El salario debe ser mayor a cero.");
 
-            var resultado = _calcular.CalculoMensual(salarioBruto);
+            var resultado = _calcular.CalcularDeduccionMensual(salarioBruto);
             return Ok(resultado);
         }
 
@@ -31,7 +31,7 @@ namespace backend_planilla.API
             if (salarioBruto <= 0)
                 return BadRequest("El salario debe ser mayor a cero.");
 
-            var resultado = _calcular.CalculoQuincenal(salarioBruto);
+            var resultado = _calcular.CalcularDeduccionQuincenal(salarioBruto);
             return Ok(resultado);
         }
     }

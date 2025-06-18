@@ -19,7 +19,7 @@ namespace PlanillaTest
         {
             decimal salario = 1000000m;
 
-            var resultado = _calculadora.CalculoMensual(salario);
+            var resultado = _calculadora.CalcularDeduccionMensual(salario);
 
             Assert.That(resultado.SEMEmpleado, Is.EqualTo(55000m));
             Assert.That(resultado.IVMEmpleado, Is.EqualTo(41700m));
@@ -33,7 +33,7 @@ namespace PlanillaTest
         [Test]
         public void DeduccionesEnCeroParaSalarioCeroTest()
         {
-            var resultado = _calculadora.CalculoMensual(0m);
+            var resultado = _calculadora.CalcularDeduccionMensual(0m);
 
             Assert.That(resultado.TotalEmpleado, Is.EqualTo(0));
             Assert.That(resultado.TotalPatrono, Is.EqualTo(0));
@@ -43,7 +43,7 @@ namespace PlanillaTest
         public void TotalesCalculadosCorrectamenteTest()
         {
             decimal salario = 1500000m;
-            var r = _calculadora.CalculoMensual(salario);
+            var r = _calculadora.CalcularDeduccionMensual(salario);
 
             decimal esperadoEmpleado = r.SEMEmpleado + r.IVMEmpleado + r.BPPOEmpleado + r.ImpuestoRenta;
             decimal esperadoPatrono = r.SEMPatrono + r.IVMPatrono + r.FCLPatrono;
