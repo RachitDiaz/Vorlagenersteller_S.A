@@ -191,7 +191,7 @@ namespace backend_planilla.Handlers
 
             var consulta = @"Select	Persona.Cedula, Persona.Nombre, Persona.Apellido1, Persona.Apellido2,
                             Persona.Genero, Empleado.Banco, Empleado.SalarioBruto, Empleado.CedulaEmpresa,
-                            Empleado.TipoContrato, Usuario.Correo
+                            Empleado.TipoContrato, Usuario.Correo, Empleado.Editable
                             From Persona
                             INNER JOIN Empleado ON Empleado.CedulaEmpleado = Persona.Cedula
                             INNER JOIN Usuario ON Usuario.Cedula = Persona.Cedula
@@ -222,7 +222,7 @@ namespace backend_planilla.Handlers
                     },
                     Genero = lector["Genero"].ToString(),
                     Correo = lector["Correo"].ToString(),
-                    CedulaEditable = true
+                    CedulaEditable = Convert.ToBoolean(lector["Editable"])
                 };
 
             }
