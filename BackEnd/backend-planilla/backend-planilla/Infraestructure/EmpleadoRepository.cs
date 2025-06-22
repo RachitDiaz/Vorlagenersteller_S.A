@@ -129,6 +129,33 @@ namespace backend_planilla.Handlers
             return cedulaEmpresa;
         }
 
+        public string ObtenerCedulaEmpleado(string correo)
+        {
+            string cedulaEmpresa = "";
+            var consulta =  @"SELECT Empleado.CedulaEmpleado
+                            FROM Usuario
+                            JOIN Empleado ON Usuario.Cedula = Empleado.CedulaEmpleado
+                            WHERE Usuario.Correo = @Correo;";
+            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+            comandoParaConsulta.Parameters.AddWithValue("@Correo", correo);
+
+            try
+            {
+                _conexion.Open();
+                var reader = comandoParaConsulta.ExecuteReader();
+                if (reader.Read())
+                {
+                    cedulaEmpresa = reader["CedulaEmpleado"].ToString();
+                }
+            }
+            finally
+            {
+                if (_conexion.State != ConnectionState.Closed) { _conexion.Close(); }
+            }
+
+            return cedulaEmpresa;
+        }
+
         public int ObtenerIdUsuario(string correo)
         {
             var consulta = @"SELECT ID FROM Usuario
