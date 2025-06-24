@@ -36,7 +36,7 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 builder.Services.AddScoped<IGetDeduccionBeneficiosQuery, GetDeduccionBeneficiosQuery>();
-builder.Services.AddScoped<CalculoDeduccionesObligatorias>();
+builder.Services.AddScoped<ICalculoDeduccionesObligatorias, CalculoDeduccionesObligatorias>();
 
 builder.Services.AddCors(options =>
 {

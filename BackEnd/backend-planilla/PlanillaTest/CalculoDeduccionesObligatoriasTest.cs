@@ -6,7 +6,7 @@ namespace PlanillaTest
 {
     public class CalculoDeduccionesObligatoriasTest
     {
-        private CalculoDeduccionesObligatorias _calculadora;
+        private ICalculoDeduccionesObligatorias _calculadora;
 
         [SetUp]
         public void Setup()
@@ -18,7 +18,6 @@ namespace PlanillaTest
         public void DeduccionesCorrectasParaSalarioValidoTest()
         {
             decimal salario = 1000000m;
-
             var resultado = _calculadora.CalcularDeduccionMensual(salario);
 
             Assert.That(resultado.SEMEmpleado, Is.EqualTo(55000m));
@@ -27,7 +26,7 @@ namespace PlanillaTest
 
             Assert.That(resultado.SEMPatrono, Is.EqualTo(92500m));
             Assert.That(resultado.IVMPatrono, Is.EqualTo(54200m));
-            Assert.That(resultado.FCLPatrono, Is.EqualTo(47500m));
+            Assert.That(resultado.FCLPatrono, Is.EqualTo(15000m));
         }
 
         [Test]
@@ -46,11 +45,26 @@ namespace PlanillaTest
             var r = _calculadora.CalcularDeduccionMensual(salario);
 
             decimal esperadoEmpleado = r.SEMEmpleado + r.IVMEmpleado + r.BPPOEmpleado + r.ImpuestoRenta;
-            decimal esperadoPatrono = r.SEMPatrono + r.IVMPatrono + r.FCLPatrono;
+            decimal esperadoPatrono = r.SEMPatrono + r.IVMPatrono + r.BPOPPatrono + r.AsignacionesFamiliaresPatrono + r.IMASPatrono + r.INAPatrono + r.FCLPatrono + r.OPCPatrono + r.INSPatrono;
 
             Assert.That(r.TotalEmpleado, Is.EqualTo(esperadoEmpleado));
             Assert.That(r.TotalPatrono, Is.EqualTo(esperadoPatrono));
         }
+
+        [Test]
+        public void DeduccionesQuincenalesCorrectasTest()
+        {
+            decimal salario = 1000000m;
+
+            var mensual = _calculadora.CalcularDeduccionMensual(salario);
+            var quincenal = _calculadora.CalcularDeduccionQuincenal(salario);
+
+            Assert.That(quincenal.SEMEmpleado, Is.EqualTo(mensual.SEMEmpleado / 2));
+            Assert.That(quincenal.IVMEmpleado, Is.EqualTo(mensual.IVMEmpleado / 2));
+            Assert.That(quincenal.BPPOEmpleado, Is.EqualTo(mensual.BPPOEmpleado / 2));
+            Assert.That(quincenal.ImpuestoRenta, Is.EqualTo(mensual.ImpuestoRenta / 2));
+        }
     }
 }
+
 
