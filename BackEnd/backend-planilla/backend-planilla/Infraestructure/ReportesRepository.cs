@@ -61,30 +61,33 @@ namespace backend_planilla.Infraestructure
 
                 foreach (DataRow columna in consultaFormatoTabla.Rows)
                 {
-                    decimal LoopBeneficioCosto1 = 0;
-                    decimal LoopBeneficioCosto2 = 0;
-                    decimal LoopBeneficioCosto3 = 0;
+                    decimal loopBeneficioCosto1 = 0;
+                    decimal loopBeneficioCosto2 = 0;
+                    decimal loopBeneficioCosto3 = 0;
+                    string nombreCompleto = Convert.ToString(columna["Nombre"]) + " " +
+                        Convert.ToString(columna["Apellido1"]) + " " + Convert.ToString(columna["Apellido2"]);
 
                     if (!columna["BeneficioMonto1"].ToString().Equals(""))
                     {
-                        LoopBeneficioCosto1 = Convert.ToDecimal(columna["BeneficioCosto1"]);
+                        loopBeneficioCosto1 = Convert.ToDecimal(columna["BeneficioCosto1"]);
                     }
 
                     if (!columna["BeneficioMonto2"].ToString().Equals(""))
                     {
-                        LoopBeneficioCosto2 = Convert.ToDecimal(columna["BeneficioCosto2"]);
+                        loopBeneficioCosto2 = Convert.ToDecimal(columna["BeneficioCosto2"]);
                     }
 
                     if (!columna["BeneficioMonto3"].ToString().Equals(""))
                     {
-                        LoopBeneficioCosto3 = Convert.ToDecimal(columna["BeneficioCosto3"]);
+                        loopBeneficioCosto3 = Convert.ToDecimal(columna["BeneficioCosto3"]);
                     }
 
                     reportesEmpleado.Add(
                     new ReportePagoEmpleadoDTO
                     {
                         NombreEmpresa = Convert.ToString(columna["Empresa"]),
-                        NombreEmpleado = Convert.ToString(columna["Nombre"]),
+                        NombreEmpleado = nombreCompleto,
+                        TipoContrato = Convert.ToString(columna["TipoContrato"]),
                         Fecha = Convert.ToDateTime(columna["Fecha"]),
                         SalarioBruto = Convert.ToDecimal(columna["SalarioBruto"]),
                         SEM = Convert.ToDecimal(columna["SEMEmpleado"]),
@@ -92,11 +95,11 @@ namespace backend_planilla.Infraestructure
                         BPP = Convert.ToDecimal(columna["BPPOEmpleado"]),
                         Renta = Convert.ToDecimal(columna["ImpuestoRenta"]),
                         BeneficioNombre1 = columna["BeneficioMonto1"].ToString(),
-                        BeneficioCosto1 = LoopBeneficioCosto1,
+                        BeneficioCosto1 = loopBeneficioCosto1,
                         BeneficioNombre2 = columna["BeneficioMonto2"].ToString(),
-                        BeneficioCosto2 = LoopBeneficioCosto2,
+                        BeneficioCosto2 = loopBeneficioCosto2,
                         BeneficioNombre3 = columna["BeneficioMonto3"].ToString(),
-                        BeneficioCosto3 = LoopBeneficioCosto3,
+                        BeneficioCosto3 = loopBeneficioCosto3,
                         TotalDeduccionesEmpleado = Convert.ToDecimal(columna["TotalDeduccionesEmpleado"]),
                         TotalDeduccionesBeneficios = Convert.ToDecimal(columna["TotalDeduccionesBeneficios"])
                     });

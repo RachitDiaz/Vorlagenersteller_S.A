@@ -5,6 +5,7 @@ namespace backend_planilla.Domain
     public class ReportePagoEmpleadoDTO
     {
         public string NombreEmpresa { get; set; }
+        public string TipoContrato { get; set; }
         public string NombreEmpleado { get; set; }
         public DateTime Fecha { get; set; }
         public decimal SalarioBruto { get; set; }
