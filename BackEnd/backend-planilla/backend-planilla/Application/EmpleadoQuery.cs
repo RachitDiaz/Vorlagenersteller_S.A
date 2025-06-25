@@ -47,6 +47,11 @@ namespace backend_planilla.Application
             return _empleadoRepository.ObtenerEmpleados(correo);
         }
 
+        public string ObtenerCedulaEmpleado(string correo)
+        {
+            return _empleadoRepository.ObtenerCedulaEmpleado(correo);
+        }
+
         private static bool PermiteEdicion(InfoEmpleadoModel original, InfoEmpleadoModel nuevo)
         {
             if (original == null) return false;

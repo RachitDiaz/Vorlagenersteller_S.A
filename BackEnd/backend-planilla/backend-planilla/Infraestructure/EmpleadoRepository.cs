@@ -129,6 +129,33 @@ namespace backend_planilla.Handlers
             return cedulaEmpresa;
         }
 
+        public string ObtenerCedulaEmpleado(string correo)
+        {
+            string cedulaEmpresa = "";
+            var consulta =  @"SELECT Empleado.CedulaEmpleado
+                            FROM Usuario
+                            JOIN Empleado ON Usuario.Cedula = Empleado.CedulaEmpleado
+                            WHERE Usuario.Correo = @Correo;";
+            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+            comandoParaConsulta.Parameters.AddWithValue("@Correo", correo);
+
+            try
+            {
+                _conexion.Open();
+                var reader = comandoParaConsulta.ExecuteReader();
+                if (reader.Read())
+                {
+                    cedulaEmpresa = reader["CedulaEmpleado"].ToString();
+                }
+            }
+            finally
+            {
+                if (_conexion.State != ConnectionState.Closed) { _conexion.Close(); }
+            }
+
+            return cedulaEmpresa;
+        }
+
         public int ObtenerIdUsuario(string correo)
         {
             var consulta = @"SELECT ID FROM Usuario
@@ -191,7 +218,7 @@ namespace backend_planilla.Handlers
 
             var consulta = @"Select	Persona.Cedula, Persona.Nombre, Persona.Apellido1, Persona.Apellido2,
                             Persona.Genero, Empleado.Banco, Empleado.SalarioBruto, Empleado.CedulaEmpresa,
-                            Empleado.TipoContrato, Usuario.Correo
+                            Empleado.TipoContrato, Usuario.Correo, Empleado.Editable
                             From Persona
                             INNER JOIN Empleado ON Empleado.CedulaEmpleado = Persona.Cedula
                             INNER JOIN Usuario ON Usuario.Cedula = Persona.Cedula
@@ -222,7 +249,7 @@ namespace backend_planilla.Handlers
                     },
                     Genero = lector["Genero"].ToString(),
                     Correo = lector["Correo"].ToString(),
-                    CedulaEditable = true
+                    CedulaEditable = Convert.ToBoolean(lector["Editable"])
                 };
 
             }

@@ -85,7 +85,6 @@ const login = async () => {
     const token = response.data.token
     localStorage.setItem('jwtToken', token)
     localStorage.setItem('rol', selectedTab.value)
-    console.log(selectedTab.value);
     if (selectedTab.value === 'Dueno') {
       window.location.href = '/ListaEmpleados'
     } else {
@@ -126,7 +125,7 @@ const login = async () => {
 }
 
 .tab.active {
-  background: #e3d2f4;
+  background: #9950ff;
   color: black;
 }
 
