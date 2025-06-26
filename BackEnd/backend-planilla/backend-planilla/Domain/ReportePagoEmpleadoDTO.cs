@@ -7,7 +7,7 @@ namespace backend_planilla.Domain
         public string NombreEmpresa { get; set; }
         public string TipoContrato { get; set; }
         public string NombreEmpleado { get; set; }
-        public DateTime Fecha { get; set; }
+        public string Fecha { get; set; }
         public decimal SalarioBruto { get; set; }
         public decimal SEM { get; set; }
         public decimal IVM { get; set; }

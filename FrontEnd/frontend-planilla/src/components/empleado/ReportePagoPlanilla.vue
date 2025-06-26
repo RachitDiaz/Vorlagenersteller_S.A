@@ -11,7 +11,7 @@
       </select>
     </div>
 
-  <div class="reporte">
+  <div class="reporte" v-show="show">
     <h3 class="title" style="font-weight: bold;"> {{ display.nombreEmpresa }}</h3>
     
     <div class="title" style="display: inline-block; width: 60%;"> {{ display.nombreEmpleado }}</div>
@@ -80,6 +80,7 @@ var display = reactive(
   }
 )
 var reportes = reactive([])
+var show = false;
 
 function obtenerReportes() {
 
@@ -95,7 +96,7 @@ function obtenerReportes() {
     axios.get(`${backendURL}Reportes/ObtenerUltimosPagosEmpleado`, {headers})
     .then((response) => {
       reportes = response.data;
-      updateDisplay(0);
+      display.beneficioCosto1 = 0;
     });
   } catch (error) {
     console.error("Error cargando planilla:", error)
@@ -113,6 +114,7 @@ onMounted(() => {
 })
 
 function updateDisplay(index) {
+  show = true;
   display.beneficioCosto1 = reportes[index].beneficioCosto1;
   display.beneficioCosto2 = reportes[index].beneficioCosto2;
   display.beneficioCosto3 = reportes[index].beneficioCosto3;

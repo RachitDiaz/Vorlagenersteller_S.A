@@ -88,7 +88,7 @@ namespace backend_planilla.Infraestructure
                         NombreEmpresa = Convert.ToString(columna["Empresa"]),
                         NombreEmpleado = nombreCompleto,
                         TipoContrato = Convert.ToString(columna["TipoContrato"]),
-                        Fecha = Convert.ToDateTime(columna["Fecha"]),
+                        Fecha = Convert.ToString(columna["Fecha"]),
                         SalarioBruto = Convert.ToDecimal(columna["SalarioBruto"]),
                         SEM = Convert.ToDecimal(columna["SEMEmpleado"]),
                         IVM = Convert.ToDecimal(columna["IVEMEmpleado"]),
