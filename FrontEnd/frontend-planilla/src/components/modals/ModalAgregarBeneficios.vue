@@ -375,7 +375,6 @@ watch(() => form.cantidadParametros, (newVal) => {
 });
 
 function submitForm() {
-  console.log('Datos a guardar', form);
   axios.post(`${backendURL}Beneficios/Agregar`, {
     nombre: form.nombre,
     descripcion: form.descripcion,

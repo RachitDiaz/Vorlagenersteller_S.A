@@ -86,7 +86,6 @@ export default {
   },
   methods: {
     async registrarDueno() {
-      console.log("Datos a guardar", this.form);
       if (this.form.contrasena !== this.form.confirmarContrasena) {
         alert('Las contraseñas no coinciden');
         return;

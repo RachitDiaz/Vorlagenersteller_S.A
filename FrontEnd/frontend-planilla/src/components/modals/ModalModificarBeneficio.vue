@@ -344,11 +344,8 @@ watch(() => form.cantidadParametros, (newVal) => {
   }
 });
 
-/**
- * Function para enviar info a backend y modificar el beneficio
- */
+
 function submitForm() {
-  console.log('Datos a cambiar', form);
   const payload = {
     modificado: {
       nombre: form.nombre,

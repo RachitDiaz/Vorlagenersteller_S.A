@@ -90,7 +90,6 @@ export default {
           }, 2000);
           return;
         }
-        console.log(token);
         const response = await axios.get(`${backendURL}Empleado/GetEmpleadosEmpresa`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -98,7 +97,6 @@ export default {
         });
 
         this.empleados = response.data;
-        console.log("Empleados recibidos:", response.data);
       } catch (error) {
         if (error.response && error.response.status === 401) {
           localStorage.removeItem('jwtToken');
