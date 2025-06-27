@@ -18,11 +18,19 @@ namespace backend_planilla.Application
         {
             _reportesRepository = _nuevoReportesRepository;
         }
-        public List<ReportePagoEmpleadoDTO> ObtenerUltimosPagosEmpleado(string cedula)
+        public List<ReportePagoEmpleadoDTO> ObtenerUltimosPagosEmpleado(string cedulaEmpleado)
         {
             int cantidadARecuperar = 10;
 
-            List<ReportePagoEmpleadoDTO> resultado = _reportesRepository.ObtenerUltimosPagosEmpleado(cedula, cantidadARecuperar);
+            List<ReportePagoEmpleadoDTO> resultado = _reportesRepository.ObtenerUltimosPagosEmpleado(cedulaEmpleado, cantidadARecuperar);
+            return resultado;
+        }
+
+        public List<ReportePagoEmpresaDTO> ObtenerUltimosPagosEmpresa(string cedulaDueno)
+        {
+            int cantidadARecuperar = 10;
+
+            List<ReportePagoEmpresaDTO> resultado = _reportesRepository.ObtenerUltimosPagosEmpresa(cedulaDueno, cantidadARecuperar);
             return resultado;
         }
     }

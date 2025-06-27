@@ -30,7 +30,7 @@
       <div class="row" v-show="display.beneficioCosto2"> {{ display.beneficioNombre2 }} </div>
       <div class="row" v-show="display.beneficioCosto3"> {{ display.beneficioNombre3 }} </div>
       <div class="row" style="font-weight: bold;  margin-bottom: 1rem;"> Total deducciones beneficios </div>
-      <div class="row" style="font-weight: bold;"> Salaio neto </div>
+      <div class="row" style="font-weight: bold; font-size: 1.4rem; margin-bottom: 1rem;"> Salario neto </div>
     </div>
     <div class="column" style="width: 40%;">
       <div class="row" style="font-weight: bold;"> {{ display.salarioBruto }}₡</div>
@@ -43,7 +43,7 @@
       <div class="row" v-show="display.beneficioCosto2"> -{{ display.beneficioCosto2 }}₡ </div>
       <div class="row" v-show="display.beneficioCosto3"> -{{ display.beneficioCosto3 }}₡ </div>
       <div class="row" style="font-weight: bold; margin-bottom: 1rem;"> -{{ display.totalDeduccionesBeneficios }}₡</div>
-      <div class="row" style="font-weight: bold;"> {{ display.salarioNeto }}₡</div>
+      <div class="row" style="font-weight: bold; font-size: 1.4rem; margin-bottom: 1rem;"> {{ display.salarioNeto }}₡</div>
     </div>
   </div>
   </div>
@@ -96,7 +96,7 @@ function obtenerReportes() {
     axios.get(`${backendURL}Reportes/ObtenerUltimosPagosEmpleado`, {headers})
     .then((response) => {
       reportes = response.data;
-      display.beneficioCosto1 = 0;
+      updateDisplay(0);
     });
   } catch (error) {
     console.error("Error cargando planilla:", error)

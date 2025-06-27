@@ -52,6 +52,38 @@ namespace backend_planilla.Controllers
             return Ok(_resultado);
         }
 
+        [HttpGet]
+        public IActionResult ObtenerUltimosPagosEmpresa()
+        {
+            string _correoDueno = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (string.IsNullOrWhiteSpace(_correoDueno))
+                return BadRequest();
+
+            string _cedulaDueno;
+            List<ReportePagoEmpresaDTO> _resultado;
+
+            try
+            {
+                _cedulaDueno = _EmpleadoQuery.ObtenerCedulaEmpleado(_correoDueno);
+                _cedulaDueno = "1-1909-0924";
+            }
+            catch (Exception mensajeError)
+            {
+                return BadRequest("Error recuperando cedula del empleado");
+            }
+
+            try
+            {
+                _resultado = _ReportesQuery.ObtenerUltimosPagosEmpresa(_cedulaDueno);
+            }
+            catch (Exception mensajeError)
+            {
+                return BadRequest("Error recuperando pagos al empleado");
+            }
+
+            return Ok(_resultado);
+        }
+
     }
         
 }
