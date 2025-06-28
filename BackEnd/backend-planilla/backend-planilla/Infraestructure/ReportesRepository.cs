@@ -36,13 +36,13 @@ namespace backend_planilla.Infraestructure
 				    Empleado.TipoContrato, Empresa.Nombre Empresa, P.FechaDeCreacion,
 				    P.SalarioBruto, P.SEMEmpleado, P.IVEMEmpleado, P.BPPOEmpleado,
 				    P.ImpuestoRenta, P.BeneficioMonto1, P.BeneficioNombre1, P.FechaDeCreacion Fecha,
-				    P.BeneficioMonto2, P.BeneficioNombre3,P.BeneficioMonto3,
+				    P.BeneficioMonto2, P.BeneficioNombre2, P.BeneficioMonto3,
 				    P.BeneficioNombre3, P.TotalDeduccionesEmpleado, P.TotalDeduccionesBeneficios
 		            FROM Persona
 		            INNER JOIN Empleado ON Empleado.CedulaEmpleado = Persona.Cedula
 		            INNER JOIN Empresa ON Empresa.CedulaJuridica = Empleado.CedulaEmpresa
 		            INNER JOIN PlanillaMensualEmpleado P ON P.CedulaEmpleado = Empleado.CedulaEmpleado
-		            WHERE Persona.Cedula = @CedulaEmpleado
+		            WHERE Persona.Cedula = @CedulaEmpleado AND Empresa.activo = 1
 		            ORDER BY P.FechaDeCreacion DESC;";
 
             SqlCommand comandoParaConsulta = new SqlCommand(query, _conexion);
@@ -67,17 +67,17 @@ namespace backend_planilla.Infraestructure
                     string nombreCompleto = Convert.ToString(columna["Nombre"]) + " " +
                         Convert.ToString(columna["Apellido1"]) + " " + Convert.ToString(columna["Apellido2"]);
 
-                    if (!columna["BeneficioMonto1"].ToString().Equals(""))
+                    if (!columna["BeneficioNombre1"].ToString().Equals(""))
                     {
                         loopBeneficioCosto1 = Convert.ToDecimal(columna["BeneficioCosto1"]);
                     }
 
-                    if (!columna["BeneficioMonto2"].ToString().Equals(""))
+                    if (!columna["BeneficioNombre2"].ToString().Equals(""))
                     {
                         loopBeneficioCosto2 = Convert.ToDecimal(columna["BeneficioCosto2"]);
                     }
 
-                    if (!columna["BeneficioMonto3"].ToString().Equals(""))
+                    if (!columna["BeneficioNombre3"].ToString().Equals(""))
                     {
                         loopBeneficioCosto3 = Convert.ToDecimal(columna["BeneficioCosto3"]);
                     }
@@ -88,7 +88,7 @@ namespace backend_planilla.Infraestructure
                         NombreEmpresa = Convert.ToString(columna["Empresa"]),
                         NombreEmpleado = nombreCompleto,
                         TipoContrato = Convert.ToString(columna["TipoContrato"]),
-                        Fecha = Convert.ToDateTime(columna["Fecha"]),
+                        Fecha = Convert.ToString(columna["Fecha"]),
                         SalarioBruto = Convert.ToDecimal(columna["SalarioBruto"]),
                         SEM = Convert.ToDecimal(columna["SEMEmpleado"]),
                         IVM = Convert.ToDecimal(columna["IVEMEmpleado"]),
@@ -111,6 +111,68 @@ namespace backend_planilla.Infraestructure
             }
 
             return reportesEmpleado;
+        }
+
+        public List<ReportePagoEmpresaDTO> ObtenerUltimosPagosEmpresa(string cedulaDueno, int cantidad)
+        {
+            List<ReportePagoEmpresaDTO> reportesEmpresa = new List<ReportePagoEmpresaDTO>();
+            string query = @"Select TOP (@Cantidad) Empresa.Nombre Empresa, Persona.Nombre, Persona.Apellido1, Persona.Apellido2,
+					P.FechaDeCreacion, P.Periodo, P.TotalSalariosPagar, P.TotalSEMPagar,
+					P.TotalIVMPagar, P.TotalBPOPPagar, P.TotalAsignacionesFamiliaresPagar,
+					P.TotalIMASPagar, P.TotalINAPagar, P.TotalFCLPagar, P.TotalOPCPagar,
+					P.TotalINSPagar, P.TotalBeneficiosPagar
+		            FROM Empresa
+		            INNER JOIN Persona ON Empresa.CedulaDueno = Persona.Cedula
+		            INNER JOIN PlanillaDeduccionesEmpresa P ON P.CedulaEmpresa = Empresa.CedulaJuridica
+		            WHERE Empresa.CedulaDueno = @CedulaDueno AND Empresa.activo = 1
+		            ORDER BY P.FechaDeCreacion DESC;";
+
+            SqlCommand comandoParaConsulta = new SqlCommand(query, _conexion);
+            comandoParaConsulta.Parameters.AddWithValue("@CedulaDueno", cedulaDueno);
+            comandoParaConsulta.Parameters.AddWithValue("@Cantidad", cantidad);
+
+            try
+            {
+                if (_conexion.State != ConnectionState.Open) { _conexion.Open(); }
+
+                SqlDataAdapter adaptadorParaTabla = new SqlDataAdapter(comandoParaConsulta);
+                DataTable consultaFormatoTabla = new DataTable();
+                adaptadorParaTabla.Fill(consultaFormatoTabla);
+
+                _conexion.Close();
+
+                foreach (DataRow columna in consultaFormatoTabla.Rows)
+                {
+                    string nombreCompleto = Convert.ToString(columna["Nombre"]) + " " +
+                        Convert.ToString(columna["Apellido1"]) + " " + Convert.ToString(columna["Apellido2"]);
+
+                    reportesEmpresa.Add(
+                    new ReportePagoEmpresaDTO
+                    {
+                        NombreEmpresa = Convert.ToString(columna["Empresa"]),
+                        NombreEmpleador = nombreCompleto,
+                        FechaPago = Convert.ToString(columna["FechaDeCreacion"]),
+                        PeridoPago = Convert.ToString(columna["Periodo"]),
+                        SalariosTiempoCompleto = Convert.ToDecimal(columna["TotalSalariosPagar"]),
+                        TotalSEM = Convert.ToDecimal(columna["TotalSEMPagar"]),
+                        TotalIVM = Convert.ToDecimal(columna["TotalIVMPagar"]),
+                        TotalBP = Convert.ToDecimal(columna["TotalBPOPPagar"]),
+                        TotalAF = Convert.ToDecimal(columna["TotalAsignacionesFamiliaresPagar"]),
+                        TotalIMAS = Convert.ToDecimal(columna["TotalIMASPagar"]),
+                        TotalINA = Convert.ToDecimal(columna["TotalINAPagar"]),
+                        TotalFCL = Convert.ToDecimal(columna["TotalFCLPagar"]),
+                        TotalPC = Convert.ToDecimal(columna["TotalOPCPagar"]),
+                        TotalINS = Convert.ToDecimal(columna["TotalINSPagar"]),
+                        BeneficiosTotales = Convert.ToDecimal(columna["TotalBeneficiosPagar"])
+                    });
+                }
+            }
+            finally
+            {
+                if (_conexion.State != ConnectionState.Closed) { _conexion.Close(); }
+            }
+
+            return reportesEmpresa;
         }
 
     }
