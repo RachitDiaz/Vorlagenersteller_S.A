@@ -4,5 +4,7 @@ using backend_planilla.Application;
 
 public interface IGetDeduccionBeneficiosQuery
 {
-    Task<List<DeduccionCalculada>> ExecuteAsync(string cedulaEmpleado);
+    public Task<List<DeduccionCalculada>> CalcularDeduccioensBeneficios(string correo);
+
+
 }

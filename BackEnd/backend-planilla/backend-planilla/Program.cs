@@ -50,7 +50,11 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(); 
+builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
+builder.Services.AddScoped<IBeneficioRepository, BeneficioRepository>();
+builder.Services.AddScoped<IBeneficiosRepository, BeneficiosRepository>();
+builder.Services.AddScoped<IGetDeduccionBeneficiosQuery, GetDeduccionBeneficiosQuery>();
 
 
 var app = builder.Build();

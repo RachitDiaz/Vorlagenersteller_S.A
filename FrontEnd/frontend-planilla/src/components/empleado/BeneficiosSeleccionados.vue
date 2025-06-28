@@ -52,7 +52,7 @@ const availableBenefits = computed(() =>
 
 onMounted(async () => {
   const token = localStorage.getItem("jwtToken")
-
+  console.log("Token:", token)
   if (!token) {
     alert("Tiene que iniciar sesión primero.")
     setTimeout(() => router.push("/login"), 2000)
@@ -60,7 +60,6 @@ onMounted(async () => {
   }
 
   const headers = { Authorization: `Bearer ${token}` }
-
   try {
     const { data: disponibles } = await axios.get(`${backendURL}BeneficioEmpleado/listar`, { headers })
     allBenefits.value = disponibles.map(b => ({ id: b.id, name: b.nombre }))

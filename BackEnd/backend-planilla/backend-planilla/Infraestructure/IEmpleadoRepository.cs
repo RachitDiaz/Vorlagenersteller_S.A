@@ -15,5 +15,9 @@ namespace backend_planilla.Infraestructure
         public Task<string> ObtenerGeneroEmpleado(string cedulaEmpleado);
 
         public string ObtenerCedulaEmpleado(string correo);
+
+        public Task<string> ObtenerFechaNacimientoEmpleado(string cedulaEmpleado);
+
+        public Task<string> ObtenerCantDependientesEmpleado(string cedulaEmpleado);
     }
 }
