@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using backend_planilla.Domain;
 using backend_planilla.Infraestructure;
 using backend_planilla.Models;
@@ -28,10 +29,27 @@ namespace backend_planilla.Application
 
         public List<ReportePagoEmpresaDTO> ObtenerUltimosPagosEmpresa(string cedulaDueno)
         {
+            try
+            {
+                if (!CedulaValida(cedulaDueno))
+                { throw new Exception(); }
+
+            } catch (Exception) {
+                throw;
+            }
+            
+
             int cantidadARecuperar = 10;
 
             List<ReportePagoEmpresaDTO> resultado = _reportesRepository.ObtenerUltimosPagosEmpresa(cedulaDueno, cantidadARecuperar);
             return resultado;
+        }
+
+        private bool CedulaValida(string cedula)
+        {
+            string expresion = "\\d-\\d\\d\\d\\d-\\d\\d\\d\\d";
+            Regex regex = new Regex(expresion);
+            return regex.IsMatch(cedula);
         }
     }
 }

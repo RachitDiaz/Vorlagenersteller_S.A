@@ -15,10 +15,12 @@ namespace backend_planilla.Controllers
     {
         private readonly IReportesQuery _ReportesQuery;
         private readonly IEmpleadoQuery _EmpleadoQuery;
+        private readonly DuenoHandler _DuenoHandler;
         public ReportesController()
         {
             _ReportesQuery = new ReportesQuery();
             _EmpleadoQuery = new EmpleadoQuery();
+            _DuenoHandler = new DuenoHandler();
         }
 
         [HttpGet]
@@ -64,8 +66,7 @@ namespace backend_planilla.Controllers
 
             try
             {
-                _cedulaDueno = _EmpleadoQuery.ObtenerCedulaEmpleado(_correoDueno);
-                _cedulaDueno = "1-1909-0924";
+                _cedulaDueno = _DuenoHandler.ObtenerCedulaDueno(_correoDueno);
             }
             catch (Exception mensajeError)
             {
