@@ -15,30 +15,29 @@ namespace backend_planilla.Application
             _reportesRepository = new ReportesRepository();
         }
 
+        public ReportesQuery(IReportesRepository reportesRepository)
+        {
+            _reportesRepository = reportesRepository;
+        }
+
         public ReportesQuery(ReportesRepository _nuevoReportesRepository)
         {
             _reportesRepository = _nuevoReportesRepository;
         }
-        public List<ReportePagoEmpleadoDTO> ObtenerUltimosPagosEmpleado(string cedulaEmpleado)
+        public List<ReportePagoEmpleadoDTO>? ObtenerUltimosPagosEmpleado(string cedulaEmpleado)
         {
+            if (!CedulaValida(cedulaEmpleado)) { return null; }
+
             int cantidadARecuperar = 10;
 
             List<ReportePagoEmpleadoDTO> resultado = _reportesRepository.ObtenerUltimosPagosEmpleado(cedulaEmpleado, cantidadARecuperar);
             return resultado;
         }
 
-        public List<ReportePagoEmpresaDTO> ObtenerUltimosPagosEmpresa(string cedulaDueno)
+        public List<ReportePagoEmpresaDTO>? ObtenerUltimosPagosEmpresa(string cedulaDueno)
         {
-            try
-            {
-                if (!CedulaValida(cedulaDueno))
-                { throw new Exception(); }
-
-            } catch (Exception) {
-                throw;
-            }
+            if (!CedulaValida(cedulaDueno)){ return null; }
             
-
             int cantidadARecuperar = 10;
 
             List<ReportePagoEmpresaDTO> resultado = _reportesRepository.ObtenerUltimosPagosEmpresa(cedulaDueno, cantidadARecuperar);

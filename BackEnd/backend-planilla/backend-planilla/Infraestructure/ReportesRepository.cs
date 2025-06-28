@@ -42,7 +42,7 @@ namespace backend_planilla.Infraestructure
 		            INNER JOIN Empleado ON Empleado.CedulaEmpleado = Persona.Cedula
 		            INNER JOIN Empresa ON Empresa.CedulaJuridica = Empleado.CedulaEmpresa
 		            INNER JOIN PlanillaMensualEmpleado P ON P.CedulaEmpleado = Empleado.CedulaEmpleado
-		            WHERE Persona.Cedula = @CedulaEmpleado
+		            WHERE Persona.Cedula = @CedulaEmpleado AND Empresa.activo = 1
 		            ORDER BY P.FechaDeCreacion DESC;";
 
             SqlCommand comandoParaConsulta = new SqlCommand(query, _conexion);
@@ -124,7 +124,7 @@ namespace backend_planilla.Infraestructure
 		            FROM Empresa
 		            INNER JOIN Persona ON Empresa.CedulaDueno = Persona.Cedula
 		            INNER JOIN PlanillaDeduccionesEmpresa P ON P.CedulaEmpresa = Empresa.CedulaJuridica
-		            WHERE Empresa.CedulaDueno = @CedulaDueno
+		            WHERE Empresa.CedulaDueno = @CedulaDueno AND Empresa.activo = 1
 		            ORDER BY P.FechaDeCreacion DESC;";
 
             SqlCommand comandoParaConsulta = new SqlCommand(query, _conexion);
