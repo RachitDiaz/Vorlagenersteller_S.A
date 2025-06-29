@@ -22,96 +22,27 @@ namespace backend_planilla.Application
         }
 
 
-        public async Task<List<DeduccionCalculada>> CalcularDeduccioensBeneficios(string correo)
+        public async Task<List<DeduccionCalculada>> CalcularDeduccionesBeneficios(string correo)
         {
-            var cedulaEmpleado = _repo_beneficio.ObtenerCedulaEmpleadoDesdeCorreo(correo);
-            var salarioBruto = await _repo_empleado.ObtenerSalarioBruto(cedulaEmpleado);
+            string cedulaEmpleado = _repo_beneficio.ObtenerCedulaEmpleadoDesdeCorreo(correo);
+            decimal salarioBruto = await _repo_empleado.ObtenerSalarioBruto(cedulaEmpleado);
             var beneficios = await _repo_empleado.ObtenerBeneficiosEmpleado(cedulaEmpleado);
-            List<DeduccionCalculada> resultado = new List<DeduccionCalculada>();
-            foreach (DeduccionBeneficioModel beneficio in beneficios)
+
+            var resultado = new List<DeduccionCalculada>();
+
+            foreach (var beneficio in beneficios)
             {
-                decimal deduccion = 0;
-                const decimal cienPorciento = 100m;
-                const decimal cero = 0;
-                var parametros = _repo_beneficios.ObtenerParametrosBeneficio(beneficio.IDBeneficio);
+                decimal deduccion = await CalcularDeduccionPorBeneficio(beneficio, salarioBruto, cedulaEmpleado);
 
-                if (beneficio.Tipo.ToLower() == "porcentaje")
+                deduccion = Math.Clamp(deduccion, 0, salarioBruto);
+
+                resultado.Add(new DeduccionCalculada
                 {
-                    foreach (var param in parametros)
-                    {
-                        if (param.TipoValorParametro.ToLower() == "porcentaje")
-                        {
-                            deduccion += salarioBruto * (param.ValorDelParametro / cienPorciento);
-                        }
-                    }
-
-                }
-                else if (beneficio.Tipo.ToLower() == "fijo" || beneficio.Tipo.ToLower() == "montofijo")
-                {
-                    if (parametros.Count() >= cero)
-                    {
-                        foreach (var param in parametros)
-                        {
-                            if (param.TipoValorParametro.ToLower() == "fijo")
-                            {
-                                deduccion += param.ValorDelParametro;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        deduccion = 0;
-                    }
-                }
-                else if (beneficio.Tipo.ToLower() == "api")
-                {
-                    string nombre = beneficio.Nombre.ToLower();
-                    if (nombre == "poliza de vida")
-                    {
-                        var sexo = await _repo_empleado.ObtenerGeneroEmpleado(cedulaEmpleado);
-                        sexo = sexo.Equals("Masculino") ? "male" : "female";
-                        deduccion = await ObtenerDeduccionPolizaVida(sexo, cedulaEmpleado);
-                    }
-                    else if (nombre == "asociación solidarista" || nombre == "asociacion solidarista")
-                    {
-                        deduccion = await ObtenerDeduccionAsociacion(salarioBruto, "Asociación");
-                    }
-                    else if (nombre == "mediseguro")
-                    {
-
-                        var sexo = await _repo_empleado.ObtenerGeneroEmpleado(cedulaEmpleado);
-                        deduccion = await ObtenerDeduccionMediSeguro(sexo, cedulaEmpleado);
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    continue;
-                }
-
-                deduccion = Math.Min(deduccion, salarioBruto);
-
-
-                if (deduccion < 0)
-                {
-                    deduccion = 0;
-
-                }
-                else
-                {
-                    resultado.Add(new DeduccionCalculada
-                    {
-                        NombreBeneficio = beneficio.Nombre,
-                        MontoReducido = Math.Round(deduccion, 2)
-                    });
-                }
-
+                    NombreBeneficio = beneficio.Nombre,
+                    MontoReducido = Math.Round(deduccion, 2)
+                });
             }
 
-            // Siempre retornar una lista de 3 elementos (relleno con ceros si hay menos)
             while (resultado.Count < 3)
             {
                 resultado.Add(new DeduccionCalculada
@@ -120,7 +51,61 @@ namespace backend_planilla.Application
                     MontoReducido = 0
                 });
             }
+
             return resultado;
+        }
+
+        private async Task<decimal> CalcularDeduccionPorBeneficio(DeduccionBeneficioModel beneficio, decimal salarioBruto, string cedulaEmpleado)
+        {
+            string tipo = beneficio.Tipo.ToLower();
+            string nombre = beneficio.Nombre.ToLower();
+
+            switch (tipo)
+            {
+                case "porcentaje":
+                    return await CalcularPorcentaje(beneficio.IDBeneficio, salarioBruto);
+
+                case "fijo":
+                case "montofijo":
+                    return await CalcularFijo(beneficio.IDBeneficio);
+
+                case "api":
+                    return await CalcularDesdeApi(nombre, salarioBruto, cedulaEmpleado);
+
+                default:
+                    return 0;
+            }
+        }
+
+        private async Task<decimal> CalcularPorcentaje(int idBeneficio, decimal salarioBruto)
+        {
+            const decimal cien = 100m;
+            var parametros = _repo_beneficios.ObtenerParametrosBeneficio(idBeneficio);
+            return parametros
+                .Where(p => p.TipoValorParametro.Equals("porcentaje", StringComparison.OrdinalIgnoreCase))
+                .Sum(p => salarioBruto * (p.ValorDelParametro / cien));
+        } 
+
+        private async Task<decimal> CalcularFijo(int idBeneficio)
+        {
+            var parametros =  _repo_beneficios.ObtenerParametrosBeneficio(idBeneficio);
+            return parametros
+                .Where(p => p.TipoValorParametro.Equals("fijo", StringComparison.OrdinalIgnoreCase))
+                .Sum(p => p.ValorDelParametro);
+        }
+
+        private async Task<decimal> CalcularDesdeApi(string nombre, decimal salarioBruto, string cedula)
+        {
+            string sexo = await _repo_empleado.ObtenerGeneroEmpleado(cedula);
+            sexo = sexo.Equals("Masculino", StringComparison.OrdinalIgnoreCase) ? "male" : "female";
+
+            return nombre switch
+            {
+                "poliza de vida" => await ObtenerDeduccionPolizaVida(sexo, cedula),
+                "asociación solidarista" or "asociacion solidarista" => await ObtenerDeduccionAsociacion(salarioBruto, "Asociación"),
+                "mediseguro" => await ObtenerDeduccionMediSeguro(sexo, cedula),
+                _ => 0
+            };
         }
         private async Task<decimal> ObtenerDeduccionPolizaVida(string sexo, string cedulaEmpleado)
         {

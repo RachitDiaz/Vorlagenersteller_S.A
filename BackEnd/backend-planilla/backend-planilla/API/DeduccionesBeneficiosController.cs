@@ -17,18 +17,16 @@ namespace backend_planilla.API
             _query = query;
         }
 
-        // GET: api/DeduccionesBeneficios
         [HttpGet]
-        [Authorize] // Asegura que solo usuarios autenticados puedan acceder
+        [Authorize] 
         public async Task<ActionResult<List<DeduccionCalculada>>> ObtenerDeducciones()
         {
-            // Extraer el correo electrónico del claim
+
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            Console.WriteLine(correo);
             if (string.IsNullOrEmpty(correo))
                 return Unauthorized("No se encontró el correo en el token de autenticación.");
 
-            var resultado = await _query.CalcularDeduccioensBeneficios(correo);
+            var resultado = await _query.CalcularDeduccionesBeneficios(correo);
 
             return Ok(resultado);
         }

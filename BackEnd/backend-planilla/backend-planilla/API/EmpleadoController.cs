@@ -29,7 +29,7 @@ namespace backend_planilla.Controllers
             if (string.IsNullOrWhiteSpace(cedula))
                 return BadRequest("Debe indicar una cédula.");
 
-            var resultado = await _query.CalcularDeduccioensBeneficios(cedula);
+            var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
             return Ok(resultado);
         }
 

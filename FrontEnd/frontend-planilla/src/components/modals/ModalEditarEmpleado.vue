@@ -249,7 +249,6 @@ function show(cedulaBusqueda) {
       return;
     }
 
-    console.log(token);
     axios.get(`${backendURL}Empleado/GetInfoEmpleado`, {
       headers: {
         Authorization: `Bearer ${token}`

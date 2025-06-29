@@ -3,6 +3,7 @@ USE VorlaDB
 ALTER TABLE Persona
 ADD FechaNacimiento DATE DEFAULT '2000-01-01';
 GO
+
 UPDATE Persona
 SET FechaNacimiento = '2000-01-01'
 WHERE FechaNacimiento IS NULL;

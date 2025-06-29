@@ -58,7 +58,6 @@ namespace backend_planilla.Handlers
                     SalarioBruto = Convert.ToDecimal(columna["SalarioBruto"]),
                     TipoContrato = Convert.ToString(columna["TipoContrato"])
                 });
-                Console.WriteLine($"{Convert.ToString(columna["Cedula"])}");
             }
             return empleados;
         }
@@ -67,11 +66,8 @@ namespace backend_planilla.Handlers
         {
             Console.WriteLine($"Contra: {_passwordHasher.HashPassword(persona.Usuario, persona.Usuario.Contrasena)}");
             bool exito = false;
-            Console.WriteLine($"Buscando cedula empresa");
             string cedulaEmpresa = ObtenerCedulaJuridica(correo);
-            Console.WriteLine($"Buscando ID usuario");
             int IDUsuario = ObtenerIdUsuario(correo);
-            Console.WriteLine($"CedulaEmpresa: {cedulaEmpresa} IDUsuario:{IDUsuario}");
             if (cedulaEmpresa != "")
             {
                 exito = CrearPersona(persona);
@@ -91,14 +87,6 @@ namespace backend_planilla.Handlers
                 comandoParaConsulta.Parameters.AddWithValue("@TipoContrato", empleado.TipoContrato);
                 comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", IDUsuario);
                 comandoParaConsulta.Parameters.AddWithValue("@UltimoEnModificar", IDUsuario);
-                Console.WriteLine($"Tratando de cear empleado con la siguiente información\n" +
-                    $"CedulaEmpleado: {empleado.CedulaEmpleado}\n" +
-                    $"CedulaEmpresa: {cedulaEmpresa}\n" +
-                    $"Banco: {empleado.Banco}\n" +
-                    $"SalarioBruto: {empleado.SalarioBruto}\n" +
-                    $"TipoContrato: {empleado.TipoContrato}\n" +
-                    $"UsuarioCreador: {IDUsuario}\n" +
-                    $"UltimoEnModificar: {IDUsuario}\n");
                 _conexion.Open();
                 exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
                 _conexion.Close();
@@ -203,10 +191,6 @@ namespace backend_planilla.Handlers
             comandoParaConsulta.Parameters.AddWithValue("@Correo", persona.Usuario.Correo);
             persona.Usuario.Contrasena = _passwordHasher.HashPassword(persona.Usuario, persona.Usuario.Contrasena);
             comandoParaConsulta.Parameters.AddWithValue("@Contrasena", persona.Usuario.Contrasena);
-            Console.WriteLine($"Tratando de cear usuario con la siguiente información\n" +
-                $"Cedula: {persona.Cedula}" +
-                $"Correo: {persona.Usuario.Correo}" +
-                $"Contrasena: {persona.Usuario.Contrasena}");
             _conexion.Open();
             var exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
             _conexion.Close();
