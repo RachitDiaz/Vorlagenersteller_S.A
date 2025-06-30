@@ -29,7 +29,7 @@ namespace backend_planilla.Controllers
             if (string.IsNullOrWhiteSpace(cedula))
                 return BadRequest("Debe indicar una cédula.");
 
-            var resultado = await _query.ExecuteAsync(cedula);
+            var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
             return Ok(resultado);
         }
 
@@ -38,8 +38,6 @@ namespace backend_planilla.Controllers
         {
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                $" Correo: {correo} acceso en GET /api/empleadoController");
 
             var empleados = _empleadoHandler.ObtenerEmpleados(correo);
             return empleados;

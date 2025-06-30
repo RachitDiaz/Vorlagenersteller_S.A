@@ -74,8 +74,11 @@
                   <option disabled value="">
                     Seleccione un beneficio
                   </option>
-                  <option v-for="b in beneficios"
-                    :key="b.nombre" :value="b.nombre">
+                  <option
+                    v-for="b in beneficios.filter(b => b.nombre !== 'TSE' && b.nombre !== 'Registro Nacional')"
+                    :key="b.nombre"
+                    :value="b.nombre"
+                  >
                     {{ b.nombre }}
                   </option>
                 </select>

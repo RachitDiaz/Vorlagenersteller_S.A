@@ -108,9 +108,13 @@ function submit() {
         Authorization: `Bearer ${token}`,
       },
     });
+    const excluidos = ["TSE", "Registro Nacional"];
+
     beneficiosEmpresa.value = response.data
-        .filter((b) => b.cedulaEmpresa !== '');
-    beneficiosAPI.value = response.data.filter((b) => b.cedulaEmpresa === '');
+      .filter((b) => b.cedulaEmpresa !== '' && !excluidos.includes(b.nombre));
+
+    beneficiosAPI.value = response.data
+      .filter((b) => b.cedulaEmpresa === '' && !excluidos.includes(b.nombre));
   } catch (error) {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('jwtToken');
