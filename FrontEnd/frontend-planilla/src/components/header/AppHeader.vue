@@ -41,10 +41,10 @@ const filteredMenuItems = computed(() => {
 
     if (path === '/') return true 
     if (path === '/VerEmpleado') return true 
-    if (['/ListaBeneficios', '/ListaEmpresas', '/VerEmpresa', '/ListaEmpleados', '/VerPlanilla'].includes(path)) {
+    if (['/ListaBeneficios', '/ListaEmpresas', '/VerEmpresa', '/ListaEmpleados', '/VerPlanilla', '/ReporteCostos'].includes(path)) {
       return rol.value === 'Dueno'
     }
-    if (['/BeneficiosEmpleado', '/RegistroHoras'].includes(path)) {
+    if (['/BeneficiosEmpleado', '/RegistroHoras', '/ReportePago'].includes(path)) {
       return rol.value === 'Empleado'
     }
 
@@ -80,6 +80,8 @@ const menuItems = [
   { name: 'Beneficios Empleado', path: '/BeneficiosEmpleado' },
   { name: 'Registro de Horas', path: '/RegistroHoras' },
   { name: 'Ver Planilla', path: '/VerPlanilla' },
+  { name: 'Reporte de Pagos', path: '/ReportePago'},
+  { name: 'Reporte de pagos', path: '/ReporteCostos'}
 ]
 </script>
 
