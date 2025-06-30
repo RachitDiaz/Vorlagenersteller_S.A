@@ -13,8 +13,9 @@ SELECT * FROM Empleado
 ALTER TABLE Empleado
 ADD CantidadDependientes INT DEFAULT 3;
 GO
+
 SELECT * FROM Empleado
 UPDATE Empleado
 SET CantidadDependientes = 3
-WHERE FechaNacimiento IS NOT 3;
+WHERE CantidadDependientes IS NULL;
 GO
