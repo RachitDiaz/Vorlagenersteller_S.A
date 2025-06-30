@@ -10,90 +10,102 @@ namespace PlanillaTest
 {
     public class GetDeduccionBeneficiosQueryTest
     {
-        private Mock<IEmpleadoRepository> _mockEmpleadoRepo;
-        private Mock<IBeneficiosRepository> _mockBeneficiosRepo;
-        private Mock<IBeneficioRepository> _mockBeneficioRepo;
+        private Mock<IEmpleadoRepository> _repoEmpleado;
+        private Mock<IBeneficiosRepository> _repoBeneficios;
+        private Mock<IBeneficioRepository> _repoBeneficio;
         private GetDeduccionBeneficiosQuery _query;
 
         [SetUp]
         public void Setup()
         {
-            _mockEmpleadoRepo = new Mock<IEmpleadoRepository>();
-            _mockBeneficiosRepo = new Mock<IBeneficiosRepository>();
-            _mockBeneficioRepo = new Mock<IBeneficioRepository>();
+            _repoEmpleado = new Mock<IEmpleadoRepository>();
+            _repoBeneficios = new Mock<IBeneficiosRepository>();
+            _repoBeneficio = new Mock<IBeneficioRepository>();
 
             _query = new GetDeduccionBeneficiosQuery(
-                _mockEmpleadoRepo.Object,
-                _mockBeneficiosRepo.Object,
-                _mockBeneficioRepo.Object
+                _repoEmpleado.Object,
+                _repoBeneficios.Object,
+                _repoBeneficio.Object
             );
         }
 
         [Test]
         public async Task DeduccionPorcentajeCorrecta()
         {
-            string correo = "usuario@correo.com";
             string cedula = "1-2345-6789";
-            decimal salarioBruto = 1000000;
+            string correo = "empleado@test.com";
+            decimal salario = 1000;
 
-            _mockBeneficioRepo.Setup(r => r.ObtenerCedulaEmpleadoDesdeCorreo(correo)).Returns(cedula);
-            _mockEmpleadoRepo.Setup(r => r.ObtenerSalarioBruto(cedula)).ReturnsAsync(salarioBruto);
-            _mockEmpleadoRepo.Setup(r => r.ObtenerBeneficiosEmpleado(cedula)).ReturnsAsync(new List<DeduccionBeneficioModel>
+            _repoEmpleado.Setup(r => r.ObtenerCorreoDesdeCedula(cedula)).ReturnsAsync(correo);
+            _repoBeneficio.Setup(r => r.ObtenerCedulaEmpleadoDesdeCorreo(correo)).Returns(cedula);
+            _repoEmpleado.Setup(r => r.ObtenerSalarioBruto(cedula)).ReturnsAsync(salario);
+
+            var beneficios = new List<DeduccionBeneficioModel>
             {
-                new DeduccionBeneficioModel { IDBeneficio = 1, Nombre = "Ahorro", Tipo = "porcentaje" }
-            });
-            _mockBeneficiosRepo.Setup(r => r.ObtenerParametrosBeneficio(1)).Returns(new List<ParametroBeneficioModel>
+                new DeduccionBeneficioModel { IDBeneficio = 1, Nombre = "Seguro", Tipo = "porcentaje" }
+            };
+            _repoEmpleado.Setup(r => r.ObtenerBeneficiosEmpleado(cedula)).ReturnsAsync(beneficios);
+
+            var parametros = new List<ParametroBeneficioModel>
             {
-                new ParametroBeneficioModel { TipoValorParametro = "porcentaje", ValorDelParametro = 10 }
-            });
+                new ParametroBeneficioModel { TipoValorParametro = "porcentaje", ValorDelParametro = 5 }
+            };
+            _repoBeneficios.Setup(r => r.ObtenerParametrosBeneficio(1)).Returns(parametros);
 
-            var resultado = await _query.CalcularDeduccioensBeneficios(correo);
+            var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
 
-            Assert.That(resultado.Count, Is.EqualTo(3)); // relleno hasta 3
-            Assert.That(resultado[0].NombreBeneficio, Is.EqualTo("Ahorro"));
-            Assert.That(resultado[0].MontoReducido, Is.EqualTo(100000));
+            Assert.AreEqual(3, resultado.Count); 
+            Assert.AreEqual("Seguro", resultado[0].NombreBeneficio);
+            Assert.AreEqual(50m, resultado[0].MontoReducido);
         }
 
         [Test]
-        public async Task DeduccionFijaCorrecta()
+        public async Task DeduccionMontoFijoCorrecta()
         {
-            string correo = "usuario@correo.com";
-            string cedula = "1-2345-6789";
-            decimal salarioBruto = 900000;
+            string cedula = "2-2222-2222";
+            string correo = "fijo@test.com";
+            decimal salario = 800;
 
-            _mockBeneficioRepo.Setup(r => r.ObtenerCedulaEmpleadoDesdeCorreo(correo)).Returns(cedula);
-            _mockEmpleadoRepo.Setup(r => r.ObtenerSalarioBruto(cedula)).ReturnsAsync(salarioBruto);
-            _mockEmpleadoRepo.Setup(r => r.ObtenerBeneficiosEmpleado(cedula)).ReturnsAsync(new List<DeduccionBeneficioModel>
+            _repoEmpleado.Setup(r => r.ObtenerCorreoDesdeCedula(cedula)).ReturnsAsync(correo);
+            _repoBeneficio.Setup(r => r.ObtenerCedulaEmpleadoDesdeCorreo(correo)).Returns(cedula);
+            _repoEmpleado.Setup(r => r.ObtenerSalarioBruto(cedula)).ReturnsAsync(salario);
+
+            var beneficios = new List<DeduccionBeneficioModel>
             {
-                new DeduccionBeneficioModel { IDBeneficio = 2, Nombre = "Seguro", Tipo = "fijo" }
-            });
-            _mockBeneficiosRepo.Setup(r => r.ObtenerParametrosBeneficio(2)).Returns(new List<ParametroBeneficioModel>
+                new DeduccionBeneficioModel { IDBeneficio = 2, Nombre = "Café", Tipo = "fijo" }
+            };
+            _repoEmpleado.Setup(r => r.ObtenerBeneficiosEmpleado(cedula)).ReturnsAsync(beneficios);
+
+            var parametros = new List<ParametroBeneficioModel>
             {
-                new ParametroBeneficioModel { TipoValorParametro = "fijo", ValorDelParametro = 25000 }
-            });
+                new ParametroBeneficioModel { TipoValorParametro = "fijo", ValorDelParametro = 200 }
+            };
+            _repoBeneficios.Setup(r => r.ObtenerParametrosBeneficio(2)).Returns(parametros);
 
-            var resultado = await _query.CalcularDeduccioensBeneficios(correo);
+            var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
 
-            Assert.That(resultado[0].MontoReducido, Is.EqualTo(25000));
+            Assert.AreEqual("Café", resultado[0].NombreBeneficio);
+            Assert.AreEqual(200, resultado[0].MontoReducido);
         }
 
         [Test]
-        public async Task DeduccionInvalidaPorTipo()
+        public async Task CompletaHastaTresBeneficios()
         {
-            string correo = "usuario@correo.com";
-            string cedula = "1-2345-6789";
-            decimal salarioBruto = 800000;
+            string cedula = "3-3333-3333";
+            string correo = "completo@test.com";
+            decimal salario = 1200;
 
-            _mockBeneficioRepo.Setup(r => r.ObtenerCedulaEmpleadoDesdeCorreo(correo)).Returns(cedula);
-            _mockEmpleadoRepo.Setup(r => r.ObtenerSalarioBruto(cedula)).ReturnsAsync(salarioBruto);
-            _mockEmpleadoRepo.Setup(r => r.ObtenerBeneficiosEmpleado(cedula)).ReturnsAsync(new List<DeduccionBeneficioModel>
-            {
-                new DeduccionBeneficioModel{ IDBeneficio = 3, Nombre = "Extra", Tipo = "desconocido"}
-            });
+            _repoEmpleado.Setup(r => r.ObtenerCorreoDesdeCedula(cedula)).ReturnsAsync(correo);
+            _repoBeneficio.Setup(r => r.ObtenerCedulaEmpleadoDesdeCorreo(correo)).Returns(cedula);
+            _repoEmpleado.Setup(r => r.ObtenerSalarioBruto(cedula)).ReturnsAsync(salario);
 
-            var resultado = await _query.CalcularDeduccioensBeneficios(correo);
+            var beneficios = new List<DeduccionBeneficioModel>();
+            _repoEmpleado.Setup(r => r.ObtenerBeneficiosEmpleado(cedula)).ReturnsAsync(beneficios);
 
-            Assert.That(resultado[0].MontoReducido, Is.EqualTo(0));
+            var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
+
+            Assert.AreEqual(3, resultado.Count);
+            Assert.IsTrue(resultado.TrueForAll(d => d.NombreBeneficio == "Sin beneficio"));
         }
     }
 }
