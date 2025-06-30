@@ -32,14 +32,17 @@
           <td>{{ empleado.cedulaEmpleado }}</td>
           <td>Empleado</td>
           <td class="acciones">
-            <button class="edit" @click="abrirEdicion(empleado.cedulaEmpleado)">Editar</button>
-            <button class="delete">Eliminar</button>
+            <button class="edit"
+            @click="abrirEdicion(empleado.cedulaEmpleado)">Editar</button>
+            <button class="delete"
+            @click="abrirEliminacion(empleado.cedulaEmpleado)">Eliminar</button>
           </td>
         </tr>
       </tbody>
     </table>
     <ModalAgregarEmpleado ref="modalAgregarEmpleado" />
     <ModalEditarEmpleado ref="modalEditarEmpleado" />
+    <ModalEliminarEmpleado ref="modalEliminarEmpleado" />
   </section>
 </template>
 
@@ -47,6 +50,7 @@
 import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
 import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue'
+import ModalEliminarEmpleado from '../modals/ModalEliminarEmpleado.vue'
 import { useRouter } from 'vue-router'
 import { backendURL } from '../../config/config.js'
 
@@ -56,7 +60,8 @@ export default {
   name: "ListaEmpleados",
   components: {
     ModalAgregarEmpleado,
-    ModalEditarEmpleado
+    ModalEditarEmpleado,
+    ModalEliminarEmpleado
   },
   data() {
     return {
@@ -76,8 +81,11 @@ export default {
     abrirModal() {
       this.$refs.modalAgregarEmpleado.show()
     },
-    abrirEdicion(cedulaEmpleado)  {
+    abrirEdicion(cedulaEmpleado) {
       this.$refs.modalEditarEmpleado.show(cedulaEmpleado)
+    },
+    abrirEliminacion(cedulaEmpleado) {
+      this.$refs.modalEliminarEmpleado.show(cedulaEmpleado)
     },
     async obtenerEmpleados() {
 

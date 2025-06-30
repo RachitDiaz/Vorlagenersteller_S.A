@@ -10,5 +10,6 @@ namespace backend_planilla.Application
         public bool EditarInfoEmpleado(InfoEmpleadoModel datosNuevos, string cedulaEmpleado);
         public InfoEmpleadoModel? ObtenerInfoEmpleado(string cedulaEmpleado);
         public List<EmpleadoModel> ObtenerEmpleados(string correo);
+        public bool EliminarEmpleado(string cedulaEmpleado);
     }
 }

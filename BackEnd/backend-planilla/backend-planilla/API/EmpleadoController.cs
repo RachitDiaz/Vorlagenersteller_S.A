@@ -105,5 +105,25 @@ namespace backend_planilla.Controllers
             }
         }
 
+        [HttpDelete]
+        public ActionResult<bool> EliminarEmpleado(string cedulaEmpleado)
+        {
+            try
+            {
+                EmpleadoQuery empleadoQuery = new EmpleadoQuery();
+                var resultado = empleadoQuery.EliminarEmpleado(cedulaEmpleado);
+                return new JsonResult(resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error al eliminar el empleado.");
+            }
+        }
+
     }
 }

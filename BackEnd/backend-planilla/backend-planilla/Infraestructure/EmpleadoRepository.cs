@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using backend_planilla.Infraestructure;
 using System.Data.Common;
+using System.Transactions;
 namespace backend_planilla.Handlers
 {
     public class EmpleadoRepository : IEmpleadoRepository
@@ -42,7 +43,8 @@ namespace backend_planilla.Handlers
                                        e.Banco, e.SalarioBruto, e.TipoContrato
                                 FROM Empleado e
                                 INNER JOIN Persona p ON e.CedulaEmpleado = p.Cedula
-                                WHERE e.CedulaEmpresa = @cedulaEmpresa;";
+                                WHERE e.CedulaEmpresa = @cedulaEmpresa
+                                AND e.Borrado = 0;";
             DataTable tablaResultado = CrearTablaConsulta(consulta, cedulaEmpresa);
             foreach (DataRow columna in tablaResultado.Rows)
             {
@@ -58,20 +60,15 @@ namespace backend_planilla.Handlers
                     SalarioBruto = Convert.ToDecimal(columna["SalarioBruto"]),
                     TipoContrato = Convert.ToString(columna["TipoContrato"])
                 });
-                Console.WriteLine($"{Convert.ToString(columna["Cedula"])}");
             }
             return empleados;
         }
 
         public bool CrearEmpleado(PersonaModel persona, EmpleadoModel empleado, string correo)
         {
-            Console.WriteLine($"Contra: {_passwordHasher.HashPassword(persona.Usuario, persona.Usuario.Contrasena)}");
             bool exito = false;
-            Console.WriteLine($"Buscando cedula empresa");
             string cedulaEmpresa = ObtenerCedulaJuridica(correo);
-            Console.WriteLine($"Buscando ID usuario");
             int IDUsuario = ObtenerIdUsuario(correo);
-            Console.WriteLine($"CedulaEmpresa: {cedulaEmpresa} IDUsuario:{IDUsuario}");
             if (cedulaEmpresa != "")
             {
                 exito = CrearPersona(persona);
@@ -91,14 +88,6 @@ namespace backend_planilla.Handlers
                 comandoParaConsulta.Parameters.AddWithValue("@TipoContrato", empleado.TipoContrato);
                 comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", IDUsuario);
                 comandoParaConsulta.Parameters.AddWithValue("@UltimoEnModificar", IDUsuario);
-                Console.WriteLine($"Tratando de cear empleado con la siguiente información\n" +
-                    $"CedulaEmpleado: {empleado.CedulaEmpleado}\n" +
-                    $"CedulaEmpresa: {cedulaEmpresa}\n" +
-                    $"Banco: {empleado.Banco}\n" +
-                    $"SalarioBruto: {empleado.SalarioBruto}\n" +
-                    $"TipoContrato: {empleado.TipoContrato}\n" +
-                    $"UsuarioCreador: {IDUsuario}\n" +
-                    $"UltimoEnModificar: {IDUsuario}\n");
                 _conexion.Open();
                 exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
                 _conexion.Close();
@@ -176,10 +165,6 @@ namespace backend_planilla.Handlers
             comandoParaConsulta.Parameters.AddWithValue("@Correo", persona.Usuario.Correo);
             persona.Usuario.Contrasena = _passwordHasher.HashPassword(persona.Usuario, persona.Usuario.Contrasena);
             comandoParaConsulta.Parameters.AddWithValue("@Contrasena", persona.Usuario.Contrasena);
-            Console.WriteLine($"Tratando de cear usuario con la siguiente información\n" +
-                $"Cedula: {persona.Cedula}" +
-                $"Correo: {persona.Usuario.Correo}" +
-                $"Contrasena: {persona.Usuario.Contrasena}");
             _conexion.Open();
             var exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
             _conexion.Close();
@@ -317,7 +302,7 @@ namespace backend_planilla.Handlers
         }
     
 
-    public async Task<string> ObtenerGeneroEmpleado(string cedulaEmpleado)
+        public async Task<string> ObtenerGeneroEmpleado(string cedulaEmpleado)
         {
             var query = "SELECT Genero FROM Persona WHERE Cedula = @Cedula";
             using var cmd = new SqlCommand(query, _conexion);
@@ -339,5 +324,60 @@ namespace backend_planilla.Handlers
 
             throw new Exception("No se encontró el género del empleado.");
         }
+
+        public string EliminarEmpleado(string cedulaEmpleado)
+        {
+            string correoUsuario = "";
+            _conexion.Open();
+            var transaccion = _conexion.BeginTransaction();
+            try
+            {
+                var consulta = @"SELECT Correo FROM Usuario WHERE Usuario.Cedula = @cedulaEmpleado";
+                var comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
+
+                comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpleado", cedulaEmpleado);
+                var reader = comandoParaConsulta.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    correoUsuario = Convert.ToString(reader["Correo"]);
+                }
+                else
+                {
+                    reader.Close();
+                    transaccion.Rollback();
+                    throw new InvalidOperationException("No se encontró un usuario con esta cédula");
+                }
+
+                reader.Close();
+
+                consulta = @"DELETE FROM Empleado WHERE CedulaEmpleado = @cedulaEmpleado";
+                comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
+                comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpleado", cedulaEmpleado);
+
+                if (comandoParaConsulta.ExecuteNonQuery() >= 1)
+                {
+                    transaccion.Commit();
+                    return correoUsuario;
+                } else
+                {
+                    transaccion.Rollback();
+                    throw new Exception("Ocurrió un error en el delete y no se afectó ninguna fila");
+                }
+            }
+            catch (Exception ex)
+            {
+                transaccion.Rollback();
+                throw new Exception("Ocurrió un error en el query");
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+        }
     }
+
 }

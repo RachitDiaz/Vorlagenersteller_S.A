@@ -11,7 +11,7 @@ namespace backend_planilla.Infraestructure
         public List<EmpleadoModel> ObtenerEmpleados(string correo);
         Task<decimal> ObtenerSalarioBruto(string cedulaEmpleado);
         Task<List<DeduccionBeneficioModel>> ObtenerBeneficiosEmpleado(string cedulaEmpleado);
-
         public Task<string> ObtenerGeneroEmpleado(string cedulaEmpleado);
+        public string EliminarEmpleado(string cedulaEmpleado);
     }
 }

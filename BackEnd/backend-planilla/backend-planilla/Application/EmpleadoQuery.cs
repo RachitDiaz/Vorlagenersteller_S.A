@@ -61,5 +61,27 @@ namespace backend_planilla.Application
 
             return valido;
         }
+
+        public bool EliminarEmpleado(string cedulaEmpleado)
+        {
+            try
+            {
+                string correoEmpleado = _empleadoRepository.EliminarEmpleado(cedulaEmpleado);
+                //Enviar correo al empleado
+                if (string.IsNullOrEmpty(correoEmpleado)) {
+                    return false;
+                }
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception) 
+            {
+                throw new Exception("Error al eliminar el empleado");
+            }
+
+        }
     }
 }
