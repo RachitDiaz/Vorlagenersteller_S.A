@@ -11,9 +11,9 @@ namespace backend_planilla.Controllers
     {
         private readonly IBeneficioQuery _beneficioQuery;
 
-        public BeneficioEmpleadoController()
+        public BeneficioEmpleadoController(IBeneficioQuery beneficioQuery)
         {
-            _beneficioQuery = new BeneficioQuery();
+            _beneficioQuery = beneficioQuery;
         }
 
 

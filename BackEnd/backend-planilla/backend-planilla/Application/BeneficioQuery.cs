@@ -7,9 +7,9 @@ namespace backend_planilla.Application
     {
         private readonly IBeneficioRepository _repo;
 
-        public BeneficioQuery()
+        public BeneficioQuery(IBeneficioRepository repo)
         {
-            _repo = new BeneficioRepository();
+            _repo = repo;
         }
 
         public bool ActualizarBeneficiosEmpleado(string cedulaEmpleado, List<int> beneficios)
@@ -25,6 +25,8 @@ namespace backend_planilla.Application
         public bool ActualizarDependientesEmpleado(string correo, int dependientes)
         {
             string cedula = _repo.ObtenerCedulaEmpleadoDesdeCorreo(correo);
+            if (cedula == null)
+                return false;
             return _repo.ActualizarDependientesEmpleado( cedula, dependientes);
         }
         public List<BeneficioSimpleModel> ObtenerBeneficiosSeleccionadosPorEmpleado(string correo)
