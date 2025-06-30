@@ -36,6 +36,17 @@ namespace backend_planilla.Controllers
             return Ok(new { exito = resultado });
         }
 
+        [HttpPost("ActualizarDependientes/{dependientes}")]
+        public IActionResult ActualizarDependientes( int dependientes)
+        {
+            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (correo == null)
+                return Unauthorized("Token inválido.");
+
+            var resultado = _beneficioQuery.ActualizarDependientesEmpleado(correo, dependientes);
+            return Ok(new { exito = resultado });
+        }
+
 
         [HttpGet("listar")]
         public IActionResult ObtenerBeneficiosDisponibles()

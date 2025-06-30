@@ -30,17 +30,6 @@
           @click="showModal">Añadir beneficios</button>
         <ModalAgregarBeneficios ref="modalRef" :beneficios="beneficiosAPI"/>
 
-        <div class="slider-section">
-          <label class="slider-label">
-            Cantidad de Beneficios por Empleado</label>
-          <div class="slider-control">
-            <span>0</span>
-            <input type="range" min="0"
-              :max="max" v-model="selectedAmount" class="slider"/>
-            <span>{{ selectedAmount }}-{{ max }}</span>
-          </div>
-        </div>
-
         <div class="button-group">
           <button class="cancel">Cancelar</button>
           <button class="accept" @click="submit">Aceptar</button>
@@ -88,8 +77,7 @@ function showModal() {
  * Guardar la cantidad de beneficios seleccionables
  */
 function submit() {
-  alert(`Has aceptado seleccionar hasta
-    ${selectedAmount.value} beneficios por empleado.`);
+  alert(`Has aceptado ${selectedAmount.value} beneficios seleccionables.`);
 }
 
   onMounted(async () => {

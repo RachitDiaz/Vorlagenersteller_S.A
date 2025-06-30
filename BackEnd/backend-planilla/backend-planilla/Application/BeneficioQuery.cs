@@ -21,6 +21,12 @@ namespace backend_planilla.Application
         {
             return _repo.ObtenerBeneficiosParaEmpleado(correo);
         }
+
+        public bool ActualizarDependientesEmpleado(string correo, int dependientes)
+        {
+            string cedula = _repo.ObtenerCedulaEmpleadoDesdeCorreo(correo);
+            return _repo.ActualizarDependientesEmpleado( cedula, dependientes);
+        }
         public List<BeneficioSimpleModel> ObtenerBeneficiosSeleccionadosPorEmpleado(string correo)
         {
             return _repo.ObtenerBeneficiosSeleccionadosPorEmpleado(correo);
