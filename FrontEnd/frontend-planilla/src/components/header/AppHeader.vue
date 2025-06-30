@@ -80,6 +80,7 @@ const menuItems = [
   { name: 'Registro de Horas', path: '/RegistroHoras' },
   { name: 'Ver Planilla', path: '/VerPlanilla' },
   { name: 'Reporte de Pagos', path: '/ReportePago'},
+  { name: 'Reporte de pagos', path: '/ReporteCostos'}
 ]
 </script>
 

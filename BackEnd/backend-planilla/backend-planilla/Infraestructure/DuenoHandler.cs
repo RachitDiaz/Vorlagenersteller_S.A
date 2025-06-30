@@ -1,6 +1,7 @@
 ﻿using backend_planilla.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Identity;
+using System.Data;
 
 namespace backend_planilla.Handlers
 {
@@ -37,6 +38,33 @@ namespace backend_planilla.Handlers
                 InsertarDireccion(dueno.Persona.Cedula, dueno.Direccion);
 
             return true;
+        }
+
+        public string ObtenerCedulaDueno(string correo)
+        {
+            string cedulaEmpresa = "";
+            var consulta = @"SELECT Dueno.Cedula
+                            FROM Dueno
+                            JOIN Usuario ON Usuario.Cedula = Dueno.Cedula
+                            WHERE Usuario.Correo = @Correo;";
+            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
+            comandoParaConsulta.Parameters.AddWithValue("@Correo", correo);
+
+            try
+            {
+                _conexion.Open();
+                var reader = comandoParaConsulta.ExecuteReader();
+                if (reader.Read())
+                {
+                    cedulaEmpresa = reader["Cedula"].ToString();
+                }
+            }
+            finally
+            {
+                if (_conexion.State != ConnectionState.Closed) { _conexion.Close(); }
+            }
+
+            return cedulaEmpresa;
         }
 
         private bool CrearPersona(PersonaModel persona)

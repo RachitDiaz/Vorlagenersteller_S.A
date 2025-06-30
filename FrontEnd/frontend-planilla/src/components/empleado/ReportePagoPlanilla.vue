@@ -11,7 +11,7 @@
       </select>
     </div>
 
-  <div class="reporte">
+  <div class="reporte" v-show="show">
     <h3 class="title" style="font-weight: bold;"> {{ display.nombreEmpresa }}</h3>
     
     <div class="title" style="display: inline-block; width: 60%;"> {{ display.nombreEmpleado }}</div>
@@ -30,7 +30,7 @@
       <div class="row" v-show="display.beneficioCosto2"> {{ display.beneficioNombre2 }} </div>
       <div class="row" v-show="display.beneficioCosto3"> {{ display.beneficioNombre3 }} </div>
       <div class="row" style="font-weight: bold;  margin-bottom: 1rem;"> Total deducciones beneficios </div>
-      <div class="row" style="font-weight: bold;"> Salaio neto </div>
+      <div class="row" style="font-weight: bold; font-size: 1.4rem; margin-bottom: 1rem;"> Salario neto </div>
     </div>
     <div class="column" style="width: 40%;">
       <div class="row" style="font-weight: bold;"> {{ display.salarioBruto }}₡</div>
@@ -43,7 +43,7 @@
       <div class="row" v-show="display.beneficioCosto2"> -{{ display.beneficioCosto2 }}₡ </div>
       <div class="row" v-show="display.beneficioCosto3"> -{{ display.beneficioCosto3 }}₡ </div>
       <div class="row" style="font-weight: bold; margin-bottom: 1rem;"> -{{ display.totalDeduccionesBeneficios }}₡</div>
-      <div class="row" style="font-weight: bold;"> {{ display.salarioNeto }}₡</div>
+      <div class="row" style="font-weight: bold; font-size: 1.4rem; margin-bottom: 1rem;"> {{ display.salarioNeto }}₡</div>
     </div>
   </div>
   </div>
@@ -80,6 +80,7 @@ var display = reactive(
   }
 )
 var reportes = reactive([])
+var show = false;
 
 function obtenerReportes() {
 
@@ -113,6 +114,7 @@ onMounted(() => {
 })
 
 function updateDisplay(index) {
+  show = true;
   display.beneficioCosto1 = reportes[index].beneficioCosto1;
   display.beneficioCosto2 = reportes[index].beneficioCosto2;
   display.beneficioCosto3 = reportes[index].beneficioCosto3;

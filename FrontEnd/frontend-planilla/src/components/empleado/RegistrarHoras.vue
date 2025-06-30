@@ -55,7 +55,6 @@ export default {
   },
   methods: {
     async registrarHoras() {
-      console.log("Horas registradas:", this.horas);
 
       try {
          const response = await axios.post(`${backendURL}Horario`, this.horas, {

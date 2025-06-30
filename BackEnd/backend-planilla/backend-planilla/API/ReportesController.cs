@@ -15,10 +15,12 @@ namespace backend_planilla.Controllers
     {
         private readonly IReportesQuery _ReportesQuery;
         private readonly IEmpleadoQuery _EmpleadoQuery;
+        private readonly DuenoHandler _DuenoHandler;
         public ReportesController()
         {
             _ReportesQuery = new ReportesQuery();
             _EmpleadoQuery = new EmpleadoQuery();
+            _DuenoHandler = new DuenoHandler();
         }
 
         [HttpGet]
@@ -44,6 +46,37 @@ namespace backend_planilla.Controllers
             {
                 _resultado = _ReportesQuery.ObtenerUltimosPagosEmpleado(_cedulaEmpleado);
 
+            }
+            catch (Exception mensajeError)
+            {
+                return BadRequest("Error recuperando pagos al empleado");
+            }
+
+            return Ok(_resultado);
+        }
+
+        [HttpGet]
+        public IActionResult ObtenerUltimosPagosEmpresa()
+        {
+            string _correoDueno = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (string.IsNullOrWhiteSpace(_correoDueno))
+                return BadRequest();
+
+            string _cedulaDueno;
+            List<ReportePagoEmpresaDTO> _resultado;
+
+            try
+            {
+                _cedulaDueno = _DuenoHandler.ObtenerCedulaDueno(_correoDueno);
+            }
+            catch (Exception mensajeError)
+            {
+                return BadRequest("Error recuperando cedula del empleado");
+            }
+
+            try
+            {
+                _resultado = _ReportesQuery.ObtenerUltimosPagosEmpresa(_cedulaDueno);
             }
             catch (Exception mensajeError)
             {
