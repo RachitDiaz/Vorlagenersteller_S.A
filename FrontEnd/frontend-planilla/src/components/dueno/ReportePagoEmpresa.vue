@@ -18,7 +18,7 @@
 
     <h3 class="title"> {{ display.fechaPago }} / {{ display.peridoPago }}</h3>
     
-    <div class="table-space">
+  <div class="table-space">
     <table style="border: none; width: 100%;">
       <colgroup>
        <col span="1" style="width: 70%;">
@@ -177,7 +177,7 @@ function updateDisplay(index) {
 function exportToPDF() {
   html2pdf(document.getElementById("reporte-pdf"), {
     margin: 1,
-    filename: "generated-pdf.pdf",
+    filename: "Reporte costos.pdf",
   });
 }
 
