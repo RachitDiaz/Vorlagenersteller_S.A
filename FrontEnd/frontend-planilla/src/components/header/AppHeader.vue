@@ -40,11 +40,10 @@ const filteredMenuItems = computed(() => {
     const path = item.path
 
     if (path === '/') return true 
-    if (path === '/VerEmpleado') return true 
     if (['/ListaBeneficios', '/ListaEmpresas', '/VerEmpresa', '/ListaEmpleados', '/VerPlanilla'].includes(path)) {
       return rol.value === 'Dueno'
     }
-    if (['/BeneficiosEmpleado', '/RegistroHoras', '/ReportePago'].includes(path)) {
+    if (['/BeneficiosEmpleado', '/RegistroHoras', '/ReportePago', '/VerEmpleado'].includes(path)) {
       return rol.value === 'Empleado'
     }
 
@@ -56,7 +55,7 @@ const handleAuthAction = () => {
   if (isLoggedIn.value) {
     localStorage.removeItem('jwtToken')
     token.value = null
-    router.push('/login')
+    router.push('/')
   } else {
     router.push('/login')
   }

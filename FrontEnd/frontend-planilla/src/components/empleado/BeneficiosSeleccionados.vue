@@ -84,7 +84,6 @@ onMounted(async () => {
     return
   }
   
-  console.log(token);
   const headers = { Authorization: `Bearer ${token}` }
   try {
     const { data: disponibles } = await axios.get(`${backendURL}BeneficioEmpleado/listar`, { headers })

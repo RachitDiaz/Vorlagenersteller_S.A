@@ -43,6 +43,7 @@ namespace backend_planilla.Controllers
             try
             {
                 _resultado = _ReportesQuery.ObtenerUltimosPagosEmpleado(_cedulaEmpleado);
+
             }
             catch (Exception mensajeError)
             {

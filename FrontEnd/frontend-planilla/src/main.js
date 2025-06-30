@@ -12,7 +12,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import ListaEmpresas from './components/dueno/ListaEmpresas.vue';
 import VerEmpresa from './components/dueno/VerEmpresa.vue';
-import VerEmpleado from './components/VerEmpleado.vue';
+import VerEmpleado from './components/empleado/VerEmpleado.vue';
 import RegistrarHoras from './components/empleado/RegistrarHoras.vue';
 import ReportePagoPlanilla from './components/empleado/ReportePagoPlanilla.vue';
 

@@ -249,13 +249,10 @@ function show(cedulaBusqueda) {
       return;
     }
 
-    axios.get(`${backendURL}Empleado/GetInfoEmpleado`, {
+    axios.get(`${backendURL}Empleado/GetInfoEmpleadoCedula/${cedulaBusqueda}`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
-      params: {
-        cedulaEmpleado: `${cedulaBusqueda}`
-      }
     }).then((response) => {
       infoEmpleado.empleado = response.data.empleado;
       infoEmpleado.genero = response.data.genero;
