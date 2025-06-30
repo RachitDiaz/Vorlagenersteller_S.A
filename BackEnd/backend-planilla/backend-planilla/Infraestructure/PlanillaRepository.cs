@@ -35,11 +35,11 @@ namespace backend_planilla.Infraestructure
             var query = @"INSERT INTO PlanillaMensualEmpleado (
                 IDPlanilla, CedulaEmpleado, SalarioBruto,
                 SEMEmpleado, IVEMEmpleado, BPPOEmpleado,
-                ImpuestoRenta, TotalDeduccionesEmpleado, TotalDeduccionesPatrono, FechaGeneracion)
+                ImpuestoRenta, TotalDeduccionesEmpleado, TotalDeduccionesPatrono)
                 VALUES (
                 @IDPlanilla, @CedulaEmpleado, @SalarioBruto,
                 @SEMEmpleado, @IVMEmpleado, @BPPOEmpleado,
-                @ImpuestoRenta, @TotalDeduccionesEmpleado, @TotalDeduccionesPatrono, @FechaGeneracion);";
+                @ImpuestoRenta, @TotalDeduccionesEmpleado, @TotalDeduccionesPatrono);";
 
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(query, conn);
@@ -50,7 +50,6 @@ namespace backend_planilla.Infraestructure
             cmd.Parameters.AddWithValue("@IVMEmpleado", empleado.Deducciones.IVMEmpleado);
             cmd.Parameters.AddWithValue("@BPPOEmpleado", empleado.Deducciones.BPPOEmpleado);
             cmd.Parameters.AddWithValue("@ImpuestoRenta", empleado.Deducciones.ImpuestoRenta);
-            cmd.Parameters.AddWithValue("@FechaGeneracion", DateTime.Now);
             cmd.Parameters.AddWithValue("@TotalDeduccionesEmpleado", empleado.Deducciones.TotalEmpleado);
             cmd.Parameters.AddWithValue("@TotalDeduccionesPatrono", empleado.Deducciones.TotalPatrono);
 
