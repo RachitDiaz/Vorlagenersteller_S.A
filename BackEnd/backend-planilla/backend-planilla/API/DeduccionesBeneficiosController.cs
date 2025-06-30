@@ -17,16 +17,13 @@ namespace backend_planilla.API
             _query = query;
         }
 
-        [HttpGet]
-        [Authorize] 
-        public async Task<ActionResult<List<DeduccionCalculada>>> ObtenerDeducciones()
+        [HttpGet("{cedula}")]
+        public async Task<ActionResult<List<DeduccionCalculada>>> ObtenerDeducciones(string cedula)
         {
-
-            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(correo))
+            if (string.IsNullOrEmpty(cedula))
                 return Unauthorized("No se encontró el correo en el token de autenticación.");
 
-            var resultado = await _query.CalcularDeduccionesBeneficios(correo);
+            var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
 
             return Ok(resultado);
         }

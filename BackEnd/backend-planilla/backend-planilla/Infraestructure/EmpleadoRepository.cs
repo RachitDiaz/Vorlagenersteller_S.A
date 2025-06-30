@@ -63,7 +63,7 @@ namespace backend_planilla.Handlers
         }
 
         public bool CrearEmpleado(PersonaModel persona, EmpleadoModel empleado, string correo)
-        {
+        {   
             bool exito = false;
             string cedulaEmpresa = ObtenerCedulaJuridica(correo);
             int IDUsuario = ObtenerIdUsuario(correo);
@@ -162,6 +162,8 @@ namespace backend_planilla.Handlers
             _conexion.Close();
             return IDUsuario;
         }
+
+
 
         public bool CrearPersona(PersonaModel persona)
         {
@@ -276,7 +278,24 @@ namespace backend_planilla.Handlers
         }
 
 
+        public async Task<string> ObtenerCorreoDesdeCedula(string cedula)
+        {
+            var consulta = @"SELECT Correo FROM Usuario
+                            WHERE Cedula  = @Cedula;";
+            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
+            comandoParaConsulta.Parameters.AddWithValue("@Cedula", cedula);
+
+            _conexion.Open();
+            var reader = comandoParaConsulta.ExecuteReader();
+            string result = "";
+            if (reader.Read())
+            {
+                result = reader["Correo"].ToString();
+            }
+            _conexion.Close();
+            return result;
+        }
         public async Task<decimal> ObtenerSalarioBruto(string cedulaEmpleado)
         {
             var query = "SELECT SalarioBruto FROM Empleado WHERE CedulaEmpleado = @Cedula";

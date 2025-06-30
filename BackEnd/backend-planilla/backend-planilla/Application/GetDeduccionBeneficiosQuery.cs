@@ -22,8 +22,9 @@ namespace backend_planilla.Application
         }
 
 
-        public async Task<List<DeduccionCalculada>> CalcularDeduccionesBeneficios(string correo)
+        public async Task<List<DeduccionCalculada>> CalcularDeduccionesBeneficios(string cedula)
         {
+            string correo = await _repo_empleado.ObtenerCorreoDesdeCedula(cedula);
             string cedulaEmpleado = _repo_beneficio.ObtenerCedulaEmpleadoDesdeCorreo(correo);
             decimal salarioBruto = await _repo_empleado.ObtenerSalarioBruto(cedulaEmpleado);
             var beneficios = await _repo_empleado.ObtenerBeneficiosEmpleado(cedulaEmpleado);

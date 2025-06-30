@@ -5,6 +5,6 @@ using backend_planilla.Domain;
 
 public interface IGetDeduccionBeneficiosQuery
 {
-    public Task<List<DeduccionCalculada>> CalcularDeduccionesBeneficios(string correo);
+    public Task<List<DeduccionCalculada>> CalcularDeduccionesBeneficios(string cedula);
 
 }
