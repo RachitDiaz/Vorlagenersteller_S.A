@@ -64,7 +64,6 @@ namespace backend_planilla.Handlers
 
         public bool CrearEmpleado(PersonaModel persona, EmpleadoModel empleado, string correo)
         {
-            Console.WriteLine($"Contra: {_passwordHasher.HashPassword(persona.Usuario, persona.Usuario.Contrasena)}");
             bool exito = false;
             string cedulaEmpresa = ObtenerCedulaJuridica(correo);
             int IDUsuario = ObtenerIdUsuario(correo);
