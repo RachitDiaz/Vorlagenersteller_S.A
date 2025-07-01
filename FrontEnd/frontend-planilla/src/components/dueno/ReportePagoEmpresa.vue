@@ -4,8 +4,8 @@
 
     <div class="title" style=""> Seleccione una fecha de pago </div>
     <div class="title" style="padding-bottom: 2rem;">
-      <select id="fechas">
-        <option v-for="(info, index) in reportes" :key="index" @click="updateDisplay(index)">
+      <select id="fechas" v-model="index" @change="updateDisplay(index)">
+        <option v-for="(info, i) in reportes" :key="i" :value="i">
           {{ info.fechaPago }}
         </option>
       </select>
@@ -98,6 +98,7 @@ import html2pdf from "html2pdf.js";
 
 const token = localStorage.getItem("jwtToken")
 const router = useRouter()
+const index = ref(0)
 var display = reactive(
   {
     beneficiosTotales: 0,

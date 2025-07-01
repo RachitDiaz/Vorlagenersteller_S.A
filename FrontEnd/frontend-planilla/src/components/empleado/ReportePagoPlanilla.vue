@@ -4,8 +4,8 @@
 
     <div class="title" style=""> Seleccione una fecha de pago </div>
     <div class="title" style="padding-bottom: 2rem;">
-      <select id="fechas">
-        <option v-for="(info, index) in reportes" :key="index" @click="updateDisplay(index)">
+      <select id="fechas" v-model="index" @change="updateDisplay(index)">
+        <option v-for="(info, i) in reportes" :key="i" :value="i">
           {{ info.fecha }}
         </option>
       </select>
@@ -32,19 +32,19 @@
         </tr>
         <tr>
           <td> SEM (Seguro Enfermedad/Maternidad) </td>
-          <td>-{{ display.totalSEM }}₡</td>
+          <td>-{{ display.sem }}₡</td>
         </tr>
         <tr>
           <td> IVM (Invalidez, Vejez y Muerte) </td>
-          <td>-{{ display.totalIVM }}₡</td>
+          <td>-{{ display.ivm }}₡</td>
         </tr>
         <tr>
           <td> Aporte Trabajador Banco Popular </td>
-          <td>-{{ display.totalBP }}₡</td>
+          <td>-{{ display.bpp }}₡</td>
         </tr>
-        <tr>
-          <td class="row-title"> Total deducciones de ley </td>
-          <td>-{{ display.totalPagosLey }}₡</td>
+        <tr class="row-title">
+          <td> Total deducciones de ley </td>
+          <td>-{{ display.totalDeduccionesEmpleado }}₡</td>
         </tr>
         <tr v-show="display.beneficioCosto1">
           <td> {{ display.beneficioNombre1 }} </td>
@@ -123,6 +123,7 @@ function obtenerReportes() {
     .then((response) => {
       reportes = response.data;
       updateDisplay(0);
+      console.log(reportes);
     });
   } catch (error) {
     console.error("Error cargando planilla:", error)
