@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using backend_planilla.Infraestructure;
 using System.Data.Common;
+using System.Transactions;
 namespace backend_planilla.Handlers
 {
     public class EmpleadoRepository : IEmpleadoRepository
@@ -42,7 +43,8 @@ namespace backend_planilla.Handlers
                                        e.Banco, e.SalarioBruto, e.TipoContrato
                                 FROM Empleado e
                                 INNER JOIN Persona p ON e.CedulaEmpleado = p.Cedula
-                                WHERE e.CedulaEmpresa = @cedulaEmpresa;";
+                                WHERE e.CedulaEmpresa = @cedulaEmpresa
+                                AND e.Borrado = 0;";
             DataTable tablaResultado = CrearTablaConsulta(consulta, cedulaEmpresa);
             foreach (DataRow columna in tablaResultado.Rows)
             {
@@ -63,7 +65,7 @@ namespace backend_planilla.Handlers
         }
 
         public bool CrearEmpleado(PersonaModel persona, EmpleadoModel empleado, string correo)
-        {   
+        {
             bool exito = false;
             string cedulaEmpresa = ObtenerCedulaJuridica(correo);
             int IDUsuario = ObtenerIdUsuario(correo);
@@ -344,7 +346,7 @@ namespace backend_planilla.Handlers
         }
     
 
-    public async Task<string> ObtenerGeneroEmpleado(string cedulaEmpleado)
+        public async Task<string> ObtenerGeneroEmpleado(string cedulaEmpleado)
         {
             var query = "SELECT Genero FROM Persona WHERE Cedula = @Cedula";
             using var cmd = new SqlCommand(query, _conexion);
@@ -367,7 +369,7 @@ namespace backend_planilla.Handlers
             throw new Exception("No se encontró el género del empleado.");
         }
 
-    public async Task<string> ObtenerFechaNacimientoEmpleado(string cedulaEmpleado)
+        public async Task<string> ObtenerFechaNacimientoEmpleado(string cedulaEmpleado)
         {
             var query = "SELECT FechaNacimiento FROM Persona WHERE Cedula = @Cedula";
             using var cmd = new SqlCommand(query, _conexion);
@@ -385,7 +387,7 @@ namespace backend_planilla.Handlers
             throw new Exception("No se encontró la fecha de nacimiento del empleado.");
         }
 
-    public async Task<string> ObtenerCantDependientesEmpleado(string cedulaEmpleado)
+        public async Task<string> ObtenerCantDependientesEmpleado(string cedulaEmpleado)
         {
             var query = "SELECT CantidadDependientes FROM Empleado WHERE CedulaEmpleado = @Cedula";
             using var cmd = new SqlCommand(query, _conexion);
@@ -402,6 +404,59 @@ namespace backend_planilla.Handlers
 
             throw new Exception("No se encontró la fecha de nacimiento del empleado.");
         }
-    }
+        public string EliminarEmpleado(string cedulaEmpleado)
+        {
+            string correoUsuario = "";
+            _conexion.Open();
+            var transaccion = _conexion.BeginTransaction();
+            try
+            {
+                var consulta = @"SELECT Correo FROM Usuario WHERE Usuario.Cedula = @cedulaEmpleado";
+                var comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
 
-   }
+                comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpleado", cedulaEmpleado);
+                var reader = comandoParaConsulta.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    correoUsuario = Convert.ToString(reader["Correo"]);
+                }
+                else
+                {
+                    reader.Close();
+                    transaccion.Rollback();
+                    throw new InvalidOperationException("No se encontró un usuario con esta cédula");
+                }
+
+                reader.Close();
+
+                consulta = @"DELETE FROM Empleado WHERE CedulaEmpleado = @cedulaEmpleado";
+                comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
+                comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpleado", cedulaEmpleado);
+
+                if (comandoParaConsulta.ExecuteNonQuery() >= 1)
+                {
+                    transaccion.Commit();
+                    return correoUsuario;
+                }
+                else
+                {
+                    transaccion.Rollback();
+                    throw new Exception("Ocurrió un error en el delete y no se afectó ninguna fila");
+                }
+            }
+            catch (Exception ex)
+            {
+                transaccion.Rollback();
+                throw new Exception("Ocurrió un error en el query");
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+        }
+    }
+}
