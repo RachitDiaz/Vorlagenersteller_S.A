@@ -78,7 +78,7 @@ namespace backend_planilla.Infraestructure
                 var idPlanilla = (Guid)(await cmdEmpresa.ExecuteScalarAsync())!;
 
                 // 2. Totales por columna patronal
-                decimal totalSEM = 0, totalIVM = 0, totalBPPO = 0, totalAsignaciones = 0, totalIMAS = 0, totalINA = 0, totalOPC = 0, totalFCL = 0, totalINS = 0, totalSalarios = 0;
+                decimal totalSEM = 0, totalIVM = 0, totalBPPO = 0, totalAsignaciones = 0, totalIMAS = 0, totalINA = 0, totalOPC = 0, totalFCL = 0, totalINS = 0, totalSalarios = 0, totalBeneficios = 0;
 
                 foreach (var emp in empleados)
                 {
@@ -87,11 +87,13 @@ namespace backend_planilla.Infraestructure
                 INSERT INTO PlanillaMensualEmpleado (
                     IDPlanilla, CedulaEmpleado, SalarioBruto,
                     SEMEmpleado, IVEMEmpleado, BPPOEmpleado,
-                    ImpuestoRenta, TotalDeduccionesEmpleado, TotalDeduccionesPatrono)
+                    ImpuestoRenta, TotalDeduccionesEmpleado, TotalDeduccionesPatrono, BeneficioMonto1,
+                    BeneficioNombre1, BeneficioMonto2, BeneficioNombre2, BeneficioMonto3, BeneficioNombre3, TotalDeduccionesBeneficios)
                 VALUES (
                     @IDPlanilla, @CedulaEmpleado, @SalarioBruto,
                     @SEMEmpleado, @IVMEmpleado, @BPPOEmpleado,
-                    @ImpuestoRenta, @TotalDeduccionesEmpleado, @TotalDeduccionesPatrono);", conn, transaction);
+                    @ImpuestoRenta, @TotalDeduccionesEmpleado, @TotalDeduccionesPatrono, @BeneficioMonto1,
+                    @BeneficioNombre1, @BeneficioMonto2, @BeneficioNombre2, @BeneficioMonto3, @BeneficioNombre3, @TotalDeduccionesBeneficios);", conn, transaction);
 
                     cmdEmp.Parameters.AddWithValue("@IDPlanilla", idPlanilla);
                     cmdEmp.Parameters.AddWithValue("@CedulaEmpleado", emp.CedulaEmpleado);
@@ -102,6 +104,13 @@ namespace backend_planilla.Infraestructure
                     cmdEmp.Parameters.AddWithValue("@ImpuestoRenta", emp.Deducciones.ImpuestoRenta);
                     cmdEmp.Parameters.AddWithValue("@TotalDeduccionesEmpleado", emp.Deducciones.TotalEmpleado);
                     cmdEmp.Parameters.AddWithValue("@TotalDeduccionesPatrono", emp.Deducciones.TotalPatrono);
+                    cmdEmp.Parameters.AddWithValue("@TotalDeduccionesBeneficios", emp.Beneficios.Total);
+                    cmdEmp.Parameters.AddWithValue("@BeneficioMonto1", emp.Beneficios.DeduccionesCalculadas[0].MontoReducido);
+                    cmdEmp.Parameters.AddWithValue("@BeneficioNombre1", emp.Beneficios.DeduccionesCalculadas[0].NombreBeneficio);
+                    cmdEmp.Parameters.AddWithValue("@BeneficioMonto2", emp.Beneficios.DeduccionesCalculadas[1].MontoReducido);
+                    cmdEmp.Parameters.AddWithValue("@BeneficioNombre2", emp.Beneficios.DeduccionesCalculadas[1].NombreBeneficio);
+                    cmdEmp.Parameters.AddWithValue("@BeneficioMonto3", emp.Beneficios.DeduccionesCalculadas[2].MontoReducido);
+                    cmdEmp.Parameters.AddWithValue("@BeneficioNombre3", emp.Beneficios.DeduccionesCalculadas[2].NombreBeneficio);
 
                     await cmdEmp.ExecuteNonQueryAsync();
 
@@ -116,6 +125,7 @@ namespace backend_planilla.Infraestructure
                     totalINS += emp.Deducciones.INSPatrono;
                     totalFCL += emp.Deducciones.FCLPatrono;
                     totalSalarios += emp.SalarioBruto;
+                    totalBeneficios += emp.Beneficios.Total;
                 }
 
                 // 3. UPDATE a PlanillaDeduccionesEmpresa con totales
@@ -131,6 +141,7 @@ namespace backend_planilla.Infraestructure
                 TotalINSPagar = @TotalINS,
                 TotalFCLPagar = @TotalFCL,
                 TotalSalariosPagar = @TotalSalarios,
+                TotalBeneficiosPagar = @TotalBeneficios,
                 FechaDeModificacion = @Fecha
             WHERE IDPlanilla = @IDPlanilla;", conn, transaction);
 
@@ -144,6 +155,7 @@ namespace backend_planilla.Infraestructure
                 cmdUpdate.Parameters.AddWithValue("@TotalINS", totalINS);
                 cmdUpdate.Parameters.AddWithValue("@TotalFCL", totalFCL);
                 cmdUpdate.Parameters.AddWithValue("@TotalSalarios", totalSalarios);
+                cmdUpdate.Parameters.AddWithValue("@TotalBeneficios", totalBeneficios);
                 cmdUpdate.Parameters.AddWithValue("@Fecha", fechaGeneracion);
                 cmdUpdate.Parameters.AddWithValue("@IDPlanilla", idPlanilla);
 
