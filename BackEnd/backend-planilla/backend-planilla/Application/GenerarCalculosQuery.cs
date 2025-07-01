@@ -16,6 +16,7 @@ namespace backend_planilla.Application
         {
             var empleados = await _repository.ObtenerEmpleadosConSalarioAsync(cedulaJuridica);
             var resultados = new List<ResultadoEmpleadoModel>();
+            var quincenasEnUnMes = 2;
 
             foreach (var empleado in empleados)
             {
@@ -23,10 +24,14 @@ namespace backend_planilla.Application
                     ? calculadora.CalcularDeduccionQuincenal(empleado.Salario)
                     : calculadora.CalcularDeduccionMensual(empleado.Salario);
 
+                var salarioBrutoParaGuardar = tipoPlanilla.ToLower() == "quincenal"
+                    ? empleado.Salario / quincenasEnUnMes
+                    : empleado.Salario;
+
                 resultados.Add(new ResultadoEmpleadoModel
                 {
                     CedulaEmpleado = empleado.CedulaEmpleado,
-                    SalarioBruto = empleado.Salario,
+                    SalarioBruto = salarioBrutoParaGuardar,
                     Deducciones = deducciones
                 });
             }

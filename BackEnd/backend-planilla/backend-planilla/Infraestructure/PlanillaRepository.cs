@@ -120,19 +120,19 @@ namespace backend_planilla.Infraestructure
 
                 // 3. UPDATE a PlanillaDeduccionesEmpresa con totales
                 var cmdUpdate = new SqlCommand(@"
-    UPDATE PlanillaDeduccionesEmpresa
-    SET TotalSEMPagar = @TotalSEM,
-        TotalIVMPagar = @TotalIVM,
-        TotalBPOPPagar = @TotalBPPO,
-        TotalAsignacionesFamiliaresPagar = @TotalAsignaciones,
-        TotalIMASPagar = @TotalIMAS,
-        TotalINAPagar = @TotalINA,
-        TotalOPCPagar = @TotalOPC,
-        TotalINSPagar = @TotalINS,
-        TotalFCLPagar = @TotalFCL,
-        TotalSalariosPagar = @TotalSalarios,
-        FechaDeModificacion = @Fecha
-    WHERE IDPlanilla = @IDPlanilla;", conn, transaction);
+            UPDATE PlanillaDeduccionesEmpresa
+            SET TotalSEMPagar = @TotalSEM,
+                TotalIVMPagar = @TotalIVM,
+                TotalBPOPPagar = @TotalBPPO,
+                TotalAsignacionesFamiliaresPagar = @TotalAsignaciones,
+                TotalIMASPagar = @TotalIMAS,
+                TotalINAPagar = @TotalINA,
+                TotalOPCPagar = @TotalOPC,
+                TotalINSPagar = @TotalINS,
+                TotalFCLPagar = @TotalFCL,
+                TotalSalariosPagar = @TotalSalarios,
+                FechaDeModificacion = @Fecha
+            WHERE IDPlanilla = @IDPlanilla;", conn, transaction);
 
                 cmdUpdate.Parameters.AddWithValue("@TotalSEM", totalSEM);
                 cmdUpdate.Parameters.AddWithValue("@TotalIVM", totalIVM);
