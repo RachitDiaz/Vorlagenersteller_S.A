@@ -57,6 +57,46 @@ namespace backend_planilla.Infraestructure
             return beneficios;
         }
 
+        public bool ActualizarDependientesEmpleado(string cedula, int dependientes)
+        {
+            var query = @"
+                UPDATE Empleado
+                SET CantidadDependientes = @Dependientes,
+                    FechaDeModificacion = GETDATE()
+                WHERE CedulaEmpleado = @Cedula
+            ";
+            using (var comando = new SqlCommand(query, _conexion))
+            {
+                comando.Parameters.AddWithValue("@Dependientes", dependientes);
+                comando.Parameters.AddWithValue("@Cedula", cedula);
+
+                try
+                {
+                    _conexion.Open();
+                    using (var transaccion = _conexion.BeginTransaction())
+                    {
+                        comando.Transaction = transaccion;
+                        int filasAfectadas = comando.ExecuteNonQuery();
+
+                        if (filasAfectadas > 0)
+                        {
+                            transaccion.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            transaccion.Rollback();
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error al actualizar dependientes: " + ex.Message);
+                    return false;
+                }
+            }
+        }
         public List<BeneficioSimpleModel> ObtenerBeneficiosSeleccionadosPorEmpleado(string correo)
         {
             var beneficios = new List<BeneficioSimpleModel>();

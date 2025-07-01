@@ -58,20 +58,15 @@ namespace backend_planilla.Handlers
                     SalarioBruto = Convert.ToDecimal(columna["SalarioBruto"]),
                     TipoContrato = Convert.ToString(columna["TipoContrato"])
                 });
-                Console.WriteLine($"{Convert.ToString(columna["Cedula"])}");
             }
             return empleados;
         }
 
         public bool CrearEmpleado(PersonaModel persona, EmpleadoModel empleado, string correo)
-        {
-            Console.WriteLine($"Contra: {_passwordHasher.HashPassword(persona.Usuario, persona.Usuario.Contrasena)}");
+        {   
             bool exito = false;
-            Console.WriteLine($"Buscando cedula empresa");
             string cedulaEmpresa = ObtenerCedulaJuridica(correo);
-            Console.WriteLine($"Buscando ID usuario");
             int IDUsuario = ObtenerIdUsuario(correo);
-            Console.WriteLine($"CedulaEmpresa: {cedulaEmpresa} IDUsuario:{IDUsuario}");
             if (cedulaEmpresa != "")
             {
                 exito = CrearPersona(persona);
@@ -91,14 +86,6 @@ namespace backend_planilla.Handlers
                 comandoParaConsulta.Parameters.AddWithValue("@TipoContrato", empleado.TipoContrato);
                 comandoParaConsulta.Parameters.AddWithValue("@UsuarioCreador", IDUsuario);
                 comandoParaConsulta.Parameters.AddWithValue("@UltimoEnModificar", IDUsuario);
-                Console.WriteLine($"Tratando de cear empleado con la siguiente información\n" +
-                    $"CedulaEmpleado: {empleado.CedulaEmpleado}\n" +
-                    $"CedulaEmpresa: {cedulaEmpresa}\n" +
-                    $"Banco: {empleado.Banco}\n" +
-                    $"SalarioBruto: {empleado.SalarioBruto}\n" +
-                    $"TipoContrato: {empleado.TipoContrato}\n" +
-                    $"UsuarioCreador: {IDUsuario}\n" +
-                    $"UltimoEnModificar: {IDUsuario}\n");
                 _conexion.Open();
                 exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
                 _conexion.Close();
@@ -176,6 +163,8 @@ namespace backend_planilla.Handlers
             return IDUsuario;
         }
 
+
+
         public bool CrearPersona(PersonaModel persona)
         {
             var consulta = @"INSERT INTO Persona(Cedula, Nombre, Apellido1, Apellido2, Genero)
@@ -203,10 +192,6 @@ namespace backend_planilla.Handlers
             comandoParaConsulta.Parameters.AddWithValue("@Correo", persona.Usuario.Correo);
             persona.Usuario.Contrasena = _passwordHasher.HashPassword(persona.Usuario, persona.Usuario.Contrasena);
             comandoParaConsulta.Parameters.AddWithValue("@Contrasena", persona.Usuario.Contrasena);
-            Console.WriteLine($"Tratando de cear usuario con la siguiente información\n" +
-                $"Cedula: {persona.Cedula}" +
-                $"Correo: {persona.Usuario.Correo}" +
-                $"Contrasena: {persona.Usuario.Contrasena}");
             _conexion.Open();
             var exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
             _conexion.Close();
@@ -293,7 +278,24 @@ namespace backend_planilla.Handlers
         }
 
 
+        public async Task<string> ObtenerCorreoDesdeCedula(string cedula)
+        {
+            var consulta = @"SELECT Correo FROM Usuario
+                            WHERE Cedula  = @Cedula;";
+            var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
+            comandoParaConsulta.Parameters.AddWithValue("@Cedula", cedula);
+
+            _conexion.Open();
+            var reader = comandoParaConsulta.ExecuteReader();
+            string result = "";
+            if (reader.Read())
+            {
+                result = reader["Correo"].ToString();
+            }
+            _conexion.Close();
+            return result;
+        }
         public async Task<decimal> ObtenerSalarioBruto(string cedulaEmpleado)
         {
             var query = "SELECT SalarioBruto FROM Empleado WHERE CedulaEmpleado = @Cedula";
@@ -307,12 +309,11 @@ namespace backend_planilla.Handlers
         public async Task<List<DeduccionBeneficioModel>> ObtenerBeneficiosEmpleado(string cedulaEmpleado)
         {
             var beneficios = new List<DeduccionBeneficioModel>();
-            var query = @"SELECT B.ID, B.Nombre, PB.TipoValorParametro AS Tipo, PB.ValorDelParametro AS Monto
+            var query = @"SELECT B.ID, B.Nombre, B.Tipo AS Tipo
                         FROM EligeBeneficio EB
                         JOIN Beneficio B ON EB.IDBeneficio = B.ID
-                        JOIN ParametrosBeneficio PB ON PB.IDBeneficio = B.ID
-                        WHERE EB.CedulaEmpleado = @Cedula
-                        AND PB.TipoValorParametro IS NOT NULL";
+                        JOIN EligeBeneficio PB ON PB.IDBeneficio = B.ID
+                        WHERE EB.CedulaEmpleado = @Cedula";
 
             using var cmd = new SqlCommand(query, _conexion);
             cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
@@ -329,8 +330,7 @@ namespace backend_planilla.Handlers
                     {
                         IDBeneficio = reader.GetInt32(0),
                         Nombre = reader.GetString(1),
-                        Tipo = reader.GetString(2),
-                        Monto = decimal.TryParse(reader["Monto"].ToString(), out var val) ? val : 0
+                        Tipo = reader.GetString(2)
                     });
                 }
             }
@@ -366,5 +366,42 @@ namespace backend_planilla.Handlers
 
             throw new Exception("No se encontró el género del empleado.");
         }
+
+    public async Task<string> ObtenerFechaNacimientoEmpleado(string cedulaEmpleado)
+        {
+            var query = "SELECT FechaNacimiento FROM Persona WHERE Cedula = @Cedula";
+            using var cmd = new SqlCommand(query, _conexion);
+            cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
+
+            if (_conexion.State != ConnectionState.Open)
+                _conexion.Open();
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return reader["FechaNacimiento"].ToString()?.ToLower();
+            }
+
+            throw new Exception("No se encontró la fecha de nacimiento del empleado.");
+        }
+
+    public async Task<string> ObtenerCantDependientesEmpleado(string cedulaEmpleado)
+        {
+            var query = "SELECT CantidadDependientes FROM Empleado WHERE CedulaEmpleado = @Cedula";
+            using var cmd = new SqlCommand(query, _conexion);
+            cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
+
+            if (_conexion.State != ConnectionState.Open)
+                _conexion.Open();
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return reader["CantidadDependientes"].ToString()?.ToLower();
+            }
+
+            throw new Exception("No se encontró la fecha de nacimiento del empleado.");
+        }
     }
-}
+
+   }

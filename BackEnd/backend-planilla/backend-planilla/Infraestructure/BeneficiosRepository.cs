@@ -239,7 +239,6 @@ namespace backend_planilla.Infraestructure
                         if (reader.Read())
                         {
                             idBeneficio = Convert.ToInt32(reader["IDBeneficio"]);
-                            Console.WriteLine($"Ingresado con éxito el beneficio: {idBeneficio}");
                         }
                     }
                 }
@@ -324,7 +323,6 @@ namespace backend_planilla.Infraestructure
 
                 comandoParaConsulta.Parameters.AddWithValue("@NombreBeneficio", nombreBeneficio);
                 comandoParaConsulta.Parameters.AddWithValue("@CedulaEmpresa", cedulaEmpresa);
-                Console.WriteLine($"Buscando si empresa ya tiene el beneficio {nombreBeneficio} {cedulaEmpresa}");
                 _conexion.Open();
                 var reader = comandoParaConsulta.ExecuteReader();
                 return reader.HasRows;
@@ -374,7 +372,6 @@ namespace backend_planilla.Infraestructure
                         if (reader.Read())
                         {
                             idBeneficio = Convert.ToInt32(reader["IDBeneficio"]);
-                            Console.WriteLine($"Copiado con éxito el beneficio: {idBeneficio}");
                         }
                     }
                 }
@@ -420,10 +417,6 @@ namespace backend_planilla.Infraestructure
                     _conexion.Open();
 
                     exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
-                    if (exito)
-                    {
-                        Console.WriteLine($"Copiado con éxito la tabla API");
-                    }
                 }
 
                 if (exito)
@@ -441,10 +434,6 @@ namespace backend_planilla.Infraestructure
                         comandoParaConsulta.Parameters.AddWithValue("@nombreBeneficioCopiar", nombreBeneficioCopiar);
 
                         exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
-                        if (exito)
-                        {
-                            Console.WriteLine($"Copiado con éxito los parámetros del beneficio");
-                        }
                     }
                 }
             }
@@ -521,10 +510,6 @@ namespace backend_planilla.Infraestructure
                 comandoParaConsulta.Parameters.AddWithValue("@UsuarioModifica", idUsuario);
                 _conexion.Open();
                 exito = comandoParaConsulta.ExecuteNonQuery() >= 1;
-                if (exito)
-                {
-                    Console.WriteLine($"Modificado con éxito el beneficio");
-                }
             }
             catch (Exception ex)
             {
@@ -554,7 +539,6 @@ namespace backend_planilla.Infraestructure
                 _conexion.Open();
                 comandoParaConsulta.ExecuteNonQuery();
                 _conexion.Close();
-                Console.WriteLine("Creando parámetros");
                 exito = CrearParametros(parametros, idBeneficio);
             }
             catch (Exception ex)
