@@ -369,7 +369,7 @@ namespace backend_planilla.Handlers
             throw new Exception("No se encontró el género del empleado.");
         }
 
-    public async Task<string> ObtenerFechaNacimientoEmpleado(string cedulaEmpleado)
+        public async Task<string> ObtenerFechaNacimientoEmpleado(string cedulaEmpleado)
         {
             var query = "SELECT FechaNacimiento FROM Persona WHERE Cedula = @Cedula";
             using var cmd = new SqlCommand(query, _conexion);
@@ -387,7 +387,7 @@ namespace backend_planilla.Handlers
             throw new Exception("No se encontró la fecha de nacimiento del empleado.");
         }
 
-    public async Task<string> ObtenerCantDependientesEmpleado(string cedulaEmpleado)
+        public async Task<string> ObtenerCantDependientesEmpleado(string cedulaEmpleado)
         {
             var query = "SELECT CantidadDependientes FROM Empleado WHERE CedulaEmpleado = @Cedula";
             using var cmd = new SqlCommand(query, _conexion);
@@ -404,10 +404,6 @@ namespace backend_planilla.Handlers
 
             throw new Exception("No se encontró la fecha de nacimiento del empleado.");
         }
-    }
-
-   }
-
         public string EliminarEmpleado(string cedulaEmpleado)
         {
             string correoUsuario = "";
@@ -442,7 +438,8 @@ namespace backend_planilla.Handlers
                 {
                     transaccion.Commit();
                     return correoUsuario;
-                } else
+                }
+                else
                 {
                     transaccion.Rollback();
                     throw new Exception("Ocurrió un error en el delete y no se afectó ninguna fila");
@@ -462,5 +459,4 @@ namespace backend_planilla.Handlers
             }
         }
     }
-
 }
