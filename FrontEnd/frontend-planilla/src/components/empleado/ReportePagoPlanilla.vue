@@ -4,8 +4,8 @@
 
     <div class="title" style=""> Seleccione una fecha de pago </div>
     <div class="title" style="padding-bottom: 2rem;">
-      <select id="fechas">
-        <option v-for="(info, index) in reportes" :key="index" @click="updateDisplay(index)">
+      <select id="fechas" v-model="index" @change="updateDisplay(index)">
+        <option v-for="(info, i) in reportes" :key="i" :value="i">
           {{ info.fecha }}
         </option>
       </select>
@@ -57,6 +57,7 @@ import { backendURL } from '../../config/config.js'
 
 const token = localStorage.getItem("jwtToken")
 const router = useRouter()
+const index = ref(0)
 var display = reactive(
   {
     beneficioCosto1: 1,
@@ -96,8 +97,9 @@ function obtenerReportes() {
     axios.get(`${backendURL}Reportes/ObtenerUltimosPagosEmpleado`, {headers})
     .then((response) => {
       reportes = response.data;
-      updateDisplay(0);
+      updateDisplay(index.value);
     });
+
   } catch (error) {
     console.error("Error cargando planilla:", error)
     alert("No se pudo cargar la informacion.")
@@ -114,6 +116,7 @@ onMounted(() => {
 })
 
 function updateDisplay(index) {
+  index = index
   show = true;
   display.beneficioCosto1 = reportes[index].beneficioCosto1;
   display.beneficioCosto2 = reportes[index].beneficioCosto2;
