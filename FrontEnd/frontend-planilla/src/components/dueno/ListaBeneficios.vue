@@ -57,25 +57,15 @@ const modalRef = ref(null);
 const modalModificar = ref(null);
 const beneficioSeleccionado = ref(null);
 
-/**
- * Mostrar modal para modificar beneficio
- * @param {Beneficio} beneficio seleccionado para modificar
- */
 function abrirModalModificar(beneficio) {
   beneficioSeleccionado.value = { ...beneficio };
   modalModificar.value?.show(beneficio);
 }
 
-/**
- * Mostrar el formulario para agregar beneficios
- */
 function showModal() {
   modalRef.value?.show();
 }
 
-/**
- * Guardar la cantidad de beneficios seleccionables
- */
 function submit() {
   alert(`Has aceptado ${selectedAmount.value} beneficios seleccionables.`);
 }

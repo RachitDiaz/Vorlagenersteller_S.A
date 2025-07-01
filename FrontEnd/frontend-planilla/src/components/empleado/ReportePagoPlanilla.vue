@@ -83,6 +83,7 @@ import html2pdf from "html2pdf.js";
 
 const token = localStorage.getItem("jwtToken")
 const router = useRouter()
+const index = ref(0)
 var display = reactive(
   {
     beneficioCosto1: 1,
@@ -122,9 +123,9 @@ function obtenerReportes() {
     axios.get(`${backendURL}Reportes/ObtenerUltimosPagosEmpleado`, {headers})
     .then((response) => {
       reportes = response.data;
-      updateDisplay(0);
-      console.log(reportes);
+      updateDisplay(index.value);
     });
+
   } catch (error) {
     console.error("Error cargando planilla:", error)
     alert("No se pudo cargar la informacion.")
@@ -141,6 +142,7 @@ onMounted(() => {
 })
 
 function updateDisplay(index) {
+  index = index
   show = true;
   display.beneficioCosto1 = reportes[index].beneficioCosto1;
   display.beneficioCosto2 = reportes[index].beneficioCosto2;

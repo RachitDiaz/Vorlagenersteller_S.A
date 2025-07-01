@@ -83,8 +83,6 @@ onMounted(async () => {
     setTimeout(() => router.push("/login"), 2000)
     return
   }
-  
-  console.log(token);
   const headers = { Authorization: `Bearer ${token}` }
   try {
     const { data: disponibles } = await axios.get(`${backendURL}BeneficioEmpleado/listar`, { headers })

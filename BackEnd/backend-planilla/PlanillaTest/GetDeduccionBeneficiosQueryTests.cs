@@ -54,9 +54,9 @@ namespace PlanillaTest
 
             var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
 
-            Assert.AreEqual(3, resultado.Count); 
-            Assert.AreEqual("Seguro", resultado[0].NombreBeneficio);
-            Assert.AreEqual(50m, resultado[0].MontoReducido);
+            Assert.AreEqual(3, resultado.DeduccionesCalculadas.Count()); 
+            Assert.AreEqual("Seguro", resultado.DeduccionesCalculadas[0].NombreBeneficio);
+            Assert.AreEqual(50m, resultado.DeduccionesCalculadas[0].MontoReducido);
         }
 
         [Test]
@@ -84,8 +84,8 @@ namespace PlanillaTest
 
             var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
 
-            Assert.AreEqual("Café", resultado[0].NombreBeneficio);
-            Assert.AreEqual(200, resultado[0].MontoReducido);
+            Assert.AreEqual("Café", resultado.DeduccionesCalculadas[0].NombreBeneficio);
+            Assert.AreEqual(200, resultado.DeduccionesCalculadas[0].MontoReducido);
         }
 
         [Test]
@@ -104,8 +104,8 @@ namespace PlanillaTest
 
             var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
 
-            Assert.AreEqual(3, resultado.Count);
-            Assert.IsTrue(resultado.TrueForAll(d => d.NombreBeneficio == "Sin beneficio"));
+            Assert.AreEqual(3, resultado.DeduccionesCalculadas.Count);
+            Assert.IsTrue(resultado.DeduccionesCalculadas.TrueForAll(d => d.NombreBeneficio == "Sin beneficio"));
         }
     }
 }

@@ -49,6 +49,12 @@ namespace backend_planilla.Application
         {
             return _empleadoRepository.ObtenerInfoEmpleado(cedulaEmpleado);
         }
+
+        public InfoEmpleadoModel? ObtenerInfoEmpleadoCorreo(string correo)
+        {
+            string cedulaEmpleado = _empleadoRepository.ObtenerCedulaEmpleado(correo);
+            return _empleadoRepository.ObtenerInfoEmpleado(cedulaEmpleado);
+        }
         public List<EmpleadoModel> ObtenerEmpleados(string correo)
         {
             return _empleadoRepository.ObtenerEmpleados(correo);
