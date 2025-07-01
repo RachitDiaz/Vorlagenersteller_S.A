@@ -16,14 +16,9 @@ namespace backend_planilla.Application
 
         public async Task<Guid> EjecutarAsync(GenerarPlanillaRequestModel request, ICalculoDeduccionesObligatorias calculadora)
         {
-            var idPlanilla = await _planillaRepository.InsertarPlanillaEmpresaAsync(request.CedulaJuridica, request.Periodo, request.FechaGeneracion);
 
             var resultados = await _calculosQuery.ObtenerResultadosAsync(request.CedulaJuridica, request.TipoPlanilla, calculadora);
-
-            foreach (var empleado in resultados)
-            {
-                await _planillaRepository.InsertarPlanillaEmpleadoAsync(idPlanilla, empleado);
-            }
+            var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, request.Periodo, request.FechaGeneracion, resultados);
 
             return idPlanilla;
         }

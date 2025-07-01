@@ -56,5 +56,108 @@ namespace backend_planilla.Infraestructure
             await conn.OpenAsync();
             await cmd.ExecuteNonQueryAsync();
         }
+
+        public async Task<Guid> InsertarPlanillaCompletaAsync(string cedulaJuridica, string periodo, DateTime fechaGeneracion, List<ResultadoEmpleadoModel> empleados)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+            using var transaction = conn.BeginTransaction();
+
+            try
+            {
+                // 1. Insertar encabezado empresa
+                var cmdEmpresa = new SqlCommand(@"
+            INSERT INTO PlanillaDeduccionesEmpresa (IDPlanilla, CedulaEmpresa, Periodo, FechaDeCreacion)
+            OUTPUT INSERTED.IDPlanilla
+            VALUES (NEWID(), @CedulaJuridica, @Periodo, @Fecha);", conn, transaction);
+
+                cmdEmpresa.Parameters.AddWithValue("@CedulaJuridica", cedulaJuridica);
+                cmdEmpresa.Parameters.AddWithValue("@Periodo", periodo);
+                cmdEmpresa.Parameters.AddWithValue("@Fecha", fechaGeneracion);
+
+                var idPlanilla = (Guid)(await cmdEmpresa.ExecuteScalarAsync())!;
+
+                // 2. Totales por columna patronal
+                decimal totalSEM = 0, totalIVM = 0, totalBPPO = 0, totalAsignaciones = 0, totalIMAS = 0, totalINA = 0, totalOPC = 0, totalFCL = 0, totalINS = 0, totalSalarios = 0;
+
+                foreach (var emp in empleados)
+                {
+                    // INSERT individual
+                    var cmdEmp = new SqlCommand(@"
+                INSERT INTO PlanillaMensualEmpleado (
+                    IDPlanilla, CedulaEmpleado, SalarioBruto,
+                    SEMEmpleado, IVEMEmpleado, BPPOEmpleado,
+                    ImpuestoRenta, TotalDeduccionesEmpleado, TotalDeduccionesPatrono)
+                VALUES (
+                    @IDPlanilla, @CedulaEmpleado, @SalarioBruto,
+                    @SEMEmpleado, @IVMEmpleado, @BPPOEmpleado,
+                    @ImpuestoRenta, @TotalDeduccionesEmpleado, @TotalDeduccionesPatrono);", conn, transaction);
+
+                    cmdEmp.Parameters.AddWithValue("@IDPlanilla", idPlanilla);
+                    cmdEmp.Parameters.AddWithValue("@CedulaEmpleado", emp.CedulaEmpleado);
+                    cmdEmp.Parameters.AddWithValue("@SalarioBruto", emp.SalarioBruto);
+                    cmdEmp.Parameters.AddWithValue("@SEMEmpleado", emp.Deducciones.SEMEmpleado);
+                    cmdEmp.Parameters.AddWithValue("@IVMEmpleado", emp.Deducciones.IVMEmpleado);
+                    cmdEmp.Parameters.AddWithValue("@BPPOEmpleado", emp.Deducciones.BPPOEmpleado);
+                    cmdEmp.Parameters.AddWithValue("@ImpuestoRenta", emp.Deducciones.ImpuestoRenta);
+                    cmdEmp.Parameters.AddWithValue("@TotalDeduccionesEmpleado", emp.Deducciones.TotalEmpleado);
+                    cmdEmp.Parameters.AddWithValue("@TotalDeduccionesPatrono", emp.Deducciones.TotalPatrono);
+
+                    await cmdEmp.ExecuteNonQueryAsync();
+
+                    // Acumulamos
+                    totalSEM += emp.Deducciones.SEMPatrono;
+                    totalIVM += emp.Deducciones.IVMPatrono;
+                    totalBPPO += emp.Deducciones.BPOPPatrono;
+                    totalIMAS += emp.Deducciones.IMASPatrono;
+                    totalINA += emp.Deducciones.INAPatrono;
+                    totalOPC += emp.Deducciones.OPCPatrono;
+                    totalAsignaciones += emp.Deducciones.AsignacionesFamiliaresPatrono;
+                    totalINS += emp.Deducciones.INSPatrono;
+                    totalFCL += emp.Deducciones.FCLPatrono;
+                    totalSalarios += emp.SalarioBruto;
+                }
+
+                // 3. UPDATE a PlanillaDeduccionesEmpresa con totales
+                var cmdUpdate = new SqlCommand(@"
+    UPDATE PlanillaDeduccionesEmpresa
+    SET TotalSEMPagar = @TotalSEM,
+        TotalIVMPagar = @TotalIVM,
+        TotalBPOPPagar = @TotalBPPO,
+        TotalAsignacionesFamiliaresPagar = @TotalAsignaciones,
+        TotalIMASPagar = @TotalIMAS,
+        TotalINAPagar = @TotalINA,
+        TotalOPCPagar = @TotalOPC,
+        TotalINSPagar = @TotalINS,
+        TotalFCLPagar = @TotalFCL,
+        TotalSalariosPagar = @TotalSalarios,
+        FechaDeModificacion = @Fecha
+    WHERE IDPlanilla = @IDPlanilla;", conn, transaction);
+
+                cmdUpdate.Parameters.AddWithValue("@TotalSEM", totalSEM);
+                cmdUpdate.Parameters.AddWithValue("@TotalIVM", totalIVM);
+                cmdUpdate.Parameters.AddWithValue("@TotalBPPO", totalBPPO);
+                cmdUpdate.Parameters.AddWithValue("@TotalAsignaciones", totalAsignaciones);
+                cmdUpdate.Parameters.AddWithValue("@TotalIMAS", totalIMAS);
+                cmdUpdate.Parameters.AddWithValue("@TotalINA", totalINA);
+                cmdUpdate.Parameters.AddWithValue("@TotalOPC", totalOPC);
+                cmdUpdate.Parameters.AddWithValue("@TotalINS", totalINS);
+                cmdUpdate.Parameters.AddWithValue("@TotalFCL", totalFCL);
+                cmdUpdate.Parameters.AddWithValue("@TotalSalarios", totalSalarios);
+                cmdUpdate.Parameters.AddWithValue("@Fecha", fechaGeneracion);
+                cmdUpdate.Parameters.AddWithValue("@IDPlanilla", idPlanilla);
+
+                await cmdUpdate.ExecuteNonQueryAsync();
+
+                await transaction.CommitAsync();
+                return idPlanilla;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
     }
 }
