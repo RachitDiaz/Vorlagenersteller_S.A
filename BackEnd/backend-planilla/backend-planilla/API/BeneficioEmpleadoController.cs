@@ -11,9 +11,9 @@ namespace backend_planilla.Controllers
     {
         private readonly IBeneficioQuery _beneficioQuery;
 
-        public BeneficioEmpleadoController()
+        public BeneficioEmpleadoController(IBeneficioQuery beneficioQuery)
         {
-            _beneficioQuery = new BeneficioQuery();
+            _beneficioQuery = beneficioQuery;
         }
 
 
@@ -33,6 +33,17 @@ namespace backend_planilla.Controllers
 
             var beneficios = body["beneficios"];
             var resultado = _beneficioQuery.ActualizarBeneficiosEmpleado(cedulaEmpleado, beneficios);
+            return Ok(new { exito = resultado });
+        }
+
+        [HttpPost("ActualizarDependientes/{dependientes}")]
+        public IActionResult ActualizarDependientes( int dependientes)
+        {
+            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (correo == null)
+                return Unauthorized("Token inválido.");
+
+            var resultado = _beneficioQuery.ActualizarDependientesEmpleado(correo, dependientes);
             return Ok(new { exito = resultado });
         }
 

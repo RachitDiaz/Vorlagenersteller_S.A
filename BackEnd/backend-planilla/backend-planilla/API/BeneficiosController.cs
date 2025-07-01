@@ -25,6 +25,8 @@ namespace backend_planilla.API
         {
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
             try
             {
                 var beneficios = _beneficiosHandler.GetBeneficios(correo);

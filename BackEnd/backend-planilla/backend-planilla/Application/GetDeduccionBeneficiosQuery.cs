@@ -22,7 +22,7 @@ namespace backend_planilla.Application
         }
 
 
-        public async Task<List<DeduccionCalculada>> CalcularDeduccionesBeneficios(string cedula)
+        public async Task<DeduccionCalculadaConTotal> CalcularDeduccionesBeneficios(string cedula)
         {
             string correo = await _repo_empleado.ObtenerCorreoDesdeCedula(cedula);
             string cedulaEmpleado = _repo_beneficio.ObtenerCedulaEmpleadoDesdeCorreo(correo);
@@ -53,7 +53,13 @@ namespace backend_planilla.Application
                 });
             }
 
-            return resultado;
+            decimal total = resultado.Sum(r => r.MontoReducido);
+
+            return new DeduccionCalculadaConTotal
+            {
+                DeduccionesCalculadas = resultado,
+                Total = Math.Round(total, 2)
+            };
         }
 
         private async Task<decimal> CalcularDeduccionPorBeneficio(DeduccionBeneficioModel beneficio, decimal salarioBruto, string cedulaEmpleado)

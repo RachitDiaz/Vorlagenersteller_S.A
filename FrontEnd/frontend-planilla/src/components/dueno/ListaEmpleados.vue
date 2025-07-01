@@ -25,21 +25,25 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="empleado in empleadosFiltrados" :key="empleado.cedulaEmpleado">
+        <tr v-for="empleado in empleadosFiltrados" :key="empleado.cedulaEmpleado" @click="mostrarEmpleado(empleado.cedulaEmpleado)">
           <td>{{ empleado.nombre }}</td>
           <td>{{ empleado.apellido1 }}</td>
           <td>{{ empleado.apellido2 }}</td>
           <td>{{ empleado.cedulaEmpleado }}</td>
           <td>Empleado</td>
           <td class="acciones">
-            <button class="edit" @click="abrirEdicion(empleado.cedulaEmpleado)">Editar</button>
-            <button class="delete">Eliminar</button>
+            <button class="edit"
+            @click="abrirEdicion(empleado.cedulaEmpleado)">Editar</button>
+            <button class="delete"
+            @click="abrirEliminacion(empleado.cedulaEmpleado)">Eliminar</button>
           </td>
         </tr>
       </tbody>
     </table>
     <ModalAgregarEmpleado ref="modalAgregarEmpleado" />
     <ModalEditarEmpleado ref="modalEditarEmpleado" />
+    <ModalVerEmpleado ref="modalVerEmpleado" />
+    <ModalEliminarEmpleado ref="modalEliminarEmpleado" />
   </section>
 </template>
 
@@ -47,42 +51,59 @@
 import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
 import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue'
+import ModalVerEmpleado from '../modals/ModalVerEmpleado.vue'
 import { useRouter } from 'vue-router'
 import { backendURL } from '../../config/config.js'
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min'
+import axios from 'axios';
+import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue';
+import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue';
+import ModalEliminarEmpleado from '../modals/ModalEliminarEmpleado.vue';
+import {useRouter} from 'vue-router';
+import {backendURL} from '../../config/config.js';
 
 const router = useRouter();
-const token = localStorage.getItem("jwtToken");
+const token = localStorage.getItem('jwtToken');
 export default {
-  name: "ListaEmpleados",
+  name: 'ListaEmpleados',
   components: {
     ModalAgregarEmpleado,
-    ModalEditarEmpleado
+    ModalEditarEmpleado,
+    ModalVerEmpleado
+    ModalEditarEmpleado,
+    ModalEliminarEmpleado,
   },
   data() {
     return {
-      search: "",
-      empleados: []
+      search: '',
+      empleados: [],
     };
   },
   computed: {
     empleadosFiltrados() {
-      return this.empleados.filter(e =>
-        (e?.Nombre?.toLowerCase() ?? "").includes(this.search.toLowerCase()) ||
-        (e?.CedulaEmpleado ?? "").includes(this.search)
+      return this.empleados.filter((e) =>
+        (e?.Nombre?.toLowerCase() ?? '').includes(this.search.toLowerCase()) ||
+        (e?.CedulaEmpleado ?? '').includes(this.search),
       );
-    }
+    },
   },
   methods: {
     abrirModal() {
-      this.$refs.modalAgregarEmpleado.show()
+      this.$refs.modalAgregarEmpleado.show();
+    },
+    abrirEdicion(cedulaEmpleado) {
+      this.$refs.modalEditarEmpleado.show(cedulaEmpleado);
+    },
+    mostrarEmpleado(cedulaEmpleado) {
+      this.$refs.modalVerEmpleado.show(cedulaEmpleado)
     },
     abrirEdicion(cedulaEmpleado)  {
       this.$refs.modalEditarEmpleado.show(cedulaEmpleado)
+    abrirEliminacion(cedulaEmpleado) {
+      this.$refs.modalEliminarEmpleado.show(cedulaEmpleado);
     },
     async obtenerEmpleados() {
-
       try {
-
         if (!token) {
           alert('Tiene que iniciar sesión primero.');
           setTimeout(() => {
@@ -92,8 +113,8 @@ export default {
         }
         const response = await axios.get(`${backendURL}Empleado/GetEmpleadosEmpresa`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         this.empleados = response.data;
@@ -107,16 +128,15 @@ export default {
           alert('Error al cargar los empleados desde el servidor.');
         }
       }
-    }
+    },
   },
   mounted() {
-    this.obtenerEmpleados()
-  }
-}
+    this.obtenerEmpleados();
+  },
+};
 </script>
 
 
-  
   <style scoped>
   .employee-table {
     background: #fff;
@@ -126,19 +146,19 @@ export default {
     margin: 5rem auto 2rem auto;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
-  
+
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
   }
-  
+
   .header h2 {
     font-weight: bold;
     font-size: 1.5rem;
   }
-  
+
   .add-button {
     background-color: #7c3aed;
     color: white;
@@ -147,7 +167,7 @@ export default {
     border-radius: 9999px;
     cursor: pointer;
   }
-  
+
   .controls {
     display: flex;
     justify-content: space-between;
@@ -155,19 +175,19 @@ export default {
     margin-bottom: 1rem;
     gap: 1rem;
   }
-  
+
   .controls input {
     flex: 1;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 6px;
   }
-  
+
   .buttons {
     display: flex;
     gap: 0.5rem;
   }
-  
+
   .btn {
     background-color: #f3f4f6;
     border: 1px solid #ccc;
@@ -175,36 +195,36 @@ export default {
     border-radius: 6px;
     cursor: pointer;
   }
-  
+
   table {
     width: 100%;
     border-collapse: collapse;
   }
-  
+
   th {
     text-align: left;
     padding: 0.75rem;
     background-color: #f9fafb;
     border-bottom: 1px solid #e5e7eb;
   }
-  
+
   td {
     padding: 0.75rem;
     border-bottom: 1px solid #f1f1f1;
   }
-  
+
   .acciones {
     display: flex;
     gap: 0.5rem;
   }
-  
+
   .edit {
     color: #3b82f6;
     background: none;
     border: none;
     cursor: pointer;
   }
-  
+
   .delete {
     color: #ef4444;
     background: none;
@@ -212,4 +232,4 @@ export default {
     cursor: pointer;
   }
   </style>
-  
+
