@@ -136,8 +136,10 @@ function obtenerReportes() {
   try {
     axios.get(`${backendURL}Reportes/ObtenerUltimosPagosEmpresa`, {headers})
     .then((response) => {
-      reportes = response.data;
-      updateDisplay(0);
+      if (response.data.length != 0) {
+        reportes = response.data;
+        updateDisplay(0);
+      }
     });
   } catch (error) {
     console.error("Error cargando planilla:", error)
