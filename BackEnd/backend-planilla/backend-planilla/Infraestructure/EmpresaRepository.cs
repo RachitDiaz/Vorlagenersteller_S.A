@@ -61,5 +61,125 @@ namespace backend_planilla.Infraestructure
 
             return exito;
         }
+        public List<string> EliminarEmpresa(string cedulaEmpresa)
+        {
+            List<string> listaCorreos = new();
+            _conexion.Open();
+            var transaccion = _conexion.BeginTransaction();
+            try
+            {
+                Console.WriteLine(cedulaEmpresa + " Eliminar");
+                var consulta = @"
+                                SELECT Correo FROM Usuario u
+                                INNER JOIN Persona p ON u.Cedula = p.Cedula
+                                INNER JOIN Empleado e ON p.Cedula = e.CedulaEmpleado
+                                WHERE CedulaEmpresa = @cedulaEmpresa;";
+                var comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
+                Console.WriteLine("Read start");
+
+                comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpresa", cedulaEmpresa);
+                var reader = comandoParaConsulta.ExecuteReader();
+                while (reader.Read())
+                {
+                    string correo = Convert.ToString(reader["Correo"]);
+                    listaCorreos.Add(correo);
+                    Console.WriteLine(correo);
+                }
+                reader.Close();
+
+                Console.WriteLine("Delete start");
+                consulta = @"DELETE FROM Empresa WHERE CedulaJuridica = @cedulaEmpresa;";
+                comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
+                comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpresa", cedulaEmpresa);
+
+                if (comandoParaConsulta.ExecuteNonQuery() >= 1)
+                {
+                    transaccion.Commit();
+                    return listaCorreos;
+                }
+                else
+                {
+                    throw new Exception("Ocurrió un error al eliminar la empresa2");
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "  a");
+                transaccion.Rollback();
+                throw new Exception("Ocurrió un error en el query");
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+        }
+        public string ObtenerCedulaJuridica(string correo)
+        {
+            string cedulaEmpresa = "";
+            try
+            {
+                var consultaDueño = @"
+                                      SELECT e.CedulaJuridica
+                                      FROM Usuario u
+                                      JOIN Dueno d ON u.Cedula = d.Cedula
+                                      JOIN Empresa e ON d.Cedula = e.CedulaDueno
+                                      WHERE u.Correo = @Correo;";
+
+                var consultaEmpleado = @"
+                                         SELECT e.CedulaEmpresa
+                                         FROM Usuario u
+                                         JOIN Empleado e ON u.Cedula = e.CedulaEmpleado
+                                         WHERE u.Correo = @Correo;";
+
+                using (var comando = new SqlCommand(consultaDueño, _conexion))
+                {
+                    comando.Parameters.AddWithValue("@Correo", correo);
+                    _conexion.Open();
+                    var reader = comando.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        cedulaEmpresa = reader["CedulaJuridica"].ToString();
+                    }
+                    _conexion.Close();
+                }
+
+                if (string.IsNullOrEmpty(cedulaEmpresa))
+                {
+                    using (var comando = new SqlCommand(consultaEmpleado, _conexion))
+                    {
+                        comando.Parameters.AddWithValue("@Correo", correo);
+                        _conexion.Open();
+                        var reader = comando.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            cedulaEmpresa = reader["CedulaEmpresa"].ToString();
+                        }
+                        _conexion.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+            return cedulaEmpresa;
+        }
     }
 }

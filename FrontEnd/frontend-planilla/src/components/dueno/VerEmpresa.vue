@@ -50,6 +50,9 @@
             <div class="section-subtittle">Direccion</div>
             <div> {{ Direccion[0].Provincia }}, {{ Direccion[0].Canton }}, {{ Direccion[0].Distrito }}, {{ Direccion[0].OtrasSenas }} </div>
         </div>
+        <button class="delete"
+        @click="abrirEliminacion()">Eliminar</button>
+        <ModalEliminarEmpresa ref="modalEliminarEmpresa"/>
 
         <div style="width: 35%; margin: 5%;">
         <button type="submit" class="btn-eliminar">Eliminar</button>
@@ -62,9 +65,12 @@
   import { useRouter } from 'vue-router'
   import axios from 'axios'
   import { backendURL } from '../../config/config.js'
+  import ModalEliminarEmpresa from '../modals/ModalEliminarEmpresa.vue';
 
   export default {
-
+  components: {
+    ModalEliminarEmpresa,
+  },
   name: 'InfoEmpresa',
   data() {
     return {
@@ -126,6 +132,9 @@
     obtenerEmpresa() {
         axios.put(`${backendURL}Empresa`+ this.cedulaQuerry).then((response) =>
       { this.Empresas = response.data; });
+    },
+    abrirEliminacion() {
+      this.$refs.modalEliminarEmpresa.show();
     },
   },
 
