@@ -211,11 +211,11 @@ async function reporteEmail() {
         );
 
         const formData = new FormData();
-        formData.append("solicitud", file);
+        formData.append("documentoPDF", file);
 
         setTimeout("alert('Su solicitud esta siendo procesada');", 1);
 
-        axios.post(`${backendURL}Reportes/correoForm`, formData, {headers})
+        axios.post(`${backendURL}Reportes/enviarEmailReporte`, formData, {headers})
         .then((response) => {
           if(response.data === true){
             alert('Solicitud exitosa, en breve el informe llegara a su correo.');

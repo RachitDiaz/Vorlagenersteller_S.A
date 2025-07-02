@@ -1,5 +1,4 @@
 ﻿using backend_planilla.Handlers;
-using backend_planilla.Models;
 using backend_planilla.Domain;
 using backend_planilla.Application;
 using Microsoft.AspNetCore.Authorization;
@@ -83,6 +82,27 @@ namespace backend_planilla.Controllers
             }
 
             return Ok(_resultado);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<bool>> enviarEmailReporte(IFormFile documentoPDF)
+        {
+            try
+            {
+                string _correoUsuario = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                if (string.IsNullOrWhiteSpace(_correoUsuario))
+                    return BadRequest();
+
+                _correoUsuario = "cascante.aldo@gmail.com";
+                _ReportesQuery.enviarEmailReporte(documentoPDF, _correoUsuario);
+                
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error creando empleado.");
+            }
+            return true;
         }
 
     }
