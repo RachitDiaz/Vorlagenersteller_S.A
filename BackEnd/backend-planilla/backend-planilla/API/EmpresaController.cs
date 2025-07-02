@@ -25,7 +25,7 @@ namespace backend_planilla.API
             _IEmpresaQuerry = new EmpresaQuery();
         }
 
-        [HttpPut("{cedula}")]
+        [HttpGet("{cedula}")]
         public List<EmpresaModel> Get(string cedula)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
