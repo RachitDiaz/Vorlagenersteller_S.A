@@ -18,7 +18,7 @@ namespace backend_planilla.Application
         {
 
             var resultados = await _calculosQuery.ObtenerResultadosAsync(request.CedulaJuridica, request.TipoPlanilla, calculadora, beneficios);
-            var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, request.Periodo, request.FechaGeneracion, resultados);
+            var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, request.Periodo, request.FechaGeneracion, resultados, request.TipoPlanilla);
 
             return idPlanilla;
         }

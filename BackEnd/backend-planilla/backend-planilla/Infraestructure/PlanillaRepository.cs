@@ -57,7 +57,7 @@ namespace backend_planilla.Infraestructure
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task<Guid> InsertarPlanillaCompletaAsync(string cedulaJuridica, string periodo, DateTime fechaGeneracion, List<ResultadoEmpleadoModel> empleados)
+        public async Task<Guid> InsertarPlanillaCompletaAsync(string cedulaJuridica, string periodo, DateTime fechaGeneracion, List<ResultadoEmpleadoModel> empleados, string tipo)
         {
             using var conn = new SqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -65,24 +65,22 @@ namespace backend_planilla.Infraestructure
 
             try
             {
-                // 1. Insertar encabezado empresa
                 var cmdEmpresa = new SqlCommand(@"
-            INSERT INTO PlanillaDeduccionesEmpresa (IDPlanilla, CedulaEmpresa, Periodo, FechaDeCreacion)
+            INSERT INTO PlanillaDeduccionesEmpresa (IDPlanilla, CedulaEmpresa, Periodo, FechaDeCreacion, Tipo)
             OUTPUT INSERTED.IDPlanilla
-            VALUES (NEWID(), @CedulaJuridica, @Periodo, @Fecha);", conn, transaction);
+            VALUES (NEWID(), @CedulaJuridica, @Periodo, @Fecha, @Tipo);", conn, transaction);
 
                 cmdEmpresa.Parameters.AddWithValue("@CedulaJuridica", cedulaJuridica);
                 cmdEmpresa.Parameters.AddWithValue("@Periodo", periodo);
                 cmdEmpresa.Parameters.AddWithValue("@Fecha", fechaGeneracion);
+                cmdEmpresa.Parameters.AddWithValue("@Tipo", tipo);
 
                 var idPlanilla = (Guid)(await cmdEmpresa.ExecuteScalarAsync())!;
 
-                // 2. Totales por columna patronal
                 decimal totalSEM = 0, totalIVM = 0, totalBPPO = 0, totalAsignaciones = 0, totalIMAS = 0, totalINA = 0, totalOPC = 0, totalFCL = 0, totalINS = 0, totalSalarios = 0, totalBeneficios = 0;
 
                 foreach (var emp in empleados)
                 {
-                    // INSERT individual
                     var cmdEmp = new SqlCommand(@"
                 INSERT INTO PlanillaMensualEmpleado (
                     IDPlanilla, CedulaEmpleado, SalarioBruto,
@@ -114,7 +112,6 @@ namespace backend_planilla.Infraestructure
 
                     await cmdEmp.ExecuteNonQueryAsync();
 
-                    // Acumulamos
                     totalSEM += emp.Deducciones.SEMPatrono;
                     totalIVM += emp.Deducciones.IVMPatrono;
                     totalBPPO += emp.Deducciones.BPOPPatrono;
@@ -128,7 +125,6 @@ namespace backend_planilla.Infraestructure
                     totalBeneficios += emp.Beneficios.Total;
                 }
 
-                // 3. UPDATE a PlanillaDeduccionesEmpresa con totales
                 var cmdUpdate = new SqlCommand(@"
             UPDATE PlanillaDeduccionesEmpresa
             SET TotalSEMPagar = @TotalSEM,
