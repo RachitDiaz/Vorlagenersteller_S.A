@@ -41,7 +41,7 @@ builder.Services.AddScoped<IPlanillaRepository, PlanillaRepository>();
 builder.Services.AddScoped<IGenerarCalculosRepository, GenerarCalculosRepository>();
 builder.Services.AddScoped<IGenerarCalculosQuery, GenerarCalculosQuery>();
 builder.Services.AddScoped<IGenerarPlanilla, GenerarPlanilla>();
-builder.Services.AddScoped<ICalculoDeduccionesObligatorias, CalculoDeduccionesObligatorias>();
+builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 
 builder.Services.AddCors(options =>
 {

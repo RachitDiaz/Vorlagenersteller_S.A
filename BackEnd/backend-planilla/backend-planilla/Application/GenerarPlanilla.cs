@@ -18,12 +18,12 @@ namespace backend_planilla.Application
         {
             string tipoPlanilla = await _planillaRepository.GetTipoDePagoAsync(request.CedulaJuridica);
             string periodo = GenerarPeriodo(tipoPlanilla);
-            /*
+            
             bool yaExiste = await _planillaRepository.ExistePeriodoAsync(request.CedulaJuridica, periodo);
             if (yaExiste)
             {
                 throw new InvalidOperationException($"Ya existe una planilla generada para el período '{periodo}'.");
-            }*/
+            }
             DateTime fechaGeneracion = DateTime.Today;
             var resultados = await _calculosQuery.ObtenerResultadosAsync(request.CedulaJuridica, tipoPlanilla, calculadora, beneficios);
             var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, periodo, fechaGeneracion, resultados, tipoPlanilla);
