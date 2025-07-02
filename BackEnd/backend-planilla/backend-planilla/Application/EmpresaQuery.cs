@@ -76,7 +76,6 @@ namespace backend_planilla.Application
                 }
                 for (int i = 0; i < listaCorreos.Count; i++)
                 {
-                    Console.WriteLine(listaCorreos[i]);
                     EnviarCorreoEmpleado(listaCorreos[i], ASUNTO_CORREO_ELIMINACION, MENSAJE_CORREO_ELIMINACION);
                 }
                 EnviarCorreoEmpleado(correo, ASUNTO_CORREO_ELIMINACION, MENSAJE_CORREO_ELIMINACION);
@@ -89,7 +88,7 @@ namespace backend_planilla.Application
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al eliminar el empleado", ex);
+                throw new Exception("Error al eliminar la empresa", ex);
             }
 
         }

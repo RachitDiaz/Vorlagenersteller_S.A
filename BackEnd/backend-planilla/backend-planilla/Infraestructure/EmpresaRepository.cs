@@ -68,14 +68,12 @@ namespace backend_planilla.Infraestructure
             var transaccion = _conexion.BeginTransaction();
             try
             {
-                Console.WriteLine(cedulaEmpresa + " Eliminar");
                 var consulta = @"
                                 SELECT Correo FROM Usuario u
                                 INNER JOIN Persona p ON u.Cedula = p.Cedula
                                 INNER JOIN Empleado e ON p.Cedula = e.CedulaEmpleado
                                 WHERE CedulaEmpresa = @cedulaEmpresa;";
                 var comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
-                Console.WriteLine("Read start");
 
                 comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpresa", cedulaEmpresa);
                 var reader = comandoParaConsulta.ExecuteReader();
@@ -83,11 +81,9 @@ namespace backend_planilla.Infraestructure
                 {
                     string correo = Convert.ToString(reader["Correo"]);
                     listaCorreos.Add(correo);
-                    Console.WriteLine(correo);
                 }
                 reader.Close();
 
-                Console.WriteLine("Delete start");
                 consulta = @"DELETE FROM Empresa WHERE CedulaJuridica = @cedulaEmpresa;";
                 comandoParaConsulta = new SqlCommand(consulta, _conexion, transaccion);
                 comandoParaConsulta.Parameters.AddWithValue("@cedulaEmpresa", cedulaEmpresa);
@@ -99,17 +95,15 @@ namespace backend_planilla.Infraestructure
                 }
                 else
                 {
-                    throw new Exception("Ocurrió un error al eliminar la empresa2");
+                    throw new Exception("Ocurrió un error al eliminar la empresa");
                 }
             }
             catch (SqlException ex)
             {
-                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + "  a");
                 transaccion.Rollback();
                 throw new Exception("Ocurrió un error en el query");
             }
@@ -178,6 +172,10 @@ namespace backend_planilla.Infraestructure
                 {
                     _conexion.Close();
                 }
+            }
+            if (string.IsNullOrEmpty(cedulaEmpresa))
+            {
+                throw new InvalidOperationException("No se encontró una empresa asociada a este correo");
             }
             return cedulaEmpresa;
         }
