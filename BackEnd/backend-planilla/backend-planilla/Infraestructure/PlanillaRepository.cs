@@ -166,6 +166,22 @@ namespace backend_planilla.Infraestructure
                 throw;
             }
         }
+        public async Task<bool> ExistePeriodoAsync(string cedulaJuridica, string periodo)
+        {
+            const string query = @"
+                SELECT COUNT(*) 
+                FROM PlanillaDeduccionesEmpresa 
+                WHERE CedulaEmpresa = @CedulaJuridica AND Periodo = @Periodo";
 
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@CedulaJuridica", cedulaJuridica);
+            cmd.Parameters.AddWithValue("@Periodo", periodo);
+
+            await conn.OpenAsync();
+            var result = await cmd.ExecuteScalarAsync();
+            int count = result != null ? Convert.ToInt32(result) : 0;
+            return count > 0;
+        }
     }
 }

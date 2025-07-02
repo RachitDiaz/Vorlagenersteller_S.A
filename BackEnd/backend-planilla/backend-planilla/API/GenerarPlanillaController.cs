@@ -22,8 +22,19 @@ namespace backend_planilla.API
         [HttpPost]
         public async Task<IActionResult> Generar([FromBody] GenerarPlanillaRequestModel request)
         {
-            var id = await _generador.EjecutarAsync(request, _calculadora, _beneficios);
-            return Ok(new { IDPlanilla = id });
+            try
+            {
+                var id = await _generador.EjecutarAsync(request, _calculadora, _beneficios);
+                return Ok(new { IDPlanilla = id });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Ocurrió un error al generar la planilla.", detalle = ex.Message });
+            }
         }
     }
 }
