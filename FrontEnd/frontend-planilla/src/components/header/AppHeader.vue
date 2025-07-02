@@ -44,7 +44,6 @@ const filteredMenuItems = computed(() => {
       [
         '/ListaBeneficios',
         '/ListaEmpresas',
-        '/VerEmpresa',
         '/ListaEmpleados',
         '/VerPlanilla',
       ].includes(path)
@@ -87,7 +86,6 @@ const menuItems = [
   {name: 'Lista Beneficios', path: '/ListaBeneficios'},
   {name: 'Dashboard Empleado', path: '/DashboardEmpleado'},
   {name: 'Lista Empresas', path: '/ListaEmpresas'},
-  {name: 'Ver Empresa', path: '/VerEmpresa'},
   {name: 'Lista Empleados', path: '/ListaEmpleados'},
   {name: 'Ver Empleado', path: '/VerEmpleado'},
   {name: 'Beneficios Empleado', path: '/BeneficiosEmpleado'},
