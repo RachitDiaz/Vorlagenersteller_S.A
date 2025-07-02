@@ -4,7 +4,7 @@ using backend_planilla.Infraestructure;
 using backend_planilla.Domain;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace PlanillaTest.BeneficioQueryTests
+namespace PlanillaTest.UnitTests.BeneficioQueryTests
 {
     public class ModificarBeneficioTest
     {
