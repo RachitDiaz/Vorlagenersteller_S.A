@@ -129,6 +129,5 @@ namespace backend_planilla.Controllers
                     "Error al eliminar el empleado.");
             }
         }
-
     }
 }
