@@ -59,8 +59,7 @@ function eliminarEmpleado() {
       Authorization: `Bearer ${token}`,
     },
   }).then(() => {
-    localStorage.removeItem('jwtToken');
-    window.location.href = '/login';
+    window.location.href = '/ListaEmpresas';
   }).catch((error) => {
     if (error.response && error.response.data) {
       mensajeError.value = error.response.data;

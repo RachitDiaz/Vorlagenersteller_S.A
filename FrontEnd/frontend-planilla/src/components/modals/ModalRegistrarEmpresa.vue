@@ -211,7 +211,7 @@
     razonSocial: '',
     nombre: '',
     descripcion: '',
-    beneficiosMaximos: '0',
+    beneficiosMaximos: '3',
     correo: '',
     telefono: '',
     provincia: '',
