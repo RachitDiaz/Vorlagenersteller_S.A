@@ -11,6 +11,7 @@ namespace backend_planilla.Infraestructure
     {
         private SqlConnection _conexion;
         private string _rutaConexion;
+        private readonly string cedulaAdmin = "1-0000-4444"; 
 
         public EmpresaRepository()
         {
@@ -41,7 +42,7 @@ namespace backend_planilla.Infraestructure
 
             comandoParaConsulta.Parameters.AddWithValue("@@CedulaJuridica", infoEmpresa.CedulaJuridica);
             comandoParaConsulta.Parameters.AddWithValue("@@CedulaDueno", infoEmpresa.CedulaDueno);
-            comandoParaConsulta.Parameters.AddWithValue("@@CedulaAdmin", "1-1909-0924");
+            comandoParaConsulta.Parameters.AddWithValue("@@CedulaAdmin", cedulaAdmin);
             comandoParaConsulta.Parameters.AddWithValue("@@TipoDePago", infoEmpresa.TipoDePago);
             comandoParaConsulta.Parameters.AddWithValue("@@RazonSocial", infoEmpresa.RazonSocial);
             comandoParaConsulta.Parameters.AddWithValue("@@Nombre", infoEmpresa.Nombre);

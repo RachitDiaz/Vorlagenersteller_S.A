@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
 using backend_planilla.Domain;
+using System.Linq.Expressions;
 
 namespace backend_planilla.Infraestructure
 {
@@ -19,126 +20,182 @@ namespace backend_planilla.Infraestructure
 
         public bool ActualizarBeneficiosEmpleado(string cedulaEmpleado, List<int> beneficios)
         {
-            string beneficiosJson = JsonSerializer.Serialize(beneficios.Select(id => new { id }));
-            string query = "EXEC ActualizarBeneficiosEmpleado @CedulaEmpleado, @ListaBeneficios";
-            SqlCommand command = new SqlCommand(query, _conexion);
+            bool exito = false;
+            try
+            {
+                string beneficiosJson = JsonSerializer.Serialize(beneficios.Select(id => new { id }));
+                string query = "EXEC ActualizarBeneficiosEmpleado @CedulaEmpleado, @ListaBeneficios";
+                SqlCommand command = new SqlCommand(query, _conexion);
 
-            command.Parameters.AddWithValue("@CedulaEmpleado", cedulaEmpleado);
-            command.Parameters.AddWithValue("@ListaBeneficios", beneficiosJson);
+                command.Parameters.AddWithValue("@CedulaEmpleado", cedulaEmpleado);
+                command.Parameters.AddWithValue("@ListaBeneficios", beneficiosJson);
 
-            _conexion.Open();
-            bool exito = command.ExecuteNonQuery() >= 1;
-            _conexion.Close();
-
+                _conexion.Open();
+                exito = command.ExecuteNonQuery() >= 1;
+                _conexion.Close();
+            }
+            catch (Exception ex)
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
             return exito;
         }
 
         public List<BeneficioSimpleModel> ObtenerBeneficiosParaEmpleado(string correo)
         {
             var beneficios = new List<BeneficioSimpleModel>();
-            var query = "SELECT ID, Nombre FROM dbo.FnObtenerBeneficiosParaEmpleado(@CorreoUsuario)";
-            var comando = new SqlCommand(query, _conexion);
-            comando.Parameters.AddWithValue("@CorreoUsuario", correo);
-
-            _conexion.Open();
-            using (var reader = comando.ExecuteReader())
+            try
             {
-                while (reader.Read())
+                var query = "SELECT ID, Nombre FROM dbo.FnObtenerBeneficiosParaEmpleado(@CorreoUsuario)";
+                var comando = new SqlCommand(query, _conexion);
+                comando.Parameters.AddWithValue("@CorreoUsuario", correo);
+
+                _conexion.Open();
+                using (var reader = comando.ExecuteReader())
                 {
-                    beneficios.Add(new BeneficioSimpleModel
+                    while (reader.Read())
                     {
-                        ID = Convert.ToInt32(reader["ID"]),
-                        Nombre = reader["Nombre"].ToString()
-                    });
+                        beneficios.Add(new BeneficioSimpleModel
+                        {
+                            ID = Convert.ToInt32(reader["ID"]),
+                            Nombre = reader["Nombre"].ToString()
+                        });
+                    }
+                }
+                _conexion.Close();
+            }
+            catch (Exception ex)
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
                 }
             }
-            _conexion.Close();
-
             return beneficios;
         }
 
         public bool ActualizarDependientesEmpleado(string cedula, int dependientes)
         {
-            var query = @"
-                UPDATE Empleado
-                SET CantidadDependientes = @Dependientes,
-                    FechaDeModificacion = GETDATE()
-                WHERE CedulaEmpleado = @Cedula
-            ";
-            using (var comando = new SqlCommand(query, _conexion))
+            try
             {
-                comando.Parameters.AddWithValue("@Dependientes", dependientes);
-                comando.Parameters.AddWithValue("@Cedula", cedula);
-
-                try
+                var query = @"
+                    UPDATE Empleado
+                    SET CantidadDependientes = @Dependientes,
+                        FechaDeModificacion = GETDATE()
+                    WHERE CedulaEmpleado = @Cedula
+                ";
+                using (var comando = new SqlCommand(query, _conexion))
                 {
-                    _conexion.Open();
-                    using (var transaccion = _conexion.BeginTransaction())
-                    {
-                        comando.Transaction = transaccion;
-                        int filasAfectadas = comando.ExecuteNonQuery();
+                    comando.Parameters.AddWithValue("@Dependientes", dependientes);
+                    comando.Parameters.AddWithValue("@Cedula", cedula);
 
-                        if (filasAfectadas > 0)
+                    try
+                    {
+                        _conexion.Open();
+                        using (var transaccion = _conexion.BeginTransaction())
                         {
-                            transaccion.Commit();
-                            return true;
-                        }
-                        else
-                        {
-                            transaccion.Rollback();
-                            return false;
+                            comando.Transaction = transaccion;
+                            int filasAfectadas = comando.ExecuteNonQuery();
+
+                            if (filasAfectadas > 0)
+                            {
+                                transaccion.Commit();
+                                return true;
+                            }
+                            else
+                            {
+                                transaccion.Rollback();
+                                return false;
+                            }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error al actualizar dependientes: " + ex.Message);
-                    return false;
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error al actualizar dependientes: " + ex.Message);
+                        return false;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+            return false;
         }
         public List<BeneficioSimpleModel> ObtenerBeneficiosSeleccionadosPorEmpleado(string correo)
         {
             var beneficios = new List<BeneficioSimpleModel>();
-            var query = "SELECT ID, Nombre FROM dbo.FnObtenerBeneficiosSeleccionados(@CorreoUsuario)";
-            var comando = new SqlCommand(query, _conexion);
-            comando.Parameters.AddWithValue("@CorreoUsuario", correo);
-
-            _conexion.Open();
-            using (var reader = comando.ExecuteReader())
+            try
             {
-                while (reader.Read())
+                var query = "SELECT ID, Nombre FROM dbo.FnObtenerBeneficiosSeleccionados(@CorreoUsuario)";
+                var comando = new SqlCommand(query, _conexion);
+                comando.Parameters.AddWithValue("@CorreoUsuario", correo);
+
+                _conexion.Open();
+                using (var reader = comando.ExecuteReader())
                 {
-                    beneficios.Add(new BeneficioSimpleModel
+                    while (reader.Read())
                     {
-                        ID = Convert.ToInt32(reader["ID"]),
-                        Nombre = reader["Nombre"].ToString()
-                    });
+                        beneficios.Add(new BeneficioSimpleModel
+                        {
+                            ID = Convert.ToInt32(reader["ID"]),
+                            Nombre = reader["Nombre"].ToString()
+                        });
+                    }
+                }
+                _conexion.Close();
+            }
+            catch (Exception ex)
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
                 }
             }
-            _conexion.Close();
-
             return beneficios;
         }
 
         public string ObtenerCedulaEmpleadoDesdeCorreo(string correo)
         {
-            var consulta = @"SELECT e.CedulaEmpleado
-                             FROM Empleado e
-                             JOIN Usuario u ON e.CedulaEmpleado = u.Cedula
-                             WHERE u.Correo = @Correo";
-
-            var comando = new SqlCommand(consulta, _conexion);
-            comando.Parameters.AddWithValue("@Correo", correo);
-
-            _conexion.Open();
-            var reader = comando.ExecuteReader();
-
             string cedula = null;
-            if (reader.Read())
-                cedula = reader["CedulaEmpleado"].ToString();
+            try
+            {
+                var consulta = @"SELECT e.CedulaEmpleado
+                                 FROM Empleado e
+                                 JOIN Usuario u ON e.CedulaEmpleado = u.Cedula
+                                 WHERE u.Correo = @Correo";
 
-            _conexion.Close();
+                var comando = new SqlCommand(consulta, _conexion);
+                comando.Parameters.AddWithValue("@Correo", correo);
+
+                _conexion.Open();
+                var reader = comando.ExecuteReader();
+
+                if (reader.Read())
+                    cedula = reader["CedulaEmpleado"].ToString();
+
+                _conexion.Close();
+            }
+            catch (Exception ex)
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
             return cedula;
         }
     }

@@ -25,12 +25,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="empleado in empleadosFiltrados" :key="empleado.cedulaEmpleado" @click="mostrarEmpleado(empleado.cedulaEmpleado)">
-          <td>{{ empleado.nombre }}</td>
-          <td>{{ empleado.apellido1 }}</td>
-          <td>{{ empleado.apellido2 }}</td>
-          <td>{{ empleado.cedulaEmpleado }}</td>
-          <td>Empleado</td>
+        <tr v-for="empleado in empleadosFiltrados" :key="empleado.cedulaEmpleado">
+          <td @click="mostrarEmpleado(empleado.cedulaEmpleado)">{{ empleado.nombre }}</td>
+          <td @click="mostrarEmpleado(empleado.cedulaEmpleado)">{{ empleado.apellido1 }}</td>
+          <td @click="mostrarEmpleado(empleado.cedulaEmpleado)">{{ empleado.apellido2 }}</td>
+          <td @click="mostrarEmpleado(empleado.cedulaEmpleado)">{{ empleado.cedulaEmpleado }}</td>
+          <td @click="mostrarEmpleado(empleado.cedulaEmpleado)">Empleado</td>
           <td class="acciones">
             <button class="edit"
             @click="abrirEdicion(empleado.cedulaEmpleado)">Editar</button>
@@ -52,8 +52,7 @@ import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
 import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue'
 import ModalVerEmpleado from '../modals/ModalVerEmpleado.vue'
-
-import ModalEliminarEmpleado from '../modals/ModalVerEmpleado.vue'
+import ModalEliminarEmpleado from '../modals/ModalEliminarEmpleado.vue'
 import { useRouter } from 'vue-router'
 import { backendURL } from '../../config/config.js'
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -86,9 +85,6 @@ export default {
   methods: {
     abrirModal() {
       this.$refs.modalAgregarEmpleado.show();
-    },
-    abrirEdicion(cedulaEmpleado) {
-      this.$refs.modalEditarEmpleado.show(cedulaEmpleado);
     },
     mostrarEmpleado(cedulaEmpleado) {
       this.$refs.modalVerEmpleado.show(cedulaEmpleado)
