@@ -12,8 +12,8 @@ using backend_planilla.Domain;
 namespace backend_planilla.API
 {
     [Authorize]
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class EmpresaController : ControllerBase
     {
 
@@ -25,18 +25,20 @@ namespace backend_planilla.API
             _IEmpresaQuerry = new EmpresaQuery();
         }
 
-        [HttpGet("{cedula}")]
-        public List<EmpresaModel> Get(string cedula)
+        [HttpGet("[action]/{cedula}")]
+        public List<EmpresaModel> ObtenerEmpresa(string cedula)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             return _EmpresaHandler.ObtenerEmpresa(cedula);
         }
 
-        [HttpGet]
-        public List<EmpresaModel> Get()
+        [HttpGet("[action]")]
+        public List<EmpresaModel> ObtenerEmpresas()
         {
-            var empresas = _EmpresaHandler.ObtenerEmpresas();
+
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var empresas = _EmpresaHandler.ObtenerEmpresas(email);
             return empresas;
         }
 

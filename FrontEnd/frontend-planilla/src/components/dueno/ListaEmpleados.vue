@@ -52,15 +52,11 @@ import axios from 'axios'
 import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
 import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue'
 import ModalVerEmpleado from '../modals/ModalVerEmpleado.vue'
+
+import ModalEliminarEmpleado from '../modals/ModalVerEmpleado.vue'
 import { useRouter } from 'vue-router'
 import { backendURL } from '../../config/config.js'
-import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min'
-import axios from 'axios';
-import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue';
-import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue';
-import ModalEliminarEmpleado from '../modals/ModalEliminarEmpleado.vue';
-import {useRouter} from 'vue-router';
-import {backendURL} from '../../config/config.js';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const router = useRouter();
 const token = localStorage.getItem('jwtToken');
@@ -69,7 +65,7 @@ export default {
   components: {
     ModalAgregarEmpleado,
     ModalEditarEmpleado,
-    ModalVerEmpleado
+    ModalVerEmpleado,
     ModalEditarEmpleado,
     ModalEliminarEmpleado,
   },
@@ -98,7 +94,8 @@ export default {
       this.$refs.modalVerEmpleado.show(cedulaEmpleado)
     },
     abrirEdicion(cedulaEmpleado)  {
-      this.$refs.modalEditarEmpleado.show(cedulaEmpleado)
+      this.$refs.modalEditarEmpleado.show(cedulaEmpleado);
+    },
     abrirEliminacion(cedulaEmpleado) {
       this.$refs.modalEliminarEmpleado.show(cedulaEmpleado);
     },

@@ -39,9 +39,9 @@
   </template>
 
 <script setup>
+import axios from 'axios';
 import {ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
-import axios from 'axios';
 import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue';
 import ModalModificarBeneficio from '../modals/ModalModificarBeneficio.vue';
 import {backendURL} from '../../config/config.js';
