@@ -8,11 +8,11 @@ namespace backend_planilla.API
     [Route("api/[controller]")]
     public class GenerarPlanillaController : ControllerBase
     {
-        private readonly GenerarPlanilla _generador;
+        private readonly IGenerarPlanilla _generador;
         private readonly ICalculoDeduccionesObligatorias _calculadora;
         private readonly IGetDeduccionBeneficiosQuery _beneficios;
 
-        public GenerarPlanillaController(GenerarPlanilla generador, ICalculoDeduccionesObligatorias calculadora, IGetDeduccionBeneficiosQuery beneficios)
+        public GenerarPlanillaController(IGenerarPlanilla generador, ICalculoDeduccionesObligatorias calculadora, IGetDeduccionBeneficiosQuery beneficios)
         {
             _generador = generador;
             _calculadora = calculadora;

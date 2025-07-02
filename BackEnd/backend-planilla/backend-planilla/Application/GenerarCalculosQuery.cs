@@ -3,7 +3,7 @@ using backend_planilla.Infraestructure;
 
 namespace backend_planilla.Application
 {
-    public class GenerarCalculosQuery
+    public class GenerarCalculosQuery : IGenerarCalculosQuery
     {
         private readonly IGenerarCalculosRepository _repository;
         private readonly IGetDeduccionBeneficiosQuery _query;

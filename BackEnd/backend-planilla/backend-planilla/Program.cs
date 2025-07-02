@@ -39,8 +39,8 @@ builder.Services.AddScoped<ICalculoDeduccionesObligatorias, CalculoDeduccionesOb
 builder.Services.AddScoped<IBeneficioQuery, BeneficioQuery>();
 builder.Services.AddScoped<IPlanillaRepository, PlanillaRepository>();
 builder.Services.AddScoped<IGenerarCalculosRepository, GenerarCalculosRepository>();
-builder.Services.AddScoped<GenerarCalculosQuery>();
-builder.Services.AddScoped<GenerarPlanilla>();
+builder.Services.AddScoped<IGenerarCalculosQuery, GenerarCalculosQuery>();
+builder.Services.AddScoped<IGenerarPlanilla, GenerarPlanilla>();
 builder.Services.AddScoped<ICalculoDeduccionesObligatorias, CalculoDeduccionesObligatorias>();
 
 builder.Services.AddCors(options =>

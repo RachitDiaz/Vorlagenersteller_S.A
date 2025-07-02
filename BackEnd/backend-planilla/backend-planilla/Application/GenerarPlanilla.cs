@@ -3,12 +3,12 @@ using backend_planilla.Infraestructure;
 
 namespace backend_planilla.Application
 {
-    public class GenerarPlanilla
+    public class GenerarPlanilla : IGenerarPlanilla
     {
         private readonly IPlanillaRepository _planillaRepository;
-        private readonly GenerarCalculosQuery _calculosQuery;
+        private readonly IGenerarCalculosQuery _calculosQuery;
 
-        public GenerarPlanilla(IPlanillaRepository planillaRepository, GenerarCalculosQuery calculosQuery)
+        public GenerarPlanilla(IPlanillaRepository planillaRepository, IGenerarCalculosQuery calculosQuery)
         {
             _planillaRepository = planillaRepository;
             _calculosQuery = calculosQuery;
@@ -18,12 +18,12 @@ namespace backend_planilla.Application
         {
             string tipoPlanilla = await _planillaRepository.GetTipoDePagoAsync(request.CedulaJuridica);
             string periodo = GenerarPeriodo(tipoPlanilla);
-            
+            /*
             bool yaExiste = await _planillaRepository.ExistePeriodoAsync(request.CedulaJuridica, periodo);
             if (yaExiste)
             {
                 throw new InvalidOperationException($"Ya existe una planilla generada para el período '{periodo}'.");
-            }
+            }*/
             DateTime fechaGeneracion = DateTime.Today;
             var resultados = await _calculosQuery.ObtenerResultadosAsync(request.CedulaJuridica, tipoPlanilla, calculadora, beneficios);
             var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, periodo, fechaGeneracion, resultados, tipoPlanilla);
