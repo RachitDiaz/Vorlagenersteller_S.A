@@ -69,8 +69,9 @@
       </tbody>
     </table>
     </div>
-    </div>
-  <button class="btn" @click="exportToPDF"> Descargar como PDF </button>
+  </div>
+    <button class="btn" @click="exportToPDF"> Descargar como PDF </button>
+    <button class="btn" @click="reporteEmail"> Enviar por correo </button>
   </div>
 </template>
 
@@ -164,10 +165,66 @@ function updateDisplay(index) {
 }
 
 function exportToPDF() {
+  const nombreArchivo = 'reporte-'.concat(display.fecha,".pdf");
+
   html2pdf(document.getElementById("reporte-pdf"), {
-    margin: 1,
-    filename: "Reporte pago.pdf",
+    html2canvas: {
+      dpi: 200,
+      scale:4,
+      letterRendering: true,
+      useCORS: true
+    },
+    margin: [15, 0, 0, 0],
+    filename: nombreArchivo,
   });
+}
+
+async function reporteEmail() {
+  if (!token) {
+    alert("Tiene que iniciar sesión primero.")
+    setTimeout(() => router.push("/login"), 2000)
+    return
+  }
+
+  const headers = { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` }
+
+  const nombreArchivo = 'reporte-'.concat(display.fecha,".pdf");
+  const element = document.getElementById("reporte-pdf");
+
+  html2pdf()
+    .set({
+      html2canvas: {
+        dpi: 200,
+        scale:4,
+        letterRendering: true,
+        useCORS: true
+      },
+      margin: [15, 0, 0, 0]
+    })
+    .from(element)
+    .outputPdf('blob')
+    .then(function(pdfBase64) {
+      const file = new File(
+        [pdfBase64],
+        nombreArchivo,
+        {type: 'application/pdf'}
+        );
+
+        const formData = new FormData();
+        formData.append("solicitud", file);
+
+        setTimeout("alert('Su solicitud esta siendo procesada');", 1);
+
+        axios.post(`${backendURL}Reportes/correoForm`, formData, {headers})
+        .then((response) => {
+          if(response.data === true){
+            alert('Solicitud exitosa, en breve el informe llegara a su correo.');
+          } else {
+            alert('Solicitud fallida, intentelo mas tarde.')
+          }
+        });
+    });
+
 }
 
 </script>
@@ -245,6 +302,8 @@ function exportToPDF() {
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 </style>
