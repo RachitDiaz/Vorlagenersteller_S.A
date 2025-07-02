@@ -183,5 +183,27 @@ namespace backend_planilla.Infraestructure
             int count = result != null ? Convert.ToInt32(result) : 0;
             return count > 0;
         }
+
+        public async Task<string> GetTipoDePagoAsync(string cedulaJuridica)
+        {
+            const string query = @"
+                SELECT TipoDePago 
+                FROM Empresa 
+                WHERE CedulaJuridica = @CedulaJuridica";
+
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@CedulaJuridica", cedulaJuridica);
+
+            await conn.OpenAsync();
+            var result = await cmd.ExecuteScalarAsync();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return result.ToString()!;
+            }
+
+            throw new InvalidOperationException("No se encontró la empresa con esa cédula jurídica.");
+        }
     }
 }

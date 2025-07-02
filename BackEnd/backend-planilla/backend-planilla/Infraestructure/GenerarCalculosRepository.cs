@@ -18,7 +18,8 @@ namespace backend_planilla.Infraestructure
             var resultado = new List<(string, decimal)>();
             var query = @"SELECT CedulaEmpleado, SalarioBruto 
                           FROM Empleado 
-                          WHERE LOWER(CedulaEmpresa) = LOWER(@CedulaJuridica)";
+                          WHERE LOWER(CedulaEmpresa) = LOWER(@CedulaJuridica)
+                            AND Borrado = 0";
 
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(query, conn);

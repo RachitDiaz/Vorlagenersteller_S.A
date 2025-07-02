@@ -8,5 +8,6 @@ namespace backend_planilla.Infraestructure
         Task InsertarPlanillaEmpleadoAsync(Guid idPlanilla, ResultadoEmpleadoModel empleado);
         Task<Guid> InsertarPlanillaCompletaAsync(string cedulaJuridica, string periodo, DateTime fechaGeneracion, List<ResultadoEmpleadoModel> empleados, string tipo);
         Task<bool> ExistePeriodoAsync(string cedulaJuridica, string periodo);
+        Task<string> GetTipoDePagoAsync(string cedulaJuridica);
     }
 }

@@ -16,15 +16,17 @@ namespace backend_planilla.Application
 
         public async Task<Guid> EjecutarAsync(GenerarPlanillaRequestModel request, ICalculoDeduccionesObligatorias calculadora, IGetDeduccionBeneficiosQuery beneficios)
         {
-            string periodo = GenerarPeriodo(request.TipoPlanilla);
+            string tipoPlanilla = await _planillaRepository.GetTipoDePagoAsync(request.CedulaJuridica);
+            string periodo = GenerarPeriodo(tipoPlanilla);
             
             bool yaExiste = await _planillaRepository.ExistePeriodoAsync(request.CedulaJuridica, periodo);
             if (yaExiste)
             {
                 throw new InvalidOperationException($"Ya existe una planilla generada para el período '{periodo}'.");
             }
-            var resultados = await _calculosQuery.ObtenerResultadosAsync(request.CedulaJuridica, request.TipoPlanilla, calculadora, beneficios);
-            var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, periodo, request.FechaGeneracion, resultados, request.TipoPlanilla);
+            DateTime fechaGeneracion = DateTime.Today;
+            var resultados = await _calculosQuery.ObtenerResultadosAsync(request.CedulaJuridica, tipoPlanilla, calculadora, beneficios);
+            var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, periodo, fechaGeneracion, resultados, tipoPlanilla);
 
             return idPlanilla;
         }
