@@ -42,6 +42,7 @@ const filteredMenuItems = computed(() => {
     if (path === '/') return true;
     if (
       [
+        '/DashboardDueno',
         '/ListaBeneficios',
         '/ListaEmpresas',
         '/ListaEmpleados',
@@ -51,10 +52,11 @@ const filteredMenuItems = computed(() => {
       return rol.value === 'Dueno';
     }
     if (
-      ['/BeneficiosEmpleado',
+      [
+        '/DashboardEmpleado',
+        '/BeneficiosEmpleado',
         '/RegistroHoras',
         '/ReportePago',
-        '/DashboardEmpleado',
         '/VerEmpleado',
       ].includes(path)) {
       return rol.value === 'Empleado';
@@ -86,6 +88,7 @@ const menuItems = [
   {name: 'Lista Beneficios', path: '/ListaBeneficios'},
   {name: 'Dashboard Empleado', path: '/DashboardEmpleado'},
   {name: 'Lista Empresas', path: '/ListaEmpresas'},
+  {name: 'Dashboard Dueño', path: '/DashboardDueno'},
   {name: 'Lista Empleados', path: '/ListaEmpleados'},
   {name: 'Ver Empleado', path: '/VerEmpleado'},
   {name: 'Beneficios Empleado', path: '/BeneficiosEmpleado'},

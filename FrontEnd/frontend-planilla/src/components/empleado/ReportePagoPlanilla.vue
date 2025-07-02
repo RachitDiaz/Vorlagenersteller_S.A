@@ -142,8 +142,11 @@ onMounted(() => {
 })
 
 function updateDisplay(index) {
-  index = index
+  if (!reportes || !reportes[index]) {
+    return;
+  }
   show = true;
+  const item = reportes[index];
   display.beneficioCosto1 = reportes[index].beneficioCosto1;
   display.beneficioCosto2 = reportes[index].beneficioCosto2;
   display.beneficioCosto3 = reportes[index].beneficioCosto3;
