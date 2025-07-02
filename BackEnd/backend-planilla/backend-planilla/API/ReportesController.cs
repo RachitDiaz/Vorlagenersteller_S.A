@@ -60,7 +60,6 @@ namespace backend_planilla.Controllers
             string _correoDueno = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             if (string.IsNullOrWhiteSpace(_correoDueno))
                 return BadRequest();
-
             string _cedulaDueno;
             List<ReportePagoEmpresaDTO> _resultado;
 

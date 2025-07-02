@@ -70,10 +70,6 @@ namespace backend_planilla.Application
             {
                 var cedulaEmpresa = _empresaRepository.ObtenerCedulaJuridica(correo);
                 List<string> listaCorreos = _empresaRepository.EliminarEmpresa(cedulaEmpresa);
-                if (!listaCorreos.Any())
-                {
-                    return false;
-                }
                 for (int i = 0; i < listaCorreos.Count; i++)
                 {
                     EnviarCorreoEmpleado(listaCorreos[i], ASUNTO_CORREO_ELIMINACION, MENSAJE_CORREO_ELIMINACION);

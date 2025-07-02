@@ -115,13 +115,28 @@ namespace backend_planilla.Infraestructure
 
         private DataTable CrearTablaConsulta(string consulta, string cedulaEmpresa)
         {
-            SqlCommand comandoParaConsulta = new(consulta, _conexion);
-            comandoParaConsulta.Parameters.AddWithValue("@CedulaJuridica", cedulaEmpresa);
-            SqlDataAdapter adaptadorParaTabla = new(comandoParaConsulta);
             DataTable consultaFormatoTabla = new();
-            _conexion.Open();
-            adaptadorParaTabla.Fill(consultaFormatoTabla);
-            _conexion.Close();
+            try
+            {
+                SqlCommand comandoParaConsulta = new(consulta, _conexion);
+                comandoParaConsulta.Parameters.AddWithValue("@CedulaJuridica", cedulaEmpresa);
+                SqlDataAdapter adaptadorParaTabla = new(comandoParaConsulta);
+                _conexion.Open();
+                adaptadorParaTabla.Fill(consultaFormatoTabla);
+                _conexion.Close();
+            }
+            catch (Exception ex)
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+            finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                    _conexion.Close();
+            }
             return consultaFormatoTabla;
         }
 
@@ -129,14 +144,14 @@ namespace backend_planilla.Infraestructure
         {
             #pragma warning disable IDE0028
             List<BeneficioModel> beneficios = new();
-            string consulta = @"SELECT *
-	                            FROM Beneficio
-	                            WHERE CedulaEmpresa = @CedulaJuridica
-	                            OR
-	                            (CedulaEmpresa IS NULL AND Tipo = 'API');";
-            DataTable tablaResultado = CrearTablaConsulta(consulta, cedulaEmpresa);
             try
             {
+                string consulta = @"SELECT *
+	                                FROM Beneficio
+	                                WHERE CedulaEmpresa = @CedulaJuridica
+	                                OR
+	                                (CedulaEmpresa IS NULL AND Tipo = 'API');";
+                DataTable tablaResultado = CrearTablaConsulta(consulta, cedulaEmpresa);
                 foreach (DataRow columna in tablaResultado.Rows)
                 {
                     int Id = Convert.ToInt32(columna["ID"]);
@@ -211,16 +226,16 @@ namespace backend_planilla.Infraestructure
         public int CrearBeneficio(BeneficioModel beneficio, string cedulaEmpresa, int idUsuario)
         {
             int idBeneficio = -1;
-            var consulta = @"INSERT INTO [dbo].[Beneficio] ([Nombre], [Tipo] ,[Descripcion],
-                                            [MesesMinimos], [CantidadParametros], [UsuarioCrea],
-                                            [UsuarioModifica], [CedulaEmpresa])
-                                VALUES(@Nombre, @Tipo , @Descripcion,
-                                    @MesesMinimos, @CantidadParametros,
-                                    @UsuarioCrea, @UsuarioModifica, @CedulaEmpresa)
-                                SELECT SCOPE_IDENTITY() AS IDBeneficio;";
 #pragma warning disable IDE0063
             try
             {
+                var consulta = @"INSERT INTO [dbo].[Beneficio] ([Nombre], [Tipo] ,[Descripcion],
+                                                [MesesMinimos], [CantidadParametros], [UsuarioCrea],
+                                                [UsuarioModifica], [CedulaEmpresa])
+                                    VALUES(@Nombre, @Tipo , @Descripcion,
+                                        @MesesMinimos, @CantidadParametros,
+                                        @UsuarioCrea, @UsuarioModifica, @CedulaEmpresa)
+                                    SELECT SCOPE_IDENTITY() AS IDBeneficio;";
                 using (var comandoParaConsulta = new SqlCommand(consulta, _conexion))
                 {
                     comandoParaConsulta.Parameters.AddWithValue("@Nombre", beneficio.Nombre);

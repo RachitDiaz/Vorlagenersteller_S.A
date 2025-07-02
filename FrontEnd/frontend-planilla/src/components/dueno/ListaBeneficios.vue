@@ -151,6 +151,8 @@ function submit() {
     border-radius: 0.5rem;
     padding: 1rem;
     margin-bottom: 1.5rem;
+    max-height: 260px; 
+    overflow-y: auto;
   }
 
   .benefit-item {

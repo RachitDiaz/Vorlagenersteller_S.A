@@ -19,10 +19,10 @@
           <td>{{ item.periodo }}</td>
           <td>{{ formatoMoneda(item.totalBruto) }}</td>
           <td>
-            {{ formatoMoneda(item.deducciones.obligatorias + item.deducciones.beneficios) }}
+            {{ formatoMoneda(item.totalDeducciones) }}
             <div class="detalles-deducciones">
-              Obligatorias: {{ formatoMoneda(item.deducciones.obligatorias) }}<br />
-              Beneficios: {{ formatoMoneda(item.deducciones.beneficios) }}
+              Obligatorias: {{ formatoMoneda(item.obligatorias) }}<br />
+              Beneficios: {{ formatoMoneda(item.beneficios) }}
             </div>
           </td>
           <td>{{ formatoMoneda(item.totalNeto) }}</td>
@@ -41,6 +41,7 @@ const token = localStorage.getItem("jwtToken")
 const mensajeError = ref('')
 const mensajeExito = ref('')
 const planillas = ref([])
+const token = localStorage.getItem("jwtToken")
 
 function formatoMoneda(valor) {
   return new Intl.NumberFormat('es-CR', {
@@ -81,7 +82,7 @@ const agregarPlanilla = async () => {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
+  max-width: 950px;
   margin: 0 auto;
 }
 

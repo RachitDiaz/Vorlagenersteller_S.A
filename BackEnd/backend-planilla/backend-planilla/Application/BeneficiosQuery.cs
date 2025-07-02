@@ -41,7 +41,7 @@ namespace backend_planilla.Application
             var cedulaEmpresa = _beneficiosRepository.ObtenerCedulaJuridica(correo);
             if (string.IsNullOrEmpty(cedulaEmpresa))
                 throw new KeyNotFoundException("No se encontró una cédula jurídica relacionada a este correo");
-            List<BeneficioModel> beneficios;
+            List<BeneficioModel> beneficios = new();
             try
             {
                 beneficios = _beneficiosRepository.ObtenerBeneficios(cedulaEmpresa);
