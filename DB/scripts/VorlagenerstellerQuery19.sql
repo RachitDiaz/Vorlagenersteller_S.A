@@ -138,7 +138,7 @@ ADD CONSTRAINT FK_Empleado_Persona
 FOREIGN KEY (CedulaEmpleado) REFERENCES Persona(Cedula)
 GO
 
--- Trigger para la eliminaci�n de los empleados
+-- Trigger para la eliminación de los empleados
 CREATE TRIGGER trg_Empleado_Delete
 ON Empleado
 INSTEAD OF DELETE
