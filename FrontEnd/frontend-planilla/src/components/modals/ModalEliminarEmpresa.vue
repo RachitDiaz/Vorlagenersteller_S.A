@@ -45,6 +45,7 @@ const mensajeError = ref('');
 onMounted(() => {
   modalInstance = new Modal(modalRef.value);
 });
+
 function show() {
   modalInstance?.show();
 }
