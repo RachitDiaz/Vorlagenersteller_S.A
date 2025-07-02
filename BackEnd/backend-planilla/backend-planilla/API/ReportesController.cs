@@ -94,7 +94,7 @@ namespace backend_planilla.Controllers
                 if (string.IsNullOrWhiteSpace(_correoUsuario))
                     return BadRequest();
 
-                _correoUsuario = "cascante.aldo@gmail.com";
+                
                 _ReportesQuery.enviarEmailReporte(documentoPDF, _correoUsuario);
                 
             }
