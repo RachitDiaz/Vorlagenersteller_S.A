@@ -80,7 +80,6 @@ function submit() {
         }, 2000);
         return;
       }
-      console.log('Token:', token);
 
     const response = await axios.get(`${backendURL}Beneficios`, {
       headers: {
