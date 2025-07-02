@@ -1,1 +1,1 @@
-export const backendURL = "https://localhost:7296/api/";
+export const backendURL = "https://backend-planilla20250702160419-cpdwgyaef9htgvbk.canadacentral-01.azurewebsites.net/api/";
