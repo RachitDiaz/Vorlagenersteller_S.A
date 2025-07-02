@@ -11,7 +11,6 @@ import Planilla from './components/dueno/Planilla.vue';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import ListaEmpresas from './components/dueno/ListaEmpresas.vue';
-import VerEmpresa from './components/dueno/VerEmpresa.vue';
 import DashboardEmpleado from './components/empleado/DashboardEmpleado.vue';
 import VerEmpleado from './components/empleado/VerEmpleado.vue';
 import RegistrarHoras from './components/empleado/RegistrarHoras.vue';
@@ -26,7 +25,6 @@ const router = createRouter({
     { path : "/VerPlanilla", name: "VerPlanilla", component: Planilla, meta: { title: 'Planilla' } },
     { path: "/RegistrarDueno", name: "RegistrarDueño", component: RegistrarDueno, meta: { title: 'Registrar Dueño' } },
     { path: "/ListaEmpresas", name: "ListaEmpresa", component: ListaEmpresas, meta: { title: 'Lista de Empresas' } },
-    { path: "/VerEmpresa", name: "VerEmpresa", component: VerEmpresa, meta: { title: 'Informacion de Empresa' } },
     { path: "/VerEmpleado", name: "VerEmpleado", component: VerEmpleado, meta: { title: 'Informacion de empleado' } },
     { path: "/login", name: "MainLogin", component: Login, meta: { title: 'Login' } },
     { path: "/", name: "LandingPage", component: LandingPage, meta: { title: 'Landing Page' } },
