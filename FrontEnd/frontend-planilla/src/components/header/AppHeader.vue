@@ -47,6 +47,7 @@ const filteredMenuItems = computed(() => {
         '/ListaEmpresas',
         '/ListaEmpleados',
         '/VerPlanilla',
+        '/ReporteCostos',
       ].includes(path)
     ) {
       return rol.value === 'Dueno';

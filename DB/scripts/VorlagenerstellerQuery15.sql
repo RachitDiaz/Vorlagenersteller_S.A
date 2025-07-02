@@ -2,6 +2,7 @@ USE VorlaDB
 
 DROP TABLE PlanillaMensualEmpleado
 DROP TABLE PlanillaMensualEmpresa
+GO
 
 CREATE TABLE PlanillaDeduccionesEmpresa (
 	IDPlanilla int IDENTITY NOT NULL,
@@ -23,6 +24,7 @@ CREATE TABLE PlanillaDeduccionesEmpresa (
 	TotalBeneficiosPagar decimal(18, 2) NOT NULL  DEFAULT 0,
 	TotalSalariosPagar decimal(18, 2) NOT NULL  DEFAULT 0
 );
+GO
 
 CREATE TABLE PlanillaMensualEmpleado (
 	IDPlanilla int NOT NULL,
@@ -45,9 +47,12 @@ CREATE TABLE PlanillaMensualEmpleado (
 	TotalDeduccionesBeneficios decimal(18, 2) NOT NULL  DEFAULT 0,
 	FechaDeCreacion datetime DEFAULT GETDATE(),
 );
+GO
 
 CREATE CLUSTERED INDEX IX_PlanillaDeduccionesEmpresa_FechaDeCreacion
 ON PlanillaDeduccionesEmpresa(FechaDeCreacion DESC)
+GO
 
 CREATE CLUSTERED INDEX IX_PlanillaMensualEmpleado_FechaDeCreacion
 ON PlanillaMensualEmpleado(FechaDeCreacion DESC)
+GO

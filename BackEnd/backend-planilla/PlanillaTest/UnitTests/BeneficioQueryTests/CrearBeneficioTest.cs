@@ -5,7 +5,7 @@ using backend_planilla.Domain;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using backend_planilla.Exceptions;
 
-namespace PlanillaTest.BeneficioQueryTests
+namespace PlanillaTest.UnitTests.BeneficioQueryTests
 {
     public class CrearBeneficioTest
     {

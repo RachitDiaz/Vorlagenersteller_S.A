@@ -4,7 +4,7 @@ using backend_planilla.Domain;
 using Moq;
 using backend_planilla.Models;
 
-namespace PlanillaTest
+namespace PlanillaTest.UnitTests.EmpleadoQueryTests
 {
     public class EmpleadoQueryTest
     {

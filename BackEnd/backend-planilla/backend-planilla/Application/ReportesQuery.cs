@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using backend_planilla.Domain;
 using backend_planilla.Infraestructure;
-using backend_planilla.Models;
-using Microsoft.Data.SqlClient;
+
 
 namespace backend_planilla.Application
 {
     public class ReportesQuery: IReportesQuery
     {
         IReportesRepository _reportesRepository;
+        INotificacionesEmail _notificacionesEmail;
         public ReportesQuery()
         {
             _reportesRepository = new ReportesRepository();
+            _notificacionesEmail = new NotificacionesEmail();
         }
 
         public ReportesQuery(IReportesRepository reportesRepository)
@@ -49,6 +49,34 @@ namespace backend_planilla.Application
             string expresion = "\\d-\\d\\d\\d\\d-\\d\\d\\d\\d";
             Regex regex = new Regex(expresion);
             return regex.IsMatch(cedula);
+        }
+
+        public bool enviarEmailReporte(IFormFile documentoPDF, string correoDestinatario)
+        {
+            if (documentoPDF == null) return false;
+            bool resultado = true;
+
+            try
+            {
+                string _MensajeReporte = "Adjunto se encuentra el reporte solicitado\n\n" +
+                    "Este es un mensaje automatizado, no responder a este correo.";
+                string _AsuntoReporte = "Reporte";
+
+                SolicitudCorreoModel solicitud = new SolicitudCorreoModel()
+                {
+                    destinatario = correoDestinatario,
+                    asunto = _AsuntoReporte,
+                    mensaje = _MensajeReporte
+                };
+
+                resultado = _notificacionesEmail.enviarDocumentoPDF(solicitud, documentoPDF);
+
+            }
+            catch (Exception excepcion) {
+                throw new Exception();
+            }
+
+            return resultado;
         }
     }
 }
