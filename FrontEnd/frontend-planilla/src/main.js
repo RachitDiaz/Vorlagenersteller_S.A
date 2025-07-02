@@ -16,6 +16,7 @@ import VerEmpleado from './components/empleado/VerEmpleado.vue';
 import RegistrarHoras from './components/empleado/RegistrarHoras.vue';
 import ReportePagoPlanillaEmpleado from './components/empleado/ReportePagoPlanilla.vue';
 import ReportePagoPlanillaEmpresa from './components/dueno/ReportePagoEmpresa.vue';
+import ReportePagoHistorico from './components/dueno/ReportePagoHistorico.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,6 +34,7 @@ const router = createRouter({
     { path: "/RegistroHoras", name: "RegistroHoras", component: RegistrarHoras, meta: { title: 'Registro de Horas' } },
     { path: "/ReportePago", name: "ReportePago", component: ReportePagoPlanillaEmpleado, meta: { title: 'Reportes de Pago' } },
     { path: "/ReporteCostos", name: "ReporteCostos", component: ReportePagoPlanillaEmpresa, meta: { title: 'Reportes de Pago' } },
+    { path: "/ReporteHistorico", name: "ReporteHistorico", component: ReportePagoHistorico, meta: { title: 'Pagos historicos' } },
   ],
 });
 

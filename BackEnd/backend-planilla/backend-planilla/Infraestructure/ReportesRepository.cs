@@ -151,6 +151,69 @@ namespace backend_planilla.Infraestructure
                     {
                         NombreEmpresa = Convert.ToString(columna["Empresa"]),
                         NombreEmpleador = nombreCompleto,
+                        FrecuenciaPago = "",
+                        FechaPago = Convert.ToString(columna["FechaDeCreacion"]),
+                        PeridoPago = Convert.ToString(columna["Periodo"]),
+                        SalariosTiempoCompleto = Convert.ToDecimal(columna["TotalSalariosPagar"]),
+                        TotalSEM = Convert.ToDecimal(columna["TotalSEMPagar"]),
+                        TotalIVM = Convert.ToDecimal(columna["TotalIVMPagar"]),
+                        TotalBP = Convert.ToDecimal(columna["TotalBPOPPagar"]),
+                        TotalAF = Convert.ToDecimal(columna["TotalAsignacionesFamiliaresPagar"]),
+                        TotalIMAS = Convert.ToDecimal(columna["TotalIMASPagar"]),
+                        TotalINA = Convert.ToDecimal(columna["TotalINAPagar"]),
+                        TotalFCL = Convert.ToDecimal(columna["TotalFCLPagar"]),
+                        TotalPC = Convert.ToDecimal(columna["TotalOPCPagar"]),
+                        TotalINS = Convert.ToDecimal(columna["TotalINSPagar"]),
+                        BeneficiosTotales = Convert.ToDecimal(columna["TotalBeneficiosPagar"])
+                    });
+                }
+            }
+            finally
+            {
+                if (_conexion.State != ConnectionState.Closed) { _conexion.Close(); }
+            }
+
+            return reportesEmpresa;
+        }
+
+        public List<ReportePagoEmpresaDTO> ObtenerPagosHistoricosEmpresa(string cedulaDueno)
+        {
+            List<ReportePagoEmpresaDTO> reportesEmpresa = new List<ReportePagoEmpresaDTO>();
+            string query = @"Select Empresa.Nombre Empresa, Persona.Nombre, Persona.Apellido1, Persona.Apellido2,
+					P.FechaDeCreacion, P.Periodo, P.TotalSalariosPagar, P.TotalSEMPagar, P.Tipo,
+					P.TotalIVMPagar, P.TotalBPOPPagar, P.TotalAsignacionesFamiliaresPagar,
+					P.TotalIMASPagar, P.TotalINAPagar, P.TotalFCLPagar, P.TotalOPCPagar,
+					P.TotalINSPagar, P.TotalBeneficiosPagar
+		            FROM Empresa
+		            INNER JOIN Persona ON Empresa.CedulaDueno = Persona.Cedula
+		            INNER JOIN PlanillaDeduccionesEmpresa P ON P.CedulaEmpresa = Empresa.CedulaJuridica
+		            WHERE Empresa.CedulaDueno = @CedulaDueno AND Empresa.activo = 1
+		            ORDER BY P.FechaDeCreacion DESC;";
+
+            SqlCommand comandoParaConsulta = new SqlCommand(query, _conexion);
+            comandoParaConsulta.Parameters.AddWithValue("@CedulaDueno", cedulaDueno);
+
+            try
+            {
+                if (_conexion.State != ConnectionState.Open) { _conexion.Open(); }
+
+                SqlDataAdapter adaptadorParaTabla = new SqlDataAdapter(comandoParaConsulta);
+                DataTable consultaFormatoTabla = new DataTable();
+                adaptadorParaTabla.Fill(consultaFormatoTabla);
+
+                _conexion.Close();
+
+                foreach (DataRow columna in consultaFormatoTabla.Rows)
+                {
+                    string nombreCompleto = Convert.ToString(columna["Nombre"]) + " " +
+                        Convert.ToString(columna["Apellido1"]) + " " + Convert.ToString(columna["Apellido2"]);
+
+                    reportesEmpresa.Add(
+                    new ReportePagoEmpresaDTO
+                    {
+                        NombreEmpresa = Convert.ToString(columna["Empresa"]),
+                        NombreEmpleador = nombreCompleto,
+                        FrecuenciaPago = Convert.ToString(columna["Tipo"]),
                         FechaPago = Convert.ToString(columna["FechaDeCreacion"]),
                         PeridoPago = Convert.ToString(columna["Periodo"]),
                         SalariosTiempoCompleto = Convert.ToDecimal(columna["TotalSalariosPagar"]),

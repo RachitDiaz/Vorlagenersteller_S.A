@@ -6,5 +6,6 @@ namespace backend_planilla.Infraestructure
     {
         public List<ReportePagoEmpleadoDTO> ObtenerUltimosPagosEmpleado(string cedulaEmpleado, int Cantidad);
         public List<ReportePagoEmpresaDTO> ObtenerUltimosPagosEmpresa(string cedulaEmpresa, int Cantidad);
+        public List<ReportePagoEmpresaDTO> ObtenerPagosHistoricosEmpresa(string cedulaEmpresa);
     }
 }

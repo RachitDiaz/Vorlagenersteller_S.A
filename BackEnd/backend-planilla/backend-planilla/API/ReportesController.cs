@@ -85,6 +85,37 @@ namespace backend_planilla.Controllers
             return Ok(_resultado);
         }
 
+        [HttpGet]
+        public IActionResult ObtenerPagosHistoricosEmpresa()
+        {
+            string _correoDueno = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (string.IsNullOrWhiteSpace(_correoDueno))
+                return BadRequest();
+
+            string _cedulaDueno;
+            List<ReportePagoEmpresaDTO> _resultado;
+
+            try
+            {
+                _cedulaDueno = _DuenoHandler.ObtenerCedulaDueno(_correoDueno);
+            }
+            catch (Exception mensajeError)
+            {
+                return BadRequest("Error recuperando cedula del empleado");
+            }
+
+            try
+            {
+                _resultado = _ReportesQuery.ObtenerPagosHistoricosEmpresa(_cedulaDueno);
+            }
+            catch (Exception mensajeError)
+            {
+                return BadRequest("Error recuperando pagos al empleado");
+            }
+
+            return Ok(_resultado);
+        }
+
         [HttpPost]
         public async Task<ActionResult<bool>> enviarEmailReporte(IFormFile documentoPDF)
         {
@@ -94,7 +125,7 @@ namespace backend_planilla.Controllers
                 if (string.IsNullOrWhiteSpace(_correoUsuario))
                     return BadRequest();
 
-                
+
                 _ReportesQuery.enviarEmailReporte(documentoPDF, _correoUsuario);
                 
             }

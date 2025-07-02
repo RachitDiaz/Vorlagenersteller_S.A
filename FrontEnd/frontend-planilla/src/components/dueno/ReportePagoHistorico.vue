@@ -1,0 +1,273 @@
+<template>
+  <div class="report-page">
+  <div id="reporte-pdf" class="reporte" v-show="show">
+
+    <h3 class="title" v-show="0"> {{ display.fechaPago }} / {{ display.peridoPago }}</h3>
+    <h2 class="title" style="font-weight: bold;">Reporte historico de pagos</h2>
+    
+  <div class="table-space">
+    <table style="border: solid; width: 100%;">
+      <colgroup>
+       <col span="1" class="column">
+       <col span="1" class="column">
+       <col span="1" class="column">
+       <col span="1" class="column">
+       <col span="1" class="column">
+       <col span="1" class="column">
+       <col span="1" class="column">
+       <col span="1" class="column">
+    </colgroup>
+      <tbody style="height: 15rem;">
+        <tr class="row-title" style="background-color: lightblue; border: solid;">
+          <td> Nombre de la empresa </td>
+          <td> Frecuencia de pago </td>
+          <td> Periodo de pago </td>
+          <td> Fecha de pago </td>
+          <td> Salarios bruto </td>
+          <td> Cargas sociales empleador </td>
+          <td> Deducciones voluntarias </td>
+          <td> Costo empleador </td>
+        </tr>
+        <tr style="border: solid" v-for="(info, i) in reportes" :key="i" :value="i">
+          <td> {{ info.nombreEmpresa }} </td>
+          <td> {{ info.frecuenciaPago }} </td>
+          <td> {{ info.peridoPago }} </td>
+          <td> {{ info.fechaPago }} </td>
+          <td> ₡{{ info.salariosTiempoCompleto }} </td>
+          <td> ₡{{ info.totalPagosLey }} </td>
+          <td> ₡{{ info.beneficiosTotales }} </td>
+          <td> ₡{{ info.salariosTiempoCompleto + info.totalPagosLey + info.beneficiosTotales }} </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <button class="btn" @click="exportToPDF"> Descargar como PDF </button>
+  <button class="btn" @click="reporteEmail"> Enviar por correo </button>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { backendURL } from '../../config/config.js'
+import html2pdf from "html2pdf.js";
+
+const token = localStorage.getItem("jwtToken")
+const router = useRouter()
+const index = ref(0)
+var display = reactive(
+  {
+    beneficiosTotales: 0,
+    costoTotal: 0,
+    fechaPago: "26/6/2025 22:49:48",
+    nombreEmpleador: "Daniel Shih Tang",
+    nombreEmpresa: "PlasTico",
+    frecuenciaPago: "Quincenal",
+    peridoPago: "2025-6 2025-7  ",
+    salariosTiempoCompleto: 0,
+    totalAF: 0,
+    totalBP: 0,
+    totalFCL: 0,
+    totalIMAS: 0,
+    totalINA: 0,
+    totalINS: 0,
+    totalIVM: 0,
+    totalPC: 0,
+    totalPagosLey: 0,
+    totalSEM: 0,
+  }
+)
+var reportes = reactive([])
+var show = false;
+
+function obtenerReportes() {
+
+  if (!token) {
+    alert("Tiene que iniciar sesión primero.")
+    setTimeout(() => router.push("/login"), 2000)
+    return
+  }
+
+  const headers = { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` }
+
+  try {
+    axios.get(`${backendURL}Reportes/ObtenerPagosHistoricosEmpresa`, {headers})
+    .then((response) => {
+      if (response.data.length != 0) {
+        reportes = response.data;
+        updateDisplay(0);
+        console.log(response);
+      }
+    });
+  } catch (error) {
+    console.error("Error cargando planilla:", error)
+    alert("No se pudo cargar la informacion.")
+  }
+}
+
+onMounted(() => {
+  if (!token) {
+    alert("Tiene que iniciar sesión primero.")
+    setTimeout(() => router.push("/login"), 2000)
+    return
+  }
+  obtenerReportes()
+})
+
+function updateDisplay(index) {
+  show = true;
+  display.beneficiosTotales = reportes[index].beneficiosTotales;
+  display.costoTotal = reportes[index].costoTotal;
+  display.fechaPago = reportes[index].fechaPago;
+  display.nombreEmpleador = reportes[index].nombreEmpleador;
+  display.nombreEmpresa = reportes[index].nombreEmpresa;
+  display.peridoPago = reportes[index].peridoPago;
+  display.salariosTiempoCompleto = reportes[index].salariosTiempoCompleto;
+  display.totalAF = reportes[index].totalAF;
+  display.totalBP = reportes[index].totalBP;
+  display.totalFCL = reportes[index].totalFCL;
+  display.totalIMAS = reportes[index].totalIMAS;
+  display.totalINA = reportes[index].totalINA;
+  display.totalINS = reportes[index].totalINS;
+  display.totalIVM = reportes[index].totalIVM;
+  display.totalPC = reportes[index].totalPC;
+  display.totalPagosLey = reportes[index].totalPagosLey;
+  display.totalSEM = reportes[index].totalSEM;
+  display.frecuenciaPago = reportes[index].frecuenciaPago;
+}
+
+function exportToPDF() {
+  const nombreArchivo = 'reporte-'.concat(display.fechaPago,".pdf");
+
+  html2pdf(document.getElementById("reporte-pdf"), {
+    html2canvas: {
+      dpi: 200,
+      scale:4,
+      letterRendering: true,
+      useCORS: true,
+      orientation: "landscape",
+    },
+    jsPDF: {
+      orientation: "landscape",
+      hotfixes: ["px_scaling"]
+    },
+    filename: nombreArchivo,
+  });
+}
+
+async function reporteEmail() {
+  if (!token) {
+    alert("Tiene que iniciar sesión primero.")
+    setTimeout(() => router.push("/login"), 2000)
+    return
+  }
+
+  const headers = { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` }
+
+  const nombreArchivo = 'reporte-'.concat(display.fechaPago,".pdf");
+  const element = document.getElementById("reporte-pdf");
+
+  html2pdf()
+    .set({
+      html2canvas: {
+        dpi: 200,
+        scale:4,
+        letterRendering: true,
+        useCORS: true,
+      },
+      jsPDF: {
+      orientation: "landscape",
+      hotfixes: ["px_scaling"]
+      },
+      margin: [15, 0, 0, 0]
+    })
+    .from(element)
+    .outputPdf('blob')
+    .then(function(pdfBase64) {
+      const file = new File(
+        [pdfBase64],
+        nombreArchivo,
+        {type: 'application/pdf'}
+        );
+
+        const formData = new FormData();
+        formData.append("documentoPDF", file);
+
+        setTimeout("alert('Su solicitud esta siendo procesada');", 1);
+
+        axios.post(`${backendURL}Reportes/enviarEmailReporte`, formData, {headers})
+        .then((response) => {
+          if(response.data === true){
+            alert('Solicitud exitosa, en breve el informe llegara a su correo.');
+          } else {
+            alert('Solicitud fallida, intentelo mas tarde.')
+          }
+        });
+    });
+
+}
+
+</script>
+
+
+<style scoped>
+.report-page {
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: normal;
+  font-size: 1.5re;
+  text-align: left;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  color: black;
+}
+
+.table-space {
+  width:100%;
+  margin: 0 auto;
+  font-size: 1.2rem;
+  font-weight: normal;
+    
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+
+  vertical-align:top;
+  text-align: left;
+
+  color: black;
+}
+
+.column {
+  width: 12.5%;
+  padding: 1rem;
+}
+
+.row-title {
+  margin-top: 0.6rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.btn {
+  background-color: #f3f4f6;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+</style>

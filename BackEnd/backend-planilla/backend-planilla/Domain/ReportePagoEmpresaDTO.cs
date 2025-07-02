@@ -9,6 +9,7 @@ namespace backend_planilla.Domain
     {
         public string NombreEmpresa { get; set; }
         public string NombreEmpleador { get; set; }
+        public string FrecuenciaPago { get; set; }
         public string FechaPago { get; set; }
         public string PeridoPago { get; set; }
         public decimal SalariosTiempoCompleto { get; set; }

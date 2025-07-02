@@ -44,6 +44,14 @@ namespace backend_planilla.Application
             return resultado;
         }
 
+        public List<ReportePagoEmpresaDTO>? ObtenerPagosHistoricosEmpresa(string cedulaDueno)
+        {
+            if (!CedulaValida(cedulaDueno)) { return null; }
+
+            List<ReportePagoEmpresaDTO> resultado = _reportesRepository.ObtenerPagosHistoricosEmpresa(cedulaDueno);
+            return resultado;
+        }
+
         private bool CedulaValida(string cedula)
         {
             string expresion = "\\d-\\d\\d\\d\\d-\\d\\d\\d\\d";
