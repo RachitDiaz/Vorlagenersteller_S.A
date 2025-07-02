@@ -1,7 +1,7 @@
 <template>
   <div class="planilla-container">
     <h2>Planilla</h2>
-    <button @click="agregarPlanilla">Nueva Planilla</button>
+    <button @click="generarNuevaPlanilla">Nueva Planilla</button>
 
     <table class="planilla-table">
       <thead>
@@ -17,10 +17,10 @@
           <td>{{ item.periodo }}</td>
           <td>{{ formatoMoneda(item.totalBruto) }}</td>
           <td>
-            {{ formatoMoneda(item.deducciones.obligatorias + item.deducciones.beneficios) }}
+            {{ formatoMoneda(item.totalDeducciones) }}
             <div class="detalles-deducciones">
-              Obligatorias: {{ formatoMoneda(item.deducciones.obligatorias) }}<br />
-              Beneficios: {{ formatoMoneda(item.deducciones.beneficios) }}
+              Obligatorias: {{ formatoMoneda(item.obligatorias) }}<br />
+              Beneficios: {{ formatoMoneda(item.beneficios) }}
             </div>
           </td>
           <td>{{ formatoMoneda(item.totalNeto) }}</td>
@@ -29,12 +29,14 @@
     </table>
   </div>
 </template>
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { backendURL } from '../../config/config.js'
 
 const planillas = ref([])
+const token = localStorage.getItem("jwtToken")
 
 function formatoMoneda(valor) {
   return new Intl.NumberFormat('es-CR', {
@@ -44,57 +46,40 @@ function formatoMoneda(valor) {
   }).format(valor)
 }
 
-const token = localStorage.getItem("jwtToken")
-
-async function cargarPlanilla() {
+async function cargarPlanillas() {
   try {
-    const empleadosResponse = await axios.get(`${backendURL}Empleado/GetEmpleadosEmpresa` , {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const response = await axios.get(`${backendURL}Reportes/ObtenerUltimosPagosEmpresa`, {
+      headers: { Authorization: `Bearer ${token}` }
     })
 
-    const empleados = empleadosResponse.data
+    const datos = response.data
 
-    const datosPlanilla = await Promise.all(
-      empleados.map(async (empleado) => {
-        const salarioBruto = empleado.salarioBruto
+    planillas.value = datos.map((item) => {
+      const obligatorias = item.totalSEM + item.totalIVM + item.totalBP + item.totalAF + item.totalIMAS + item.totalINA + item.totalFCL + item.totalPC + item.totalINS
+      const beneficios = item.beneficiosTotales
+      const totalBruto = item.salariosTiempoCompleto
+      const totalDeducciones = obligatorias + beneficios
+      const totalNeto = totalBruto - totalDeducciones
 
-        const [beneficiosRes, obligatoriasRes] = await Promise.all([
-          axios.get(`${backendURL}Empleado/GetDeducciones?cedula=${empleado.cedulaEmpleado}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          axios.get(`${backendURL}DeduccionesPlanilla/${salarioBruto}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        ])
-
-        const beneficios = beneficiosRes.data.total
-        const obligatorias = obligatoriasRes.data.total
-
-        const totalNeto = salarioBruto - beneficios - obligatorias
-
-        return {
-          periodo: 'Junio 2025',
-          totalBruto: salarioBruto,
-          deducciones: {
-            obligatorias,
-            beneficios
-          },
-          totalNeto
-        }
-      })
-    )
-
-    planillas.value = datosPlanilla
+      return {
+        periodo: item.peridoPago,
+        totalBruto,
+        obligatorias,
+        beneficios,
+        totalDeducciones,
+        totalNeto
+      }
+    })
   } catch (error) {
-    console.error("Error al cargar planilla:", error)
+    console.error("Error al cargar datos de planilla:", error)
   }
 }
 
+function generarNuevaPlanilla() {
+}
 
 onMounted(() => {
-  cargarPlanilla()
+  cargarPlanillas()
 })
 </script>
 
@@ -104,7 +89,7 @@ onMounted(() => {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
+  max-width: 950px;
   margin: 0 auto;
 }
 

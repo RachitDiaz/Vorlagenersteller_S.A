@@ -14,6 +14,7 @@ import ListaEmpresas from './components/dueno/ListaEmpresas.vue';
 import DashboardEmpleado from './components/empleado/DashboardEmpleado.vue';
 import VerEmpleado from './components/empleado/VerEmpleado.vue';
 import RegistrarHoras from './components/empleado/RegistrarHoras.vue';
+import DashboardDueno from './components/dueno/DashboardDueno.vue';
 import ReportePagoPlanillaEmpleado from './components/empleado/ReportePagoPlanilla.vue';
 import ReportePagoPlanillaEmpresa from './components/dueno/ReportePagoEmpresa.vue';
 import ReportePagoHistorico from './components/dueno/ReportePagoHistorico.vue';
@@ -23,6 +24,7 @@ const router = createRouter({
   routes: [
     { path: "/ListaBeneficios", name: "ListaBeneficios", component: ListaBeneficios, meta: { title: 'Lista de beneficios' } },
     { path: "/DashboardEmpleado", name: "DashboardEmpleado", component: DashboardEmpleado, meta: { title: 'Dashboard Empleado' } },
+    { path: "/DashboardDueno", name: "DashboardDueno", component: DashboardDueno, meta: { title: 'Dashboard Dueño' } },
     { path : "/VerPlanilla", name: "VerPlanilla", component: Planilla, meta: { title: 'Planilla' } },
     { path: "/RegistrarDueno", name: "RegistrarDueño", component: RegistrarDueno, meta: { title: 'Registrar Dueño' } },
     { path: "/ListaEmpresas", name: "ListaEmpresa", component: ListaEmpresas, meta: { title: 'Lista de Empresas' } },
