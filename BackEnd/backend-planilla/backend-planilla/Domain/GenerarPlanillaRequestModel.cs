@@ -5,6 +5,5 @@
         public string CedulaJuridica { get; set; } = string.Empty;
         public string TipoPlanilla { get; set; } = string.Empty;
         public DateTime FechaGeneracion { get; set; }
-        public string Periodo { get; set; } = string.Empty;
     }
 }

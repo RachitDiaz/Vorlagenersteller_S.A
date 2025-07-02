@@ -16,11 +16,38 @@ namespace backend_planilla.Application
 
         public async Task<Guid> EjecutarAsync(GenerarPlanillaRequestModel request, ICalculoDeduccionesObligatorias calculadora, IGetDeduccionBeneficiosQuery beneficios)
         {
-
+            string periodo = GenerarPeriodo(request.TipoPlanilla);
             var resultados = await _calculosQuery.ObtenerResultadosAsync(request.CedulaJuridica, request.TipoPlanilla, calculadora, beneficios);
-            var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, request.Periodo, request.FechaGeneracion, resultados, request.TipoPlanilla);
+            var idPlanilla = await _planillaRepository.InsertarPlanillaCompletaAsync(request.CedulaJuridica, periodo, request.FechaGeneracion, resultados, request.TipoPlanilla);
 
             return idPlanilla;
+        }
+
+        public static string GenerarPeriodo(string tipoPlanilla)
+        {
+            var fecha = DateTime.Today;
+            var mes = fecha.ToString("MMMM", new System.Globalization.CultureInfo("es-ES"));
+            mes = char.ToUpper(mes[0]) + mes.Substring(1);
+            var anio = fecha.Year;
+
+            if (tipoPlanilla.ToLower() == "mensual")
+            {
+                return $"{mes} {anio}";
+            }
+            else if (tipoPlanilla.ToLower() == "quincenal")
+            {
+                int dia = fecha.Day;
+
+                if (dia <= 15)
+                    return $"15 {mes} {anio}";
+                else
+                {
+                    int ultimoDiaMes = DateTime.DaysInMonth(anio, fecha.Month);
+                    return $"{ultimoDiaMes} {mes} {anio}";
+                }
+            }
+
+            return string.Empty;
         }
     }
 }
