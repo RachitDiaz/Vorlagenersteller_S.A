@@ -71,5 +71,25 @@ namespace backend_planilla.API
             }
         }
 
+        [HttpDelete]
+        public ActionResult<bool> EliminarEmpresa()
+        {
+            try
+            {
+                var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                EmpresaQuery empresaQuery = new EmpresaQuery();
+                var resultado = empresaQuery.EliminarEmpresa(correo);
+                return new JsonResult(resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error al eliminar la empresa.");
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ using backend_planilla.Infraestructure;
 using Moq;
 using NUnit.Framework;
 
-namespace PlanillaTest
+namespace PlanillaTest.UnitTests
 {
     public class BeneficioQueryTest
     {

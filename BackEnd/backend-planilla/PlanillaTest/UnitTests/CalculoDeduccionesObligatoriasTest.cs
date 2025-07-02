@@ -2,7 +2,7 @@
 using backend_planilla.Domain;
 using NUnit.Framework;
 
-namespace PlanillaTest
+namespace PlanillaTest.UnitTests
 {
     public class CalculoDeduccionesObligatoriasTest
     {

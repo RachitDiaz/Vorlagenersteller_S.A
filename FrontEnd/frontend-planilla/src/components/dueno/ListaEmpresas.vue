@@ -38,7 +38,7 @@
           </td>
           <td class="acciones">
             <button class="ver-btn" @click="verEmpresa(empresa.cedulaJuridica)">Ver</button>
-            <button class="delete-btn" @click="eliminarEmpresa(empresa.cedulaJuridica)">Eliminar</button>
+            <button class="delete-btn" @click="abrirEliminacion()">Eliminar</button>
           </td>
         </tr>
       </tbody>
@@ -46,6 +46,7 @@
 
     <ModalRegistrarEmpresa ref="modalRef" />
     <ModalVerEmpresa ref="modalVerEmpresa" />
+    <ModalEliminarEmpresa ref="modalEliminarEmpresa"/>
   </section>
 </template>
 
@@ -55,11 +56,13 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ModalRegistrarEmpresa from '../modals/ModalRegistrarEmpresa.vue'
 import ModalVerEmpresa from '../modals/ModalVerEmpresa.vue'
+import ModalEliminarEmpresa from '../modals/ModalEliminarEmpresa.vue'
 import { backendURL } from '../../config/config.js'
 
 const router = useRouter()
 const modalRef = ref(null)
 const modalVerEmpresa = ref(null)
+const modalEliminarEmpresa = ref(null)
 const empresas = ref([])
 const search = ref('')
 
@@ -69,6 +72,10 @@ function showModal() {
 
 function verEmpresa(cedula) {
   modalVerEmpresa.value?.show(cedula)
+}
+
+function abrirEliminacion() {
+  modalEliminarEmpresa.value?.show()
 }
 
 const empresasFiltradas = computed(() => {

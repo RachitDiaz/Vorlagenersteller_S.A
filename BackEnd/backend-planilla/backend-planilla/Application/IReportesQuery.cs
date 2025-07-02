@@ -8,5 +8,6 @@ namespace backend_planilla.Application
     {
         public List<ReportePagoEmpleadoDTO>? ObtenerUltimosPagosEmpleado(string cedula);
         public List<ReportePagoEmpresaDTO>? ObtenerUltimosPagosEmpresa(string cedula);
+        public bool enviarEmailReporte(IFormFile documentoPDF, string correoDestinatario);
     }
 }

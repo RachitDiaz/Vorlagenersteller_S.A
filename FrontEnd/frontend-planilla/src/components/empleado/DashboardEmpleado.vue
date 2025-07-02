@@ -28,7 +28,6 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import Chart from 'chart.js/auto'
 
 import { backendURL } from '../../config/config.js'
 

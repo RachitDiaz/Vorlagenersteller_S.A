@@ -3,7 +3,7 @@ using backend_planilla.Application;
 using backend_planilla.Infraestructure;
 using backend_planilla.Domain;
 
-namespace PlanillaTest.BeneficioQueryTests
+namespace PlanillaTest.UnitTests.BeneficioQueryTests
 {
     public class GetBeneficiosTest
     {

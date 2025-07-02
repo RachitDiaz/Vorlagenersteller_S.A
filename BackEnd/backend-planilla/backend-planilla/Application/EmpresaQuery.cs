@@ -1,12 +1,20 @@
 ﻿using backend_planilla.Domain;
 using backend_planilla.Application;
 using backend_planilla.Infraestructure;
+using backend_planilla.Handlers;
+using System.Net.Mail;
+using System.Net;
 
 namespace backend_planilla.Application
 {
     public class EmpresaQuery : IEmpresaQuery
     {
         private readonly IEmpresaRepository _empresaRepository;
+        private readonly string CORREO_VORLAGENERSTELLAR = "danieltestingpi@gmail.com";
+        private readonly string CONTRASENA_CORREO_VORLA = "iifr ejoo msry xqtx";
+        private readonly string ASUNTO_CORREO_ELIMINACION = "Notificación de eliminación de cuenta";
+        private readonly string MENSAJE_CORREO_ELIMINACION = "Su cuenta ha sido eliminada del sistema";
+        private readonly string CLIENTE_ENVIO_CORREO = "smtp.gmail.com";
         public EmpresaQuery() {
             _empresaRepository = new EmpresaRepository();
         }
@@ -54,6 +62,59 @@ namespace backend_planilla.Application
             }
 
             return false;
+        }
+
+        public bool EliminarEmpresa(string correo)
+        {
+            try
+            {
+                var cedulaEmpresa = _empresaRepository.ObtenerCedulaJuridica(correo);
+                List<string> listaCorreos = _empresaRepository.EliminarEmpresa(cedulaEmpresa);
+                if (!listaCorreos.Any())
+                {
+                    return false;
+                }
+                for (int i = 0; i < listaCorreos.Count; i++)
+                {
+                    EnviarCorreoEmpleado(listaCorreos[i], ASUNTO_CORREO_ELIMINACION, MENSAJE_CORREO_ELIMINACION);
+                }
+                EnviarCorreoEmpleado(correo, ASUNTO_CORREO_ELIMINACION, MENSAJE_CORREO_ELIMINACION);
+
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar la empresa", ex);
+            }
+
+        }
+
+        private void EnviarCorreoEmpleado(string destinatarioCorreo, string asuntoCorreo, string mensajeCorreo)
+        {
+            try
+            {
+                var mensaje = new MailMessage();
+                mensaje.From = new MailAddress(CORREO_VORLAGENERSTELLAR);
+                mensaje.To.Add(destinatarioCorreo);
+                mensaje.Subject = asuntoCorreo;
+                mensaje.Body = mensajeCorreo;
+                var smtpClient = new SmtpClient(CLIENTE_ENVIO_CORREO)
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential(CORREO_VORLAGENERSTELLAR, CONTRASENA_CORREO_VORLA),
+                    EnableSsl = true,
+                };
+
+                smtpClient.Send(mensaje);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

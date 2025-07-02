@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using backend_planilla.Exceptions;
 using backend_planilla.Handlers;
 
-namespace PlanillaTest.EmpleadoQueryTests
+namespace PlanillaTest.UnitTests.EmpleadoQueryTests
 {
     class EliminarEmpleadoTest
     {
