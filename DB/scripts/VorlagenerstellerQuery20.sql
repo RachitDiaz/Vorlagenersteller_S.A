@@ -205,6 +205,7 @@ WHERE Cedula = '1-1909-0924';
 GO
 
 DROP TRIGGER IF EXISTS trg_Empresa_Delete;
+GO
 
 -- Trigger para la eliminación de empresa
 CREATE TRIGGER trg_Empresa_Delete
@@ -254,5 +255,93 @@ BEGIN
 		FROM Persona p
 		INNER JOIN DELETED d ON p.Cedula = d.CedulaDueno;
 	END
+END;
+GO
+
+-- Cambios foreign key Beneficio
+DECLARE @constraintName NVARCHAR(255);
+SELECT @constraintName = f.name
+FROM sys.foreign_keys AS f
+INNER JOIN sys.foreign_key_columns AS fc 
+    ON f.object_id = fc.constraint_object_id
+WHERE OBJECT_NAME(f.parent_object_id) = 'Beneficio'
+  AND OBJECT_NAME(f.referenced_object_id) = 'Usuario'
+  AND COL_NAME(fc.referenced_object_id, fc.referenced_column_id) = 'ID';
+
+IF @constraintName IS NOT NULL
+BEGIN
+    EXEC('ALTER TABLE Beneficio DROP CONSTRAINT [' + @constraintName + ']');
+END
+GO
+
+DECLARE @constraintName NVARCHAR(255);
+SELECT @constraintName = f.name
+FROM sys.foreign_keys AS f
+INNER JOIN sys.foreign_key_columns AS fc 
+    ON f.object_id = fc.constraint_object_id
+WHERE OBJECT_NAME(f.parent_object_id) = 'Beneficio'
+  AND OBJECT_NAME(f.referenced_object_id) = 'Usuario'
+  AND COL_NAME(fc.referenced_object_id, fc.referenced_column_id) = 'ID';
+
+IF @constraintName IS NOT NULL
+BEGIN
+    EXEC('ALTER TABLE Beneficio DROP CONSTRAINT [' + @constraintName + ']');
+END
+GO
+
+ALTER TABLE Beneficio
+ALTER COLUMN UsuarioCrea INT NULL;
+GO
+
+ALTER TABLE Beneficio
+ALTER COLUMN UsuarioModifica INT NULL;
+GO
+
+ALTER TABLE Beneficio
+ADD CONSTRAINT FK_Beneficio_UsuarioCrea
+FOREIGN KEY (UsuarioCrea) REFERENCES Usuario(ID)
+ON DELETE NO ACTION;
+GO
+
+ALTER TABLE Beneficio
+ADD CONSTRAINT FK_Beneficio_UsuarioModifica
+FOREIGN KEY (UsuarioModifica) REFERENCES Usuario(ID)
+ON DELETE NO ACTION;
+GO
+
+CREATE TRIGGER trg_Persona_Delete
+ON Persona
+INSTEAD OF DELETE
+AS
+BEGIN
+	DELETE Usuario
+	WHERE Cedula IN (SELECT Cedula FROM DELETED);
+
+	DELETE FROM Persona
+    WHERE Cedula IN (SELECT Cedula FROM DELETED);
+END;
+GO
+
+ALTER TABLE Usuario
+ADD CONSTRAINT FK_Usuario_Persona
+FOREIGN KEY (Cedula) REFERENCES Persona(Cedula)
+ON UPDATE CASCADE
+ON DELETE NO ACTION;
+GO
+
+
+CREATE TRIGGER trg_Usuario_Delete
+ON Usuario
+INSTEAD OF DELETE
+AS
+BEGIN
+    UPDATE Beneficio
+    SET UsuarioCrea = NULL
+    WHERE UsuarioCrea IN (SELECT ID FROM DELETED);
+    UPDATE Beneficio
+    SET UsuarioModifica = NULL
+    WHERE UsuarioModifica IN (SELECT ID FROM DELETED);
+    DELETE FROM Usuario
+    WHERE ID IN (SELECT ID FROM DELETED);
 END;
 GO
