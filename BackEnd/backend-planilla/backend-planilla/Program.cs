@@ -13,7 +13,6 @@ var configuration = builder.Configuration;
 var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
 var issuer = configuration["Jwt:Issuer"];
 var audience = configuration["Jwt:Audience"];
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -37,6 +36,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 builder.Services.AddScoped<IGetDeduccionBeneficiosQuery, GetDeduccionBeneficiosQuery>();
 builder.Services.AddScoped<ICalculoDeduccionesObligatorias, CalculoDeduccionesObligatorias>();
+builder.Services.AddScoped<IBeneficioQuery, BeneficioQuery>();
 
 builder.Services.AddCors(options =>
 {

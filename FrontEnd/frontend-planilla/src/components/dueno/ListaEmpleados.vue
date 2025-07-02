@@ -25,7 +25,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="empleado in empleadosFiltrados" :key="empleado.cedulaEmpleado">
+        <tr v-for="empleado in empleadosFiltrados" :key="empleado.cedulaEmpleado" @click="mostrarEmpleado(empleado.cedulaEmpleado)">
           <td>{{ empleado.nombre }}</td>
           <td>{{ empleado.apellido1 }}</td>
           <td>{{ empleado.apellido2 }}</td>
@@ -42,17 +42,21 @@
     </table>
     <ModalAgregarEmpleado ref="modalAgregarEmpleado" />
     <ModalEditarEmpleado ref="modalEditarEmpleado" />
+    <ModalVerEmpleado ref="modalVerEmpleado" />
     <ModalEliminarEmpleado ref="modalEliminarEmpleado" />
   </section>
 </template>
 
 <script>
-import axios from 'axios';
-import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue';
-import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue';
-import ModalEliminarEmpleado from '../modals/ModalEliminarEmpleado.vue';
-import {useRouter} from 'vue-router';
-import {backendURL} from '../../config/config.js';
+import axios from 'axios'
+import ModalAgregarEmpleado from '../modals/ModalAgregarEmpleado.vue'
+import ModalEditarEmpleado from '../modals/ModalEditarEmpleado.vue'
+import ModalVerEmpleado from '../modals/ModalVerEmpleado.vue'
+
+import ModalEliminarEmpleado from '../modals/ModalVerEmpleado.vue'
+import { useRouter } from 'vue-router'
+import { backendURL } from '../../config/config.js'
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const router = useRouter();
 const token = localStorage.getItem('jwtToken');
@@ -60,6 +64,8 @@ export default {
   name: 'ListaEmpleados',
   components: {
     ModalAgregarEmpleado,
+    ModalEditarEmpleado,
+    ModalVerEmpleado,
     ModalEditarEmpleado,
     ModalEliminarEmpleado,
   },
@@ -82,6 +88,12 @@ export default {
       this.$refs.modalAgregarEmpleado.show();
     },
     abrirEdicion(cedulaEmpleado) {
+      this.$refs.modalEditarEmpleado.show(cedulaEmpleado);
+    },
+    mostrarEmpleado(cedulaEmpleado) {
+      this.$refs.modalVerEmpleado.show(cedulaEmpleado)
+    },
+    abrirEdicion(cedulaEmpleado)  {
       this.$refs.modalEditarEmpleado.show(cedulaEmpleado);
     },
     abrirEliminacion(cedulaEmpleado) {

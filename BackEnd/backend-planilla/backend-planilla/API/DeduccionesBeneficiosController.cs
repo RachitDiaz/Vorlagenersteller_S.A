@@ -18,7 +18,7 @@ namespace backend_planilla.API
         }
 
         [HttpGet("{cedula}")]
-        public async Task<ActionResult<List<DeduccionCalculada>>> ObtenerDeducciones(string cedula)
+        public async Task<ActionResult<DeduccionCalculadaConTotal>> ObtenerDeducciones(string cedula)
         {
             if (string.IsNullOrEmpty(cedula))
                 return Unauthorized("No se encontró el correo en el token de autenticación.");
