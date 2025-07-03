@@ -69,17 +69,17 @@ namespace backend_planilla.Infraestructure
 
                     if (!columna["BeneficioNombre1"].ToString().Equals(""))
                     {
-                        loopBeneficioCosto1 = Convert.ToDecimal(columna["BeneficioCosto1"]);
+                        loopBeneficioCosto1 = Convert.ToDecimal(columna["BeneficioMonto1"]);
                     }
 
                     if (!columna["BeneficioNombre2"].ToString().Equals(""))
                     {
-                        loopBeneficioCosto2 = Convert.ToDecimal(columna["BeneficioCosto2"]);
+                        loopBeneficioCosto2 = Convert.ToDecimal(columna["BeneficioMonto2"]);
                     }
 
                     if (!columna["BeneficioNombre3"].ToString().Equals(""))
                     {
-                        loopBeneficioCosto3 = Convert.ToDecimal(columna["BeneficioCosto3"]);
+                        loopBeneficioCosto3 = Convert.ToDecimal(columna["BeneficioMonto3"]);
                     }
 
                     reportesEmpleado.Add(
@@ -94,11 +94,11 @@ namespace backend_planilla.Infraestructure
                         IVM = Convert.ToDecimal(columna["IVEMEmpleado"]),
                         BPP = Convert.ToDecimal(columna["BPPOEmpleado"]),
                         Renta = Convert.ToDecimal(columna["ImpuestoRenta"]),
-                        BeneficioNombre1 = columna["BeneficioMonto1"].ToString(),
+                        BeneficioNombre1 = columna["BeneficioNombre1"].ToString(),
                         BeneficioCosto1 = loopBeneficioCosto1,
-                        BeneficioNombre2 = columna["BeneficioMonto2"].ToString(),
+                        BeneficioNombre2 = columna["BeneficioNombre2"].ToString(),
                         BeneficioCosto2 = loopBeneficioCosto2,
-                        BeneficioNombre3 = columna["BeneficioMonto3"].ToString(),
+                        BeneficioNombre3 = columna["BeneficioNombre3"].ToString(),
                         BeneficioCosto3 = loopBeneficioCosto3,
                         TotalDeduccionesEmpleado = Convert.ToDecimal(columna["TotalDeduccionesEmpleado"]),
                         TotalDeduccionesBeneficios = Convert.ToDecimal(columna["TotalDeduccionesBeneficios"])

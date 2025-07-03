@@ -288,24 +288,50 @@ namespace backend_planilla.Handlers
 
             comandoParaConsulta.Parameters.AddWithValue("@Cedula", cedula);
 
-            _conexion.Open();
-            var reader = comandoParaConsulta.ExecuteReader();
-            string result = "";
-            if (reader.Read())
+            try
             {
-                result = reader["Correo"].ToString();
+                if (_conexion.State != ConnectionState.Open) { _conexion.Open(); }
+                
+                var reader = comandoParaConsulta.ExecuteReader();
+                string result = "";
+                if (reader.Read())
+                {
+                    result = reader["Correo"].ToString();
+                }
+                return result;
+            } catch
+            {
+
             }
-            _conexion.Close();
-            return result;
+            finally
+            {
+                if (_conexion.State != ConnectionState.Closed) { _conexion.Close(); }
+            }
+            
+            return "";
         }
         public async Task<decimal> ObtenerSalarioBruto(string cedulaEmpleado)
         {
-            var query = "SELECT SalarioBruto FROM Empleado WHERE CedulaEmpleado = @Cedula";
-            using var cmd = new SqlCommand(query, _conexion);
-            cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
-            _conexion.Open();
-            var result = await cmd.ExecuteScalarAsync();
-            return Convert.ToDecimal(result);
+
+            try
+            {
+                var query = "SELECT SalarioBruto FROM Empleado WHERE CedulaEmpleado = @Cedula";
+                using var cmd = new SqlCommand(query, _conexion);
+                cmd.Parameters.AddWithValue("@Cedula", cedulaEmpleado);
+                _conexion.Open();
+                var result = await cmd.ExecuteScalarAsync();
+                return Convert.ToDecimal(result);
+            } catch(Exception e)
+            {
+
+            } finally
+            {
+                if (_conexion.State == ConnectionState.Open)
+                {
+                    _conexion.Close();
+                }
+            }
+            return 0;
         }
 
         public async Task<List<DeduccionBeneficioModel>> ObtenerBeneficiosEmpleado(string cedulaEmpleado)
