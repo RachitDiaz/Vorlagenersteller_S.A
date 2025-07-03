@@ -48,14 +48,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:8081", "http://localhost:8080", "http://192.168.0.8:8080", "https://sunny-pasca-9bce84.netlify.app")
+            policy.WithOrigins("http://localhost:8081", "http://localhost:8080", "http://192.168.0.8:8080")
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
 });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); 
+builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 builder.Services.AddScoped<IBeneficioRepository, BeneficioRepository>();
 builder.Services.AddScoped<IBeneficiosRepository, BeneficiosRepository>();
