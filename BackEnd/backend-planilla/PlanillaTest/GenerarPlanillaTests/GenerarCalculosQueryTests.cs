@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using backend_planilla.Application;
-using backend_planilla.Domain;
-using backend_planilla.Infraestructure;
-using Moq;
+using SeleniumExtras.WaitHelpers;
 
 namespace PlanillaTest.GenerarPlanillaTests
 {
