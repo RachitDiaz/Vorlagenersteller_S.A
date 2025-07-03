@@ -28,43 +28,47 @@
       <tbody style="height: 20rem;">
         <tr class="row-title">
           <td> Salario bruto </td>
-          <td>{{ display.salarioBruto }}₡</td>
+          <td>₡{{ display.salarioBruto }}</td>
         </tr>
         <tr>
           <td> SEM (Seguro Enfermedad/Maternidad) </td>
-          <td>-{{ display.sem }}₡</td>
+          <td>-₡{{ display.sem }}₡</td>
         </tr>
         <tr>
           <td> IVM (Invalidez, Vejez y Muerte) </td>
-          <td>-{{ display.ivm }}₡</td>
+          <td>-₡{{ display.ivm }}</td>
         </tr>
         <tr>
           <td> Aporte Trabajador Banco Popular </td>
-          <td>-{{ display.bpp }}₡</td>
+          <td>-₡{{ display.bpp }}</td>
+        </tr>
+        <tr>
+          <td> Renta </td>
+          <td>-₡{{ display.renta }}</td>
         </tr>
         <tr class="row-title">
           <td> Total deducciones de ley </td>
-          <td>-{{ display.totalDeduccionesEmpleado }}₡</td>
+          <td>-₡{{ display.totalDeduccionesEmpleado }}</td>
         </tr>
         <tr v-show="display.beneficioCosto1">
           <td> {{ display.beneficioNombre1 }} </td>
-          <td>-{{ display.beneficioCosto1 }}₡</td>
+          <td>-₡{{ display.beneficioCosto1 }}</td>
         </tr>
         <tr v-show="display.beneficioCosto2">
           <td> {{ display.beneficioNombre2 }} </td>
-          <td>-{{ display.beneficioCosto2 }}₡</td>
+          <td>-₡{{ display.beneficioCosto2 }}</td>
         </tr>
         <tr v-show="display.beneficioCosto3">
           <td> {{ display.beneficioNombre3 }} </td>
-          <td>-{{ display.beneficioCosto3 }}₡</td>
+          <td>-₡{{ display.beneficioCosto3 }}</td>
         </tr>
         <tr class="row-title">
           <td> Total deducciones de beneficios </td>
-          <td>-{{ display.totalDeduccionesBeneficios }}₡</td>
+          <td>-₡{{ display.totalDeduccionesBeneficios }}</td>
         </tr>
         <tr class="row-title">
           <td> Salario Neto </td>
-          <td>{{ display.salarioNeto }}₡</td>
+          <td>₡{{ display.salarioNeto }}</td>
         </tr>
       </tbody>
     </table>

@@ -37,6 +37,11 @@ builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 builder.Services.AddScoped<IGetDeduccionBeneficiosQuery, GetDeduccionBeneficiosQuery>();
 builder.Services.AddScoped<ICalculoDeduccionesObligatorias, CalculoDeduccionesObligatorias>();
 builder.Services.AddScoped<IBeneficioQuery, BeneficioQuery>();
+builder.Services.AddScoped<IPlanillaRepository, PlanillaRepository>();
+builder.Services.AddScoped<IGenerarCalculosRepository, GenerarCalculosRepository>();
+builder.Services.AddScoped<IGenerarCalculosQuery, GenerarCalculosQuery>();
+builder.Services.AddScoped<IGenerarPlanilla, GenerarPlanilla>();
+builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -50,7 +55,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); 
+builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 builder.Services.AddScoped<IBeneficioRepository, BeneficioRepository>();
 builder.Services.AddScoped<IBeneficiosRepository, BeneficiosRepository>();

@@ -63,7 +63,7 @@ GO
 DROP TRIGGER IF EXISTS trg_Empresa_Delete;
 GO
 
--- Trigger para la eliminación de empresa
+-- Trigger para la eliminaciï¿½n de empresa
 CREATE TRIGGER trg_Empresa_Delete
 ON Empresa
 INSTEAD OF DELETE

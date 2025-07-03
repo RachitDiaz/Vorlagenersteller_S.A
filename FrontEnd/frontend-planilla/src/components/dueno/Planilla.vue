@@ -1,7 +1,9 @@
 <template>
   <div class="planilla-container">
     <h2>Planilla</h2>
-    <button @click="generarNuevaPlanilla">Nueva Planilla</button>
+    <button @click="agregarPlanilla">Generar Planilla</button>
+    <p v-if="mensajeExito" style="color: green; margin-top: 10px;">{{ mensajeExito }}</p>
+    <p v-if="mensajeError" style="color: red; margin-top: 10px;">{{ mensajeError }}</p>
 
     <table class="planilla-table">
       <thead>
@@ -35,8 +37,10 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { backendURL } from '../../config/config.js'
 
-const planillas = ref([])
 const token = localStorage.getItem("jwtToken")
+const mensajeError = ref('')
+const mensajeExito = ref('')
+const planillas = ref([])
 
 function formatoMoneda(valor) {
   return new Intl.NumberFormat('es-CR', {
@@ -46,41 +50,29 @@ function formatoMoneda(valor) {
   }).format(valor)
 }
 
-async function cargarPlanillas() {
+const agregarPlanilla = async () => {
+  mensajeError.value = ''
+  mensajeExito.value = ''
+
   try {
-    const response = await axios.get(`${backendURL}Reportes/ObtenerUltimosPagosEmpresa`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-
-    const datos = response.data
-
-    planillas.value = datos.map((item) => {
-      const obligatorias = item.totalSEM + item.totalIVM + item.totalBP + item.totalAF + item.totalIMAS + item.totalINA + item.totalFCL + item.totalPC + item.totalINS
-      const beneficios = item.beneficiosTotales
-      const totalBruto = item.salariosTiempoCompleto
-      const totalDeducciones = obligatorias + beneficios
-      const totalNeto = totalBruto - totalDeducciones
-
-      return {
-        periodo: item.peridoPago,
-        totalBruto,
-        obligatorias,
-        beneficios,
-        totalDeducciones,
-        totalNeto
+    const response = await axios.post(`${backendURL}GenerarPlanilla`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
     })
+
+    mensajeExito.value = '✅ Planilla generada exitosamente.'
   } catch (error) {
-    console.error("Error al cargar datos de planilla:", error)
+    if (error.response?.status === 400) {
+      mensajeError.value = `⚠️ ${error.response.data.mensaje}`
+    } else if (error.response?.status === 401) {
+      mensajeError.value = '❌ No autorizado. Verifica tu sesión.'
+    } else {
+      mensajeError.value = '❌ Error al generar planilla.'
+    }
+    console.error(error)
   }
 }
-
-function generarNuevaPlanilla() {
-}
-
-onMounted(() => {
-  cargarPlanillas()
-})
 </script>
 
 <style scoped>
@@ -135,3 +127,4 @@ onMounted(() => {
   margin-top: 4px;
 }
 </style>
+
