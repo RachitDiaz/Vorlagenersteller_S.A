@@ -8,7 +8,7 @@ using backend_planilla.Domain;
 using backend_planilla.Infraestructure;
 using Moq;
 
-namespace PlanillaTest.GenerarPlanillaTests
+namespace PlanillaTest.UnitTests.GenerarPlanillaTests
 {
     public class GenerarCalculosQueryTests
     {
