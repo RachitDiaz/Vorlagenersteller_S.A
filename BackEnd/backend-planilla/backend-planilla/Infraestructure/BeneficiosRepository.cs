@@ -194,7 +194,11 @@ namespace backend_planilla.Infraestructure
                 using var command = new SqlCommand(query, _conexion);
                 command.Parameters.AddWithValue("@IDBeneficio", idBeneficio);
 
-                _conexion.Open();
+                if (_conexion.State != ConnectionState.Open)
+                {
+                    _conexion.Open();
+                }
+                
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {

@@ -41,7 +41,6 @@ const token = localStorage.getItem("jwtToken")
 const mensajeError = ref('')
 const mensajeExito = ref('')
 const planillas = ref([])
-const token = localStorage.getItem("jwtToken")
 
 function formatoMoneda(valor) {
   return new Intl.NumberFormat('es-CR', {

@@ -58,6 +58,7 @@ BEGIN
    @Distrito,  
    @OtrasSenas)  
 END;
+Go
 
 DROP TRIGGER IF EXISTS trg_Empresa_Delete;
 GO
