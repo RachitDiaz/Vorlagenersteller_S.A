@@ -23,13 +23,13 @@ namespace backend_planilla.Controllers
             _query = query;
         }
 
-        [HttpGet]
+        [HttpGet()]
         public async Task<IActionResult> GetDeducciones([FromQuery] string cedula)
         {
             if (string.IsNullOrWhiteSpace(cedula))
                 return BadRequest("Debe indicar una cédula.");
 
-            var resultado = await _query.ExecuteAsync(cedula);
+            var resultado = await _query.CalcularDeduccionesBeneficios(cedula);
             return Ok(resultado);
         }
 
@@ -38,19 +38,26 @@ namespace backend_planilla.Controllers
         {
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                $" Correo: {correo} acceso en GET /api/empleadoController");
 
             var empleados = _empleadoHandler.ObtenerEmpleados(correo);
             return empleados;
         }
 
-        [HttpGet]
-        public InfoEmpleadoModel? GetInfoEmpleado(string cedulaEmpleado)
+        [HttpGet("{cedulaEmpleado}")]
+        public InfoEmpleadoModel? GetInfoEmpleadoCedula(string cedulaEmpleado)
         {
             var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             var infoEmpleado = _empleadoHandler.ObtenerInfoEmpleado(cedulaEmpleado);
+            return infoEmpleado;
+        }
+
+        [HttpGet]
+        public InfoEmpleadoModel? GetInfoEmpleado()
+        {
+            var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var infoEmpleado = _empleadoHandler.ObtenerInfoEmpleadoCorreo(correo);
             return infoEmpleado;
         }
 
@@ -61,9 +68,7 @@ namespace backend_planilla.Controllers
             {
                 var correo = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
                 PersonaModel persona = paqueteSolicitudAgregarEmpleado.Persona;
-                EmpleadoModel empleado = paqueteSolicitudAgregarEmpleado.Empleado;
-                Console.WriteLine($"Texto de prueba para ver si sirve el token" +
-                    $" Correo: {correo} acceso en POST /api/empleadoController");
+                EmpleadoModel empleado = paqueteSolicitudAgregarEmpleado.Empleado; 
                 if (persona == null || empleado == null)
                 {
                     return BadRequest();
@@ -105,5 +110,24 @@ namespace backend_planilla.Controllers
             }
         }
 
+        [HttpDelete]
+        public ActionResult<bool> EliminarEmpleado(string cedulaEmpleado)
+        {
+            try
+            {
+                EmpleadoQuery empleadoQuery = new EmpleadoQuery();
+                var resultado = empleadoQuery.EliminarEmpleado(cedulaEmpleado);
+                return new JsonResult(resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error al eliminar el empleado.");
+            }
+        }
     }
 }

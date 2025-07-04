@@ -1,7 +1,9 @@
 <template>
   <div class="planilla-container">
     <h2>Planilla</h2>
-    <button @click="agregarPlanilla">Nueva Planilla</button>
+    <button @click="agregarPlanilla">Generar Planilla</button>
+    <p v-if="mensajeExito" style="color: green; margin-top: 10px;">{{ mensajeExito }}</p>
+    <p v-if="mensajeError" style="color: red; margin-top: 10px;">{{ mensajeError }}</p>
 
     <table class="planilla-table">
       <thead>
@@ -17,10 +19,10 @@
           <td>{{ item.periodo }}</td>
           <td>{{ formatoMoneda(item.totalBruto) }}</td>
           <td>
-            {{ formatoMoneda(item.deducciones.obligatorias + item.deducciones.beneficios) }}
+            {{ formatoMoneda(item.totalDeducciones) }}
             <div class="detalles-deducciones">
-              Obligatorias: {{ formatoMoneda(item.deducciones.obligatorias) }}<br />
-              Beneficios: {{ formatoMoneda(item.deducciones.beneficios) }}
+              Obligatorias: {{ formatoMoneda(item.obligatorias) }}<br />
+              Beneficios: {{ formatoMoneda(item.beneficios) }}
             </div>
           </td>
           <td>{{ formatoMoneda(item.totalNeto) }}</td>
@@ -31,42 +33,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { backendURL } from '../../config/config.js'
 
-import { useRouter } from 'vue-router'  
-
-const planillas = ref([
-  {
-    periodo: 'Enero 2025',
-    totalBruto: 10000000,
-    deducciones: {
-      obligatorias: 700000,
-      beneficios: 300000,
-    },
-    totalNeto: 9000000,
-  },
-  {
-    periodo: 'Febrero 2025',
-    totalBruto: 0,
-    deducciones: {
-      obligatorias: 0,
-      beneficios: 0,
-    },
-    totalNeto: 0,
-  },
-])
-
-function agregarPlanilla() {
-  planillas.value.push({
-    periodo: 'Nuevo Periodo',
-    totalBruto: 0,
-    deducciones: {
-      obligatorias: 0,
-      beneficios: 0,
-    },
-    totalNeto: 0,
-  })
-}
+const token = localStorage.getItem("jwtToken")
+const mensajeError = ref('')
+const mensajeExito = ref('')
+const planillas = ref([])
 
 function formatoMoneda(valor) {
   return new Intl.NumberFormat('es-CR', {
@@ -74,6 +48,30 @@ function formatoMoneda(valor) {
     currency: 'CRC',
     minimumFractionDigits: 0,
   }).format(valor)
+}
+
+const agregarPlanilla = async () => {
+  mensajeError.value = ''
+  mensajeExito.value = ''
+
+  try {
+    const response = await axios.post(`${backendURL}GenerarPlanilla`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    mensajeExito.value = '✅ Planilla generada exitosamente.'
+  } catch (error) {
+    if (error.response?.status === 400) {
+      mensajeError.value = `⚠️ ${error.response.data.mensaje}`
+    } else if (error.response?.status === 401) {
+      mensajeError.value = '❌ No autorizado. Verifica tu sesión.'
+    } else {
+      mensajeError.value = '❌ Error al generar planilla.'
+    }
+    console.error(error)
+  }
 }
 </script>
 
@@ -83,7 +81,7 @@ function formatoMoneda(valor) {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
+  max-width: 950px;
   margin: 0 auto;
 }
 
@@ -129,3 +127,4 @@ function formatoMoneda(valor) {
   margin-top: 4px;
 }
 </style>
+

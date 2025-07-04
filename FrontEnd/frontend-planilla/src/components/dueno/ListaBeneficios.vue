@@ -30,17 +30,6 @@
           @click="showModal">Añadir beneficios</button>
         <ModalAgregarBeneficios ref="modalRef" :beneficios="beneficiosAPI"/>
 
-        <div class="slider-section">
-          <label class="slider-label">
-            Cantidad de Beneficios por Empleado</label>
-          <div class="slider-control">
-            <span>0</span>
-            <input type="range" min="0"
-              :max="max" v-model="selectedAmount" class="slider"/>
-            <span>{{ selectedAmount }}-{{ max }}</span>
-          </div>
-        </div>
-
         <div class="button-group">
           <button class="cancel">Cancelar</button>
           <button class="accept" @click="submit">Aceptar</button>
@@ -50,9 +39,9 @@
   </template>
 
 <script setup>
+import axios from 'axios';
 import {ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
-import axios from 'axios';
 import ModalAgregarBeneficios from '../modals/ModalAgregarBeneficios.vue';
 import ModalModificarBeneficio from '../modals/ModalModificarBeneficio.vue';
 import {backendURL} from '../../config/config.js';
@@ -68,34 +57,22 @@ const modalRef = ref(null);
 const modalModificar = ref(null);
 const beneficioSeleccionado = ref(null);
 
-/**
- * Mostrar modal para modificar beneficio
- * @param {Beneficio} beneficio seleccionado para modificar
- */
 function abrirModalModificar(beneficio) {
   beneficioSeleccionado.value = { ...beneficio };
   modalModificar.value?.show(beneficio);
 }
 
-/**
- * Mostrar el formulario para agregar beneficios
- */
 function showModal() {
   modalRef.value?.show();
 }
 
-/**
- * Guardar la cantidad de beneficios seleccionables
- */
 function submit() {
-  alert(`Has aceptado seleccionar hasta
-    ${selectedAmount.value} beneficios por empleado.`);
+  alert(`Has aceptado ${selectedAmount.value} beneficios seleccionables.`);
 }
 
   onMounted(async () => {
     try {
       const token = localStorage.getItem("jwtToken");
-      console.log('Token:', token);
       if (!token) {
         alert('Tiene que iniciar sesión primero.');
         setTimeout(() => {
@@ -109,9 +86,13 @@ function submit() {
         Authorization: `Bearer ${token}`,
       },
     });
+    const excluidos = ["TSE", "Registro Nacional"];
+
     beneficiosEmpresa.value = response.data
-        .filter((b) => b.cedulaEmpresa !== '');
-    beneficiosAPI.value = response.data.filter((b) => b.cedulaEmpresa === '');
+      .filter((b) => b.cedulaEmpresa !== '' && !excluidos.includes(b.nombre));
+
+    beneficiosAPI.value = response.data
+      .filter((b) => b.cedulaEmpresa === '' && !excluidos.includes(b.nombre));
   } catch (error) {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('jwtToken');
@@ -170,6 +151,8 @@ function submit() {
     border-radius: 0.5rem;
     padding: 1rem;
     margin-bottom: 1.5rem;
+    max-height: 260px; 
+    overflow-y: auto;
   }
 
   .benefit-item {

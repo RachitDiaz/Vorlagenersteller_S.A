@@ -211,7 +211,7 @@
     razonSocial: '',
     nombre: '',
     descripcion: '',
-    beneficiosMaximos: '0',
+    beneficiosMaximos: '3',
     correo: '',
     telefono: '',
     provincia: '',
@@ -221,7 +221,6 @@
   })
   
   function submitForm() {
-    console.log("Datos a guardar", form);
     axios.post(`${backendURL}Empresa`, {
     cedulaJuridica: form.cedulaJuridica,
     cedulaDueno: form.cedulaDueno,

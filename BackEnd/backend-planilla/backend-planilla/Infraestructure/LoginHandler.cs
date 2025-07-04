@@ -33,13 +33,15 @@ namespace backend_planilla.Handlers
         public (string? CorreoUsuario, bool EsDueno) ValidarCredenciales(string correo, string contrasena)
         {
             var consulta = @"
-                    SELECT 
-                        u.Correo,
-                        u.Contrasena,
-                        CASE WHEN d.Cedula IS NOT NULL THEN 1 ELSE 0 END AS EsDueno
-                    FROM Usuario u
-                    LEFT JOIN Dueno d ON u.Cedula = d.Cedula
-                    WHERE u.Correo = @correo;";
+                            SELECT 
+                                u.Correo,
+                                u.Contrasena,
+                                CASE WHEN d.Cedula IS NOT NULL THEN 1 ELSE 0 END AS EsDueno,
+                                ISNULL(e.Borrado, 0) AS Borrado
+                            FROM Usuario u
+                            LEFT JOIN Dueno d ON u.Cedula = d.Cedula
+                            LEFT JOIN Empleado e ON u.Cedula = e.CedulaEmpleado
+                            WHERE u.Correo = @correo;";
             var comandoParaConsulta = new SqlCommand(consulta, _conexion);
 
             comandoParaConsulta.Parameters.AddWithValue("@correo", correo);
@@ -49,9 +51,15 @@ namespace backend_planilla.Handlers
 
             if (reader.Read())
             {
+                bool borrado = (bool)reader["Borrado"];
                 string correoUsuario = reader["Correo"].ToString();
                 string hashAlmacenado = reader["Contrasena"].ToString();
                 bool esDueno = (int)reader["EsDueno"] == 1;
+                if (borrado == true)
+                {
+                    _conexion.Close();
+                    return (null, false); 
+                }
 
                 var usuario = new UsuarioModel { Correo = correoUsuario };
 

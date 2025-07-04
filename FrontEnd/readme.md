@@ -7,7 +7,9 @@ Colocarse en la carpeta raiz del proyecto ".../frontend-planilla" y correr los s
   * `npm install vue-router`
   * `npm install bootstrap`
   * `npm install @fortawesome/fontawesome-free`
-  * `npm install`
+  * `npm install html2pdf.js`
+  * `npm install chart.js vue-chartjs`
+
 
 ## Para correr el proyecto
 

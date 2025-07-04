@@ -3,7 +3,7 @@ using backend_planilla.Application;
 using backend_planilla.Domain;
 using Moq;
 
-namespace PlanillaTest
+namespace PlanillaTest.UnitTests.EmpresaQueryTests
 {
     public class EmpresaQueryTest
     {

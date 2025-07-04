@@ -11,6 +11,6 @@ namespace backend_planilla.Application
         List<BeneficioSimpleModel> ObtenerBeneficiosSeleccionadosPorEmpleado(string correo);
 
         string ObtenerCedulaEmpleadoDesdeCorreo(string correo);
-
+        bool ActualizarDependientesEmpleado(string correo, int dependientes);
     }
 }

@@ -2,7 +2,7 @@
   <div >
     <header class="app-header">
       <div class="top-bar">
-        <div class="title" @click="goToLanding">{{ currentTitle }}</div>
+        <div class="title" @click="goToLanding">{{ currentTitle}}</div>
         <button @click="handleAuthAction" class="auth-button">
           {{ isLoggedIn ? 'Cerrar sesión' : 'Iniciar sesión' }}
         </button>
@@ -25,62 +25,79 @@
 
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import {ref, computed} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
-const rol = ref(localStorage.getItem('rol') || '')
-const token = ref(localStorage.getItem('jwtToken'))
-const isLoggedIn = computed(() => !!token.value)
+const rol = ref(localStorage.getItem('rol') || '');
+const token = ref(localStorage.getItem('jwtToken'));
+const isLoggedIn = computed(() => !!token.value);
 
 const filteredMenuItems = computed(() => {
-  return menuItems.filter(item => {
-    const path = item.path
+  return menuItems.filter((item) => {
+    const path = item.path;
 
-    if (path === '/') return true 
-    if (path === '/VerEmpleado') return true 
-    if (['/ListaBeneficios', '/ListaEmpresas', '/VerEmpresa', '/ListaEmpleados', '/VerPlanilla'].includes(path)) {
-      return rol.value === 'Dueno'
+    if (path === '/') return true;
+    if (
+      [
+        '/DashboardDueno',
+        '/ListaBeneficios',
+        '/ListaEmpresas',
+        '/ListaEmpleados',
+        '/VerPlanilla',
+        '/ReporteCostos',
+      ].includes(path)
+    ) {
+      return rol.value === 'Dueno';
     }
-    if (['/BeneficiosEmpleado', '/RegistroHoras'].includes(path)) {
-      return rol.value === 'Empleado'
+    if (
+      [
+        '/DashboardEmpleado',
+        '/BeneficiosEmpleado',
+        '/RegistroHoras',
+        '/ReportePago',
+        '/VerEmpleado',
+      ].includes(path)) {
+      return rol.value === 'Empleado';
     }
 
-    return false 
-  })
-})
+    return false;
+  });
+});
 
 const handleAuthAction = () => {
   if (isLoggedIn.value) {
-    localStorage.removeItem('jwtToken')
-    token.value = null
-    router.push('/login')
+    localStorage.removeItem('jwtToken');
+    token.value = null;
+    router.push('/');
   } else {
-    router.push('/login')
+    router.push('/login');
   }
-}
+};
 
 const goToLanding = () => {
-  router.push('/')
-}
+  router.push('/');
+};
 
 const currentTitle = computed(() => {
-  return route.meta.title || 'Default Title'
-})
+  return route.meta.title || 'Default Title';
+});
 
 const menuItems = [
-  { name: 'Inicio', path: '/' },
-  { name: 'Lista Beneficios', path: '/ListaBeneficios' },
-  { name: 'Lista Empresas', path: '/ListaEmpresas' },
-  { name: 'Ver Empresa', path: '/VerEmpresa' },
-  { name: 'Lista Empleados', path: '/ListaEmpleados' },
-  { name: 'Ver Empleado', path: '/VerEmpleado' },
-  { name: 'Beneficios Empleado', path: '/BeneficiosEmpleado' },
-  { name: 'Registro de Horas', path: '/RegistroHoras' },
-  { name: 'Ver Planilla', path: '/VerPlanilla' },
-]
+  {name: 'Lista Beneficios', path: '/ListaBeneficios'},
+  {name: 'Dashboard Empleado', path: '/DashboardEmpleado'},
+  {name: 'Lista Empresas', path: '/ListaEmpresas'},
+  {name: 'Dashboard Dueño', path: '/DashboardDueno'},
+  {name: 'Lista Empleados', path: '/ListaEmpleados'},
+  {name: 'Ver Empleado', path: '/VerEmpleado'},
+  {name: 'Beneficios Empleado', path: '/BeneficiosEmpleado'},
+  {name: 'Registro de Horas', path: '/RegistroHoras'},
+  {name: 'Planilla', path: '/VerPlanilla'},
+  {name: 'Reporte de Pagos', path: '/ReportePago'},
+  {name: 'Reporte de pagos', path: '/ReporteCostos'},
+];
 </script>
 
 <style scoped>

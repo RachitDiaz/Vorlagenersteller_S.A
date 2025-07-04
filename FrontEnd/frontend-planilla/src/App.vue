@@ -11,6 +11,7 @@
 <script>
 import AppHeader from './components/header/AppHeader.vue';
 import AppFooter from './components/footer/AppFooter.vue';
+import 'bootstrap/dist/css/bootstrap.min.css'
 export default {
   components: { AppHeader, AppFooter }
 }

@@ -23,14 +23,18 @@
             <input
               type="email"
               v-model="correo"
-              :placeholder="selectedTab === 'Empleado' ? 'Correo de la empresa' : 'Correo personal'"
+              :placeholder="
+                selectedTab === 'Empleado'
+                  ? 'Correo de la empresa'
+                  : 'Correo personal'
+              "
               required
             />
           </div>
           <div class="form-group">
             <label>contraseña</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               v-model="contrasena"
               required
             />
@@ -46,7 +50,11 @@
             :href="selectedTab === 'Dueno' ? '/RegistrarDueno' : '#'"
             class="link"
           >
-            {{ selectedTab === 'Empleado' ? '¿Olvidó su contraseña?' : 'Crear usuario' }}
+            {{
+              selectedTab === 'Empleado'
+                ? '¿Olvidó su contraseña?'
+                : 'Crear usuario'
+            }}
           </a>
         </form>
       </div>
@@ -55,47 +63,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import {backendURL} from "../config/config.js"
-const selectedTab = ref('Empleado')
-const correo = ref('')
-const contrasena = ref('')
-const mensajeError = ref('')
+import {ref, onMounted} from 'vue';
+import axios from 'axios';
+import {backendURL} from '../config/config.js';
+const selectedTab = ref('Empleado');
+const correo = ref('');
+const contrasena = ref('');
+const mensajeError = ref('');
 
 onMounted(() => {
-  localStorage.removeItem('jwtToken')
-})
+  localStorage.removeItem('jwtToken');
+});
 
 const login = async () => {
-  mensajeError.value = ''
+  mensajeError.value = '';
 
   if (!correo.value || !contrasena.value) {
-    mensajeError.value = 'Debe completar todos los campos'
-    return
+    mensajeError.value = 'Debe completar todos los campos';
+    return;
   }
 
   try {
     const response = await axios.post(`${backendURL}login`, {
       Correo: correo.value,
       Contrasena: contrasena.value,
-      Rol: selectedTab.value
-    })
+      Rol: selectedTab.value,
+    });
 
-    const token = response.data.token
-    localStorage.setItem('jwtToken', token)
-    localStorage.setItem('rol', selectedTab.value)
-    console.log(selectedTab.value);
+    const token = response.data.token;
+    localStorage.setItem('jwtToken', token);
+    localStorage.setItem('rol', selectedTab.value);
     if (selectedTab.value === 'Dueno') {
-      window.location.href = '/ListaEmpleados'
+      window.location.href = '/ListaEmpleados';
     } else {
-      window.location.href = '/RegistroHoras'
+      window.location.href = '/RegistroHoras';
     }
   } catch (error) {
-    mensajeError.value = error.response?.data?.mensaje || 'Error en la solicitud'
-    console.error(mensajeError.value)
+    mensajeError.value =
+      error.response?.data?.mensaje || 'Error en la solicitud';
+    console.error(mensajeError.value);
   }
-}
+};
 </script>
 
 <style scoped>
@@ -126,7 +134,7 @@ const login = async () => {
 }
 
 .tab.active {
-  background: #e3d2f4;
+  background: #9950ff;
   color: black;
 }
 
